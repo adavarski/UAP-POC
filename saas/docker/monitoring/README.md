@@ -55,21 +55,11 @@ Screens ->
 
 Grafana: 
 
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/monitoring/screens/noc-grafana-system.png?raw=true" width="650">
-
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/monitoring/screens/noc-grafana-docker.png?raw=true" width="650">
-
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/monitoring/screens/noc-grafana-docker-2.png?raw=true" width="650">
-
 
 Kibana: 
 
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/monitoring/screens/noc-kibana.png?raw=true" width="650">
 
 Sensu: 
-
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/monitoring/screens/noc-sensu-example.png?raw=true" width="650">
-
 
 
 #### TODO:
