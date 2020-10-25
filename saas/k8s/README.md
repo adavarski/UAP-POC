@@ -4,7 +4,7 @@
 
 ### AWS (we will do R&D when we have separate AWS account for SaaS : build k8s cluster with KOPS)
 
-KOPS is based on Terraform and is working very well for AWS k8s deployments. After AWS k8s cluster has been deployed, we can use Helm for SaaS services (Mission Control:NOC) @ k8s cluster (we have try to write our own Helm charts for all services: Consul cluster, Kafka cluster, etc. based on stable Helm charts for all needed SaaS services: ELK, Kafka, Consul, Grafana, Sensu, InfluxDB, etc., etc. →  Ref:https://hub.helm.sh/charts; https://github.com/helm/charts/tree/master/stable ; etc.
+KOPS is based on Terraform and is working very well for AWS k8s deployments. After AWS k8s cluster has been deployed, we can use Helm for SaaS services @ k8s cluster (we have try to write our own Helm charts for all services: Consul cluster, Kafka cluster, etc. based on stable Helm charts for all needed SaaS services: ELK, Kafka, Consul, Grafana, Sensu, InfluxDB, etc., etc. →  Ref:https://hub.helm.sh/charts; https://github.com/helm/charts/tree/master/stable ; etc.
 
 ### Local k8s dev  (minikube, kubespray. etc.) 
 
