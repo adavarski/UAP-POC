@@ -1,0 +1,37 @@
+---
+# Supported Java Versions
+# CentOS 7: latest, 11, 8, or 7
+# CentOS 8: latest, 11, 8
+# Ubuntu 18.04: 11 or 8
+# Ubuntu 20.04: 14, 13, 11, or 8
+kafka_java_version: 11
+kafka_java_install: true
+
+component_tag: saas_dev_env
+
+# Confluent settings
+confluent_version: 5.5
+scala_version: 2.12
+
+
+
+# Schema registry settings
+
+schema_registry_custom_log4j: "{{ custom_log4j }}"
+
+schema_registry_java_args:
+  - "{% if schema_registry_jolokia_enabled|bool %}-javaagent:{{jolokia_jar_path}}=port={{schema_registry_jolokia_port}},host=0.0.0.0{% if schema_registry_jolokia_ssl_enabled|bool %},keystore={{schema_registry_keystore_path}},keystorePassword={{schema_registry_keystore_storepass}},protocol=https{% endif %}{% endif %}"
+  - "{% if schema_registry_custom_log4j|bool %}-Dlog4j.configuration=file:{{schema_registry.log4j_file}}{% endif %}"
+
+schema_registry_custom_java_args: ""
+schema_registry_final_java_args: "{{ schema_registry_java_args + [ schema_registry_custom_java_args ] }}"
+
+schema_registry:
+  appender_log_path: /var/log/confluent/schema-registry/
+  appender_log_name: schema-registry.log
+  appender_max_log_files: 10
+  appender_log_file_size: 100MB
+  properties:
+    debug: false
+    schema.registry.group.id: schema-registry
+    kafkastore.topic: _schemas

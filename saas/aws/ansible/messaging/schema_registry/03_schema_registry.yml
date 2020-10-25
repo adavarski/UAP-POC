@@ -1,0 +1,6 @@
+- name: 03_schema_registry
+  hosts:
+    - schema_registry
+  become: true
+  roles:
+    - 03_schema_registry

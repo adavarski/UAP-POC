@@ -1,0 +1,6 @@
+- name: 03_telegraf
+  hosts:
+    - telegraf
+  become: true
+  roles:
+    - roles/telegraf

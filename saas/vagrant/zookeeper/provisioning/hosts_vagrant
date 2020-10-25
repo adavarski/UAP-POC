@@ -1,0 +1,4 @@
+[zookeeper]
+zoo01 zoo_id=1 zoo_server_address=10.51.21.61 ansible_host=127.0.0.1 ansible_port=2261 ansible_private_key_file=.vagrant/machines/zoo01/virtualbox/private_key
+zoo02 zoo_id=2 zoo_server_address=10.51.21.62 ansible_host=127.0.0.1 ansible_port=2262 ansible_private_key_file=.vagrant/machines/zoo02/virtualbox/private_key
+zoo03 zoo_id=3 zoo_server_address=10.51.21.63 ansible_host=127.0.0.1 ansible_port=2263 ansible_private_key_file=.vagrant/machines/zoo03/virtualbox/private_key

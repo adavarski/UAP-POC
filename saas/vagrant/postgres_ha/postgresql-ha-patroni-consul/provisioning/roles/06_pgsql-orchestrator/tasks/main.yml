@@ -1,0 +1,13 @@
+---
+
+- name: put orchestrator db setup script
+  template:
+    src: orchestrator-dbsetup.sh.j2 
+    dest: /root/orchestrator-dbsetup.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: setup db for orchestrator
+  shell: /root/orchestrator-dbsetup.sh 
+

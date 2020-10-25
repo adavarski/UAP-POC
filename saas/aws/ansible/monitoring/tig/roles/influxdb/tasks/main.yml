@@ -1,0 +1,34 @@
+---
+- name: fetch influxdb
+  get_url: url=https://dl.influxdata.com/influxdb/releases/influxdb-1.7.6.x86_64.rpm
+           dest=/tmp/influxdb-1.7.6.x86_64.rpm
+
+- name: install influxdb
+  shell: yum localinstall -y /tmp/influxdb-1.7.6.x86_64.rpm
+
+- name: setup influxdb service
+  service: name=influxdb state=started enabled=yes
+
+- name: wait 10 seconds for the service get up
+  shell: sleep 10
+
+- name: Create InfluxDB user
+  command: "influx -execute \"CREATE USER {{ influxdb_user }} WITH PASSWORD '{{ influxdb_password }}' WITH ALL PRIVILEGES\""
+
+- name: Create Grafana user
+  command: "influx -execute \"CREATE USER {{ db_user }} WITH PASSWORD '{{ db_password }}' WITH ALL PRIVILEGES\""
+
+- name: Create Grafana database
+  command: "influx -execute \"CREATE DATABASE {{ db_name }}\""
+
+- name: Grants Grafana database
+  command: "influx -execute \"GRANT ALL on {{ db_name }} to {{ db_user }}\""
+
+
+- name: Set Influxdb conf file
+  template:
+    src: "templates/influxdb.conf.j2"
+    dest: "/etc/influxdb/influxdb.conf"
+  notify: Restart Influxdb
+
+

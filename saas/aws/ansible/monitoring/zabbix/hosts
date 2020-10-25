@@ -1,0 +1,24 @@
+[zabbix_server]
+
+[zabbix_server_agent]
+
+[dev-infra]
+
+[dev-orchestrator]
+
+[dev-consul-cluster]
+dcs01 ansible_host= ansible_port= 
+dcs02 ansible_host= ansible_port= 
+dcs03 ansible_host= ansible_port=
+
+[dev-postgres-cluster]
+pg01 ansible_host= ansible_port= 
+pg02 ansible_host= ansible_port= 
+pg03 ansible_host= ansible_port= 
+
+[dev-security-vms]
+
+[dev-messaging]
+
+[dev-monitoring]
+

@@ -1,0 +1,13 @@
+---
+
+- name: put infraapi db setup script
+  template:
+    src: infraapi-dbsetup.sh.j2 
+    dest: /root/infraapi-dbsetup.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: setup db for infraapi
+  shell: /root/infraapi-dbsetup.sh 
+

@@ -1,0 +1,12 @@
+---
+- name: add elastic gpg key
+  rpm_key:
+    key: https://packages.elastic.co/GPG-KEY-elasticsearch
+    state: present
+    validate_certs: False
+
+- name: add elasticsearch repo
+  template:
+    src: elasticsearch.repo.j2
+    dest: /etc/yum.repos.d/elasticsearch.repo
+    mode: 0644

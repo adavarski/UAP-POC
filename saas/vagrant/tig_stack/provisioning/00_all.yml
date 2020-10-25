@@ -1,0 +1,5 @@
+---
+- import_playbook: 00_OS_tuning.yml
+- import_playbook: 01_influxdb.yml
+- import_playbook: 02_grafana.yml
+- import_playbook: 03_telegraf.yml

@@ -1,0 +1,27 @@
+
+{% if group == "kapacitor" %}
+### Group Kapacitor
+[[inputs.kapacitor]]
+  urls = [
+    {% for url in telegraf_aws_kapacitor_urls %}
+      "{{ url }}"
+    {% endfor %}
+  ]
+
+  ## Time limit for http requests
+  timeout = "15s"
+  insecure_skip_verify = true
+ # namedrop = [
+ # 	"kapacitor_memstats", 
+ # 	"kapacitor_ingress", 
+ # 	"kapacitor_load", 
+ # 	"kapacitor_edges",
+ # 	"kapacitor_nodes"
+ # ]
+ tagexclude = ["url", "kap_version"]
+ [inputs.kapacitor.tagdrop]
+    database = ["_internal", "_kapacitor"]
+  [inputs.kapacitor.tagpass]
+    child = ["stream"]
+### End of Kapacitor Group
+{% endif %}

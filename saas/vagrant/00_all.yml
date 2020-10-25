@@ -1,0 +1,14 @@
+---
+- import_playbook: os_tuning/01_tuning_OS.yml
+- import_playbook: consul/02_consul-cluster.yml
+- import_playbook: postgres_ha/postgresql-ha-patroni-consul/provisioning/roles/03_pgsql-patroni.yml
+- import_playbook: postgres_ha/postgresql-ha-patroni-consul/provisioning/roles/05_pgsql-infraapi.yml
+- import_playbook: postgres_ha/postgresql-ha-patroni-consul/provisioning/roles/06_pgsql-orchestrator.yml
+- import_playbook: kafka_stack/provisioning/roles/01_zoo.yml
+- import_playbook: kafka_stack/provisioning/roles/02_kafka.yml
+- import_playbook: kafka_stack/provisioning/roles/03_schema_registry.yml
+- import_playbook: kafka_stack/provisioning/roles/04_kafka_connect.yml
+- import_playbook: tig_stack/provisioning/01_influxdb.yml
+- import_playbook: tig_stack/provisioning/02_grafana.yml
+- import_playbook: tig_stack/provisioning/03_telegraf.yml
+- import_playbook: elk_stack/provisioning/roles/01_elk.yml

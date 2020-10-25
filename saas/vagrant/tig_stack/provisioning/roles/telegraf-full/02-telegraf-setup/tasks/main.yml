@@ -1,0 +1,11 @@
+---
+
+- name: Install telegraf package
+  import_tasks: tasks/setup_redhat.yml
+
+- name: Deploy telegraf configuration
+  import_tasks: tasks/install.yml
+
+# Make sure all handlers are executed before running any subsequent roles
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

@@ -1,0 +1,57 @@
+# Tags can also be specified via a normal map, but only one form at a time:
+[global_tags]
+  host = "{{ hostvars[inventory_hostname]['ansible_hostname'] }}"
+{% if group %}
+  machine = "{{ group }}"
+{% endif %}
+{% if group %}
+  group = "{{ group }}"
+{% endif %}
+
+# Configuration for telegraf agent
+[agent]
+  # Default data collection interval for all plugins
+  interval = "60s"
+  round_interval = true
+  metric_batch_size = 500
+  metric_buffer_limit = 5000
+  collection_jitter = "5s"
+  flush_interval = "60s"
+  flush_jitter = "5s"
+  debug = false
+  hostname = "{{hostvars[inventory_hostname]['ansible_hostname']}}"
+
+###############################################################################
+#                                  OUTPUTS                                    #
+###############################################################################
+
+[outputs]
+
+[[outputs.influxdb]]
+
+urls = ["http://influxdb:8086"]
+database = "grafana"
+username = "grafana"
+password = "scale250"
+
+
+###############################################################################
+#                                  PLUGINS                                    #
+###############################################################################
+[[inputs.cpu]]
+  ## Whether to report per-cpu stats or not
+  percpu = false
+  ## Whether to report total system cpu stats or not
+  totalcpu = true
+  ## If true, collect raw CPU time metrics.
+  collect_cpu_time = false
+  ## If true, compute and report the sum of all non-idle CPU states.
+  report_active = false
+  fielddrop = ["*_guest"]
+  tagexclude = ["cpu"]
+[[inputs.mem]]
+  fieldpass = ["*percent"]
+[[inputs.disk]]
+  tagexclude = ["fstype", "mode", "path"]
+  fieldpass = ["*percent"]
+  ignore_fs = ["devpts", "devtmpfs", "tmpfs", "proc", "sysfs", "securityfs", "selinuxfs","debugfs","mqueue","hugetlbfs"]

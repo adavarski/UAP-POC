@@ -1,0 +1,1 @@
+#### TBD: Building AWS EKS && AWS k8s (with KOPS) Infrastructure with Terraform Modules (including Jenkins k8s pod, private docker registry and helm private repo) and using HELM charts for SaaS-NOC services.

@@ -1,0 +1,6 @@
+- name: 01_zoo
+  hosts:
+    - zookeeper
+  become: true
+  roles:
+    - 01_zoo_server

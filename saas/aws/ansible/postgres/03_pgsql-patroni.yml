@@ -1,0 +1,8 @@
+- name: 03_pgsql-patroni
+  hosts:
+    - database
+  become: true
+  roles:
+    - roles/03_pgsql-patroni/01_consul-client
+    - roles/03_pgsql-patroni/02_patroni-server
+    - roles/03_pgsql-patroni/03_pgsql_optimization

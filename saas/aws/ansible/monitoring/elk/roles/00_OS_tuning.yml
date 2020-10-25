@@ -1,0 +1,7 @@
+---
+- name: add mappings to /etc/hosts
+  hosts: all
+  become: true
+  roles:
+   - 00_OS_tuning
+

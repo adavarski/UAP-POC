@@ -1,0 +1,39 @@
+---
+# - hosts: all
+#   # connection: local
+#   tasks:
+#     - debug: var=ansible_all_ipv4_addresses[1]
+#     - debug: var=ansible_default_ipv4.address
+
+- hosts: elasticsearch,kibana,logstash
+  become: yes
+  gather_facts: yes
+  # debugger: on_failure
+  strategy: free
+  roles:
+    - common
+    - java
+
+- hosts: elasticsearch
+  become: yes
+  gather_facts: yes
+  strategy: free
+  roles:
+    - elasticsearch
+
+- hosts: kibana
+  become: yes
+  gather_facts: yes
+  # strategy: free
+  tags:
+    - kibana
+  roles:
+    - kibana
+
+- hosts: logstash
+  become: yes
+  gather_facts: yes
+  # strategy: free
+  roles:
+    - logstash
+

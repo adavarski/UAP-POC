@@ -1,0 +1,15 @@
+elasticsearch:
+  preserveHost: false
+  url: "http://elasticnode1:9200"
+  requestTimeout: 120000
+
+server:
+  name: kibana-{{ clustername }}
+  host: 0.0.0.0
+  port: 5601
+
+logging:
+  dest: /kibana/log
+
+path:
+  data: /kibana/data

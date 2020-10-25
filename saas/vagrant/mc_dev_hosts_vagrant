@@ -1,0 +1,70 @@
+[dcs]
+dcs01 ansible_host=127.0.0.1 ansible_port=2251 ansible_private_key_file=.vagrant/machines/dcs01/virtualbox/private_key
+dcs02 ansible_host=127.0.0.1 ansible_port=2252 ansible_private_key_file=.vagrant/machines/dcs02/virtualbox/private_key
+dcs03 ansible_host=127.0.0.1 ansible_port=2253 ansible_private_key_file=.vagrant/machines/dcs03/virtualbox/private_key
+
+[database]
+pg01 ansible_host=127.0.0.1 ansible_port=2254 ansible_private_key_file=.vagrant/machines/pg01/virtualbox/private_key
+pg02 ansible_host=127.0.0.1 ansible_port=2255 ansible_private_key_file=.vagrant/machines/pg02/virtualbox/private_key
+pg03 ansible_host=127.0.0.1 ansible_port=2256 ansible_private_key_file=.vagrant/machines/pg03/virtualbox/private_key
+
+[zookeeper]
+zoo01 zoo_id=1 zoo_server_address=10.51.21.61 ansible_host=127.0.0.1 ansible_port=2257 ansible_private_key_file=.vagrant/machines/zoo01/virtualbox/private_key
+zoo02 zoo_id=2 zoo_server_address=10.51.21.62 ansible_host=127.0.0.1 ansible_port=2258 ansible_private_key_file=.vagrant/machines/zoo02/virtualbox/private_key
+zoo03 zoo_id=3 zoo_server_address=10.51.21.63 ansible_host=127.0.0.1 ansible_port=2259 ansible_private_key_file=.vagrant/machines/zoo03/virtualbox/private_key
+
+[kafka]
+kafka01 broker_id=0 kafka_server_address=10.51.21.64 ansible_host=127.0.0.1 ansible_port=2260 ansible_private_key_file=.vagrant/machines/kafka01/virtualbox/private_key
+kafka02 broker_id=2 kafka_server_address=10.51.21.65 ansible_host=127.0.0.1 ansible_port=2261 ansible_private_key_file=.vagrant/machines/kafka02/virtualbox/private_key
+kafka03 broker_id=3 kafka_server_address=10.51.21.66 ansible_host=127.0.0.1 ansible_port=2262 ansible_private_key_file=.vagrant/machines/kafka03/virtualbox/private_key
+
+[schema_registry]
+schemaregistry schema_registry_address=10.51.21.67 ansible_host=127.0.0.1 ansible_port=2263 ansible_private_key_file=.vagrant/machines/schemaregistry/virtualbox/private_key
+
+[kafka_connect]
+kafkaconnect kafka_connect_address=10.51.21.67 ansible_host=127.0.0.1 ansible_port=2264 ansible_private_key_file=.vagrant/machines/kafkaconnect/virtualbox/private_key
+
+[influxdb]
+influxdb ansible_host=127.0.0.1 ansible_port=2265 ansible_private_key_file=.vagrant/machines/influxdb/virtualbox/private_key
+
+[grafana]
+grafana ansible_host=127.0.0.1 ansible_port=2266 ansible_private_key_file=.vagrant/machines/grafana/virtualbox/private_key
+
+[telegraf]
+telegraf ansible_host=127.0.0.1 ansible_port=2267 ansible_private_key_file=.vagrant/machines/telegraf/virtualbox/private_key
+
+[elasticsearch:children]
+datanodes
+masternodes
+mixednodes
+
+[datanodes]
+
+[datanodes:vars]
+nodemaster=false
+nodedata=true
+nodeingest=true
+
+[masternodes]
+elasticnode1 ansible_host=127.0.0.1 ansible_port=2268 ansible_private_key_file=.vagrant/machines/elasticnode1/virtualbox/private_key
+
+[masternodes:vars]
+nodemaster=true
+nodedata=false
+nodeingest=false
+
+[mixednodes]
+elasticnode2 ansible_host=127.0.0.1 ansible_port=2269 ansible_private_key_file=.vagrant/machines/elasticnode2/virtualbox/private_key
+elasticnode3 ansible_host=127.0.0.1 ansible_port=2270 ansible_private_key_file=.vagrant/machines/elasticnode3/virtualbox/private_key
+
+[mixednodes:vars]
+nodemaster=true
+nodedata=true
+nodeingest=true
+
+[kibana]
+kibana ansible_host=127.0.0.1 ansible_port=2271 ansible_private_key_file=.vagrant/machines/kibana/virtualbox/private_key
+
+[logstash]
+logstash ansible_host=127.0.0.1 ansible_port=2272 ansible_private_key_file=.vagrant/machines/logstash/virtualbox/private_key
+

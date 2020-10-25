@@ -1,0 +1,13 @@
+{
+    "checks": {
+      "server-uptime": {
+        "type": "metric",
+        "command": "check-uptime.rb",
+        "subscribers": [
+          "general"
+        ],
+        "interval": 60,
+        "handlers": ["default"]
+      }
+    }
+  }

@@ -1,0 +1,16 @@
+    kafka_java_package:
+        latest: java-latest-openjdk-headless
+        "11": java-11-openjdk-headless
+        "8": java-1.8.0-openjdk-headless
+        "7": java-1.7.0-openjdk-headless
+
+    schema_registry_http_protocol: http
+    schema_registry_listener_port: 8081
+
+    schema_registry_service_name: confluent-schema-registry
+    schema_registry_packages: confluent-schema-registry
+    schema_registry_default_user: cp-schema-registry
+    schema_registry_default_group: confluent
+    #schema_registry:
+    #    "config_file": /etc/schema-registry/schema-registry.properties
+    #    "systemd_file": /usr/lib/systemd/system/{{schema_registry_service_name}}.service

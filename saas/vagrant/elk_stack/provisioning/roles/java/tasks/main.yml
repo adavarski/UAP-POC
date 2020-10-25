@@ -1,0 +1,20 @@
+---
+- name: include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: install {{ java_package }}
+  package:
+    name: "{{ java_package }}"
+
+- name: create symlink
+  file:
+    src: "{{ java_home }}"
+    dest: "{{ java_symlink }}"
+    state: link
+
+- name: add JAVA_HOME
+  lineinfile:
+    dest: "/etc/profile"
+    regexp: "^export JAVA_HOME="
+    line: "export JAVA_HOME=\"{{ java_home }}\""
+

@@ -1,0 +1,26 @@
+    kafka_java_package:
+        latest: java-latest-openjdk-headless
+        "11": java-11-openjdk-headless
+        "8": java-1.8.0-openjdk-headless
+        "7": java-1.7.0-openjdk-headless
+
+    kafka_connect_service_name: confluent-kafka-connect
+    kafka_connect_package: confluent-kafka-connect    
+    kafka_connect_default_user: cp-kafka-connect
+    kafka_connect_default_group: confluent
+    kafka_connect_packages:
+        - confluent-common
+        - confluent-rest-utils
+        - confluent-metadata-service
+        - confluent-kafka-2.12
+        - confluent-kafka-connect-storage-common
+        - confluent-kafka-connect-s3
+        - confluent-kafka-connect-elasticsearch
+        - confluent-kafka-connect-jdbc
+        - confluent-kafka-connect-jms
+        - confluent-kafka-connect-replicator
+        - confluent-security
+        - confluent-rebalancer
+        - confluent-control-center-fe
+        - confluent-control-center
+        - confluent-schema-registry

@@ -1,0 +1,13 @@
+---
+- import_playbook: os_tuning/01_tuning_OS.yml
+- import_playbook: consul/02_consul-cluster.yml
+- import_playbook: postgres/03_pgsql-patroni.yml
+- import_playbook: postgres/05_pgsql-infraapi.yml
+- import_playbook: postgres/06_pgsql-orchestrator.yml
+- import_playbook: monitoring/tig/01_influxdb.yml
+- import_playbook: monitoring/tig/02_grafana.yml
+- import_playbook: monitoring/elk/01_elk.yml
+- import_playbook: zoo/01_zoo.yml
+- import_playbook: messaging/kafka/02_kafka.yml
+- import_playbook: messaging/schema_registry/03_schema_registry.yml
+- import_playbook: messaging/kafka_connect/04_kafka_connect.yml

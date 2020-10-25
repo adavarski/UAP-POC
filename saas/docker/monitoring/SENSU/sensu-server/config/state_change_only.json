@@ -1,0 +1,12 @@
+{
+  "filters": {
+    "state_change_only": {
+      "negate": true,
+      "attributes": {
+          "check": {
+              "history": "eval: value[-1] == value[-2]"
+          }
+      }
+    }
+  }
+}

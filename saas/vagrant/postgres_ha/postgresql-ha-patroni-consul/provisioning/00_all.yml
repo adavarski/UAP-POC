@@ -1,0 +1,5 @@
+---
+- import_playbook: roles/01_tuning_OS.yml
+- import_playbook: roles/02_consul-cluster.yml
+- import_playbook: roles/03_pgsql-patroni.yml
+- import_playbook: roles/04_pgsql-client.yml

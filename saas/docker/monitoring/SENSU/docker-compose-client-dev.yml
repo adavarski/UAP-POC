@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+
+  sensu-client:
+    build: sensu-client
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - $PWD/sensu-client/plugins:/etc/sensu/plugins
+    - $CLIENT_MOUNT1:/mnt/mount1
+    - $CLIENT_MOUNT2:/mnt/mount2
+    privileged: true
+    environment:
+    - SENSU_HOST
+    - SENSU_USER
+    - SENSU_PASSWORD
+    - CLIENT_NAME
+    - CLIENT_IP

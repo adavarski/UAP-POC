@@ -1,0 +1,105 @@
+String awsCredentialsId = 'AWS_SAAS'
+
+pipeline {
+  agent {
+    label 'sofia-slave10-neterra'
+  }
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+  
+
+parameters {
+   choice(choices: ['CREATE', 'DESTROY'], description: 'Create a SAAS EC2 instance or destroy one?', name: 'Action') 
+ }  
+  
+  stages {
+ 
+  
+      stage('Clone AWS Demo Repository') {
+      steps {
+        checkout([$class: 'GitSCM', 
+          branches: [[name: "master"]], 
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'aws-tf']],
+          submoduleCfg: [],
+          userRemoteConfigs: [[credentialsId: 'saas-github-docker-ssh', url: 'git@github.com:adavarski/AWS-TF-demo-SAAS-AMI.git']]
+        ])
+      }
+    }
+ 
+    stage('TF init') {
+      steps {
+        dir('aws-tf') {
+          script {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+            credentialsId: awsCredentialsId,
+            accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+            {
+              sh "terraform init"
+            }
+            
+            }
+          }
+        }
+      }
+      
+    stage('TF plan env') {
+      steps {
+        dir('aws-tf') {
+          script {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+            credentialsId: awsCredentialsId,
+            accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+            {
+            sh "terraform plan"
+             }
+             
+            }
+          }
+        }
+      }
+
+
+     stage('TF apply env') {
+      when{ equals expected: "CREATE", actual: "${params.Action}"}
+      steps {
+        dir('aws-tf') {
+          script {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+            credentialsId: awsCredentialsId,
+            accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+             {
+             sh "terraform apply -auto-approve"
+             }
+            }
+          }
+        }
+      }
+ 
+ 
+      stage('TF Destroy env') {
+       when { equals expected: "DESTROY", actual: "${params.Action}" }
+        steps {
+            dir('aws-tf'){
+            script {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+            credentialsId: awsCredentialsId,
+            accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+             {
+             sh "terraform destroy -auto-approve"
+             }
+             
+            }
+          }
+        }
+       }
+
+
+   }
+ }

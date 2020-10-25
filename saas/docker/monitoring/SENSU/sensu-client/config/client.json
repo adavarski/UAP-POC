@@ -1,0 +1,17 @@
+{
+    "client": {
+      "name": "CLIENT_NAME",
+      "address": "CLIENT_IP",
+      "environment": "development",
+      "subscriptions": [
+        "docker",
+        "general"
+      ]
+    },
+    "keepalive": {
+      "thresholds": {
+        "critical": 60
+      },
+      "refresh": 300
+    }
+  }

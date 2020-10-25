@@ -1,0 +1,65 @@
+version: '3.1'
+
+services:
+  haproxy:
+    build: 'haproxy'
+    ports:
+      - 5432:5432
+      - 7000:7000
+    depends_on:
+      - consul1
+      - pg-master
+      - pg-slave
+
+  consul1:
+    image: consul
+    restart: always
+    container_name: consul1
+    ports:
+      - 8300:8300
+      - 8301:8301
+      - 8301:8301/udp
+      - 8302:8302
+      - 8302:8302/udp
+      - 8400:8400
+      - 8500:8500
+      - 53:53/udp
+
+  pg-master:
+    build: 'postgres'
+    restart: always
+    hostname: pg-master
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    expose:
+      - 5432
+      - 8008
+    ports:
+      - 5433:5432
+    volumes:
+     - '/var/lib/postgresql/data'
+    command: su - postgres -c 'patroni /postgres0.yml'
+    depends_on:
+      - consul1
+
+  pg-slave:
+    build: 'postgres'
+    restart: always
+    hostname: pg-slave
+    expose:
+      - 5432
+      - 8008
+    ports:
+      - 5434:5432
+    volumes:
+     - '/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+      #REPLICATE_FROM: 'pg-master'
+    command: su - postgres -c 'patroni /postgres1.yml'
+    depends_on:
+      - consul1

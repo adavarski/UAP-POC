@@ -1,0 +1,84 @@
+---
+
+- name: add Confluent repository key
+  rpm_key:
+    key: https://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+
+- name: Add Confluent.dist repository
+  yum_repository:
+    name: Confluent.dist
+    description: Confluent repository (dist)
+    file: confluent
+    baseurl: http://packages.confluent.io/rpm/{{ confluent_version }}/7
+    gpgcheck: yes
+    gpgkey: http://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+
+
+- name: Add Confluent repository
+  yum_repository:
+    name: Confluent
+    description: Confluent repository
+    file: confluent
+    baseurl: http://packages.confluent.io/rpm/{{ confluent_version }}
+    gpgcheck: yes
+    gpgkey: http://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+    
+- name: Install Java
+  yum: 
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items: "{{ kafka_java_package[kafka_java_version|string] }}"
+
+- name: install Schema Registry Packages
+  yum:
+    name: confluent-schema-registry
+    state: present
+
+# Configure environment
+- name: Schema Registry Group
+  group:
+    name: "{{schema_registry_default_group}}"
+
+- name: Schema Registry User
+  user:
+    name: "{{schema_registry_default_user}}"
+    comment: "Schema Registry User"
+    system: true
+    group: "{{schema_registry_default_group}}"
+
+- name: Create Schema Registry Config
+  template:
+    src: schema-registry.properties.j2
+    dest: "/etc/schema-registry/schema-registry.properties"
+    mode: 0640
+    owner: "{{schema_registry_default_user}}"
+    group: "{{schema_registry_default_group}}"
+  notify: restart schema-registry
+
+- name: Create Logs Directory
+  file:
+    path: "{{schema_registry.appender_log_path}}"
+    state: directory
+    group: "{{schema_registry_default_group}}"
+    owner: "{{schema_registry_default_user}}"
+    mode: '764'
+
+- name: Create Schema Registry log4j Config
+  template:
+    src: schema_registry_log4j.properties.j2
+    dest: "/etc/schema-registry/schema_registry_log4j.properties"
+    mode: 0640
+    owner: "{{schema_registry_default_user}}"
+    group: "{{schema_registry_default_group}}"
+  notify: restart schema-registry
+
+- name: Start Schema Registry Service
+  systemd:
+    name: "{{schema_registry_service_name}}"
+    enabled: true
+    state: started
+

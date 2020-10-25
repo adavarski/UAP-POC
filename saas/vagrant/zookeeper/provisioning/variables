@@ -1,0 +1,16 @@
+---
+TIMEZONE_OS: 'Europe/Sofia'
+
+HOSTS_FILE: '/etc/hosts'
+#HOSTS_FILE: '/etc/cloud/templates/hosts.redhat.tmpl'
+
+########## hosts ##########
+
+HOST_NAME_ZOO1: 'zoo01'
+HOST_IP_ZOO1: '10.51.21.61'
+
+HOST_NAME_ZOO2: 'zoo02'
+HOST_IP_ZOO2: '10.51.21.62'
+
+HOST_NAME_ZOO3: 'zoo03'
+HOST_IP_ZOO3: '10.51.21.63'

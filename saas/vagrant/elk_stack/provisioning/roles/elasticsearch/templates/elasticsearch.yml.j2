@@ -1,0 +1,41 @@
+node:
+  name: local-"{{ inventory_hostname }}"
+  master: {{ nodemaster }}
+  data: {{ nodedata }}
+  ingest: {{ nodeingest }}
+
+search:
+  remote:
+    connect: {{ remoteconnect }}
+
+path:
+  logs: /elasticsearch/log
+  data: /elasticsearch/data
+cluster:
+  name: {{ clustername }}
+
+network:
+  host: {{ inventory_hostname }}
+
+indices:
+  recovery:
+    max_bytes_per_sec: "1g"
+
+xpack:
+  monitoring:
+    enabled: true
+    collection:
+      enabled: true
+
+discovery:
+  zen:
+    minimum_master_nodes: 2
+    ping:
+      unicast:
+        hosts:
+{% for host in groups['masternodes'] %}
+          - {{ host }}
+{% endfor %}
+{% for host in groups['mixednodes'] %}
+          - {{ host }}
+{% endfor %}

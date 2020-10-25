@@ -1,0 +1,5 @@
+- name: 01_tuning_OS
+  hosts: all
+  become: true
+  roles:
+    - { role: 00_OS_tuning }

@@ -1,0 +1,42 @@
+---
+
+- name: Deploy telegraf.conf config
+  template:
+    src: telegraf.conf.j2
+    dest: /etc/telegraf/telegraf.conf
+    owner: "{{ telegraf_aws_user }}"
+    group: "{{ telegraf_aws_group }}"
+    backup: yes
+  notify:
+    - restart_telegraf
+    - restart_telegraf_systemd
+
+- name: Create telegraf telegraf.d directory
+  file:
+    path: /etc/telegraf/telegraf.d/
+    state: directory
+    mode: 0755
+    owner: "{{ telegraf_aws_user }}"
+    group: "{{ telegraf_aws_group }}"
+    force: yes
+
+- name: Deploy "telegraf.d/{{ group }}.conf" config
+  template:
+    src: conf_d.conf.j2
+    dest: "/etc/telegraf/telegraf.d/{{ group }}.conf"
+    owner: "{{ telegraf_aws_user }}"
+    group: "{{ telegraf_aws_group }}"
+    mode: 0644
+    backup: yes
+  notify:
+    - restart_telegraf
+    - restart_telegraf_systemd
+
+- name: update env file
+  template:
+    src: telegraf_env_aws.j2
+    dest: /etc/default/telegraf
+  when: telegraf_with_proxy == true
+  notify:
+    - restart_telegraf
+    - restart_telegraf_systemd

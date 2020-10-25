@@ -1,0 +1,12 @@
+[dcs]
+dcs01 ansible_host=127.0.0.1 ansible_port=2251 ansible_private_key_file=.vagrant/machines/dcs01/virtualbox/private_key
+dcs02 ansible_host=127.0.0.1 ansible_port=2252 ansible_private_key_file=.vagrant/machines/dcs02/virtualbox/private_key
+dcs03 ansible_host=127.0.0.1 ansible_port=2253 ansible_private_key_file=.vagrant/machines/dcs03/virtualbox/private_key
+
+[database]
+pg01 ansible_host=127.0.0.1 ansible_port=2521 ansible_private_key_file=.vagrant/machines/pg01/virtualbox/private_key
+pg02 ansible_host=127.0.0.1 ansible_port=2621 ansible_private_key_file=.vagrant/machines/pg02/virtualbox/private_key
+pg03 ansible_host=127.0.0.1 ansible_port=2721 ansible_private_key_file=.vagrant/machines/pg03/virtualbox/private_key
+
+[client]
+client ansible_host=127.0.0.1 ansible_port=2232 ansible_private_key_file=.vagrant/machines/client/virtualbox/private_key

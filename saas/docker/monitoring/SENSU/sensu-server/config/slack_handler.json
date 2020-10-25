@@ -1,0 +1,16 @@
+{
+  "handlers": {
+    "slack": {
+      "type": "pipe",
+      "filter": "state_change_only",
+      "command": "handler-slack.rb",
+      "severities": [
+        "critical",
+        "unknown"
+      ]
+      }
+    },
+    "slack": {
+      "webhook_url": "SLACK_HANDLER_WEBHOOK"
+    }
+}

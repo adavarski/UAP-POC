@@ -1,0 +1,14 @@
+# Maintained by Ansible
+{% for key, value in schema_registry.properties.items() %}
+{{key}}={{value}}
+{% endfor %}
+
+# Schema Registry Configuration
+listeners={{schema_registry_http_protocol}}://0.0.0.0:{{schema_registry_listener_port}}
+host.name={{inventory_hostname}}
+inter.instance.protocol={{schema_registry_http_protocol}}
+
+# Kafka Broker Configuration
+kafkastore.bootstrap.servers={% for host in groups['kafka'] %}{% if loop.index > 1%},{% endif %}{{ host }}:9092{% endfor %}
+
+

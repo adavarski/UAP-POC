@@ -1,0 +1,106 @@
+- name: Create user {{ elasticsearch.user }}
+  user:
+    create_home: no
+    name: "{{ elasticsearch.user }}"
+    state: present
+
+- name: Download ES
+  get_url:
+    url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch.version }}.rpm
+    dest: /home/vagrant/elasticsearch-{{ elasticsearch.version }}.rpm
+    mode: 0664
+    owner: "{{ elasticsearch.user }}"
+    group: "{{ elasticsearch.user }}"
+
+- name: Install ES form package
+  shell: yum localinstall -y /home/vagrant/elasticsearch-{{ elasticsearch.version }}.rpm
+
+- name: Set owner for files in dir with ES
+  file:
+    owner: "{{ elasticsearch.user }}"
+    group: "{{ elasticsearch.user }}"
+    path: /usr/share/elasticsearch/
+    recurse: yes
+    state: directory
+
+- name: Create dir for ES data and log
+  file:
+    owner: "{{ elasticsearch.user }}"
+    group: "{{ elasticsearch.user }}"
+    path: /elasticsearch/
+    recurse: yes
+    state: directory
+    
+
+- name: Set swappiness
+  sysctl:
+    name: vm.swappiness
+    value: 1
+    sysctl_set: yes
+
+- name: Set vm.max_map_count to 262144
+  sysctl:
+    name: vm.max_map_count 
+    value: 262144
+    sysctl_set: yes
+
+- name: Set PAM limits
+  pam_limits:
+    domain: "*"
+    limit_type: "-"
+    limit_item: "{{ item }}"
+    value: 64000
+  with_items:
+    - "nproc"
+    - "nofile"
+
+- name: Set session ulimits
+  copy:
+    content: "session required pam_limits.so"
+    dest: "{{ item }}"
+  with_items:
+    - "/etc/pam.d/common-session"
+    - "/etc/pam.d/common-session-noninteractive"
+
+- name: Copy node config for ES
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+  tags: 
+    - update-config
+    - update-config-es
+
+- name: Copy jvm config for ES
+  template:
+    src: jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options
+  tags:
+    - update-config
+    - update-config-jvm
+
+- name: Copy log4j2 properties
+  template:
+    src: log4j2.properties.j2
+    dest: /etc/elasticsearch/log4j2.properties
+  tags:
+    - update-config
+    - update-config-log4j
+
+- name: Check s3 plugin installed
+  shell: /usr/share/elasticsearch/bin/elasticsearch-plugin list
+  register: result
+
+- name: Install S3 plugin
+  shell: /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-s3 -b
+  when: '"repository-s3" not in result.stdout'
+
+- name: Check ES is started
+  service:
+    name: elasticsearch
+    enabled: no
+    state: restarted
+  tags:
+    - update-config
+    - update-config-es
+    - update-config-jvm
+    - update-config-log4j

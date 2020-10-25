@@ -1,0 +1,22 @@
+---
+HOSTS_FILE: '/etc/hosts'
+#HOSTS_FILE: '/etc/cloud/templates/hosts.redhat.tmpl'
+
+########## hosts ##########
+
+HOST_NAME_ELASTIC_NODE1: 'elasticnode1'
+HOST_IP_ELASTIC_NODE1: '10.51.21.61'
+
+HOST_NAME_ELASTIC_NODE2: 'elasticnode2'
+HOST_IP_ELASTIC_NODE2: '10.51.21.62'
+
+HOST_NAME_ELASTIC_NODE3: 'elasticnode3'
+HOST_IP_ELASTIC_NODE3: '10.51.21.63'
+
+HOST_NAME_KIBANA: 'kibana'
+HOST_IP_KIBANA: '10.51.21.64'
+
+HOST_NAME_LOGSTASH: 'logstash'
+HOST_IP_LOGSTASH: '10.51.21.65'
+
+

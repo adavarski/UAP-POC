@@ -1,0 +1,7 @@
+elasticsearch:
+  user: elasticsearch
+  version: 6.5.4
+
+clustername: local-elk
+remoteconnect: false
+heapsize: 1 #In GB

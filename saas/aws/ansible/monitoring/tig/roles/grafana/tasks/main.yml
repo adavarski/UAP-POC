@@ -1,0 +1,32 @@
+---
+- name: fetch grafana
+  get_url: url=https://dl.grafana.com/oss/release/grafana-6.1.6-1.x86_64.rpm
+           dest=/tmp/grafana-6.1.6-1.x86_64.rpm
+
+- name: install grafana
+  shell: yum localinstall -y /tmp/grafana-6.1.6-1.x86_64.rpm
+
+- name: Set Grafana conf file - 1
+  shell: sed -i "s/;admin_password =.*/admin_password = {{ grafana_password }} /" /etc/grafana/grafana.ini
+
+- name: Set Grafana conf file -2 
+  shell: sed -i "s/;enable_gzip = .*/enable_gzip = true/" /etc/grafana/grafana.ini
+
+- name: Set Grafana conf file - 3
+  shell: sed -i "s/;allow_sign_up = .*/allow_sign_up = false/" /etc/grafana/grafana.ini
+
+- name: Enable and start grafana service
+  service:
+    name: grafana-server
+    enabled: yes
+    state: started
+
+- name: Grafana service starting, wait few seconds...
+  pause: seconds=10
+
+- name: Create influxdb datasource
+  template:
+    src: "templates/grafana-datasource.yaml.j2"
+    dest: "/etc/grafana/provisioning/datasources/datasource.yaml"
+  notify: Restart Grafana
+

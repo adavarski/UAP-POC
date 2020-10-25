@@ -1,0 +1,7 @@
+- name: 01_influxdb
+  hosts:
+    - influxdb
+  become: true
+  roles:
+    - roles/influxdb
+

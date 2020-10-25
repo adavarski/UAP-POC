@@ -1,0 +1,6 @@
+---
+- import_playbook: roles/00_tuning_OS.yml
+- import_playbook: roles/01_zoo.yml
+- import_playbook: roles/02_kafka.yml
+- import_playbook: roles/03_schema_registry.yml
+- import_playbook: roles/04_kafka_connect.yml

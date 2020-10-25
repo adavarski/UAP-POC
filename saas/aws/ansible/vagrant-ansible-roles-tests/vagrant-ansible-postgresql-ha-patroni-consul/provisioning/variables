@@ -1,0 +1,45 @@
+---
+TIMEZONE_OS: 'Europe/Sofia'
+
+HOSTS_FILE: '/etc/hosts'
+#HOSTS_FILE: '/etc/cloud/templates/hosts.redhat.tmpl'
+
+#postgres
+PASS_POSTGRES_FOR_DB: 'gfhjkm'
+NET_POSTGRES_ALLOW: '10.51.21.0/24'
+
+#consul
+CONSUL_VERSION: '1.6.1'
+CONSUL_KEY: 'sgIjP/24ugFcKfJ5DJ1Ob29dB5jgzwZbXY0lED3RM9w='
+CONSUL_DATACENTER: 'NOC-MC'
+
+#domain
+FAKE_DOMAIN: 'saas'
+
+########## hosts ##########
+
+HOST_NAME_DCS_01: 'dcs01'
+HOST_IP_DCS_01: '10.51.21.61'
+
+HOST_NAME_DCS_02: 'dcs02'
+HOST_IP_DCS_02: '10.51.21.62'
+
+HOST_NAME_DCS_03: 'dcs03'
+HOST_IP_DCS_03: '10.51.21.63'
+
+
+
+
+HOST_NAME_PG01: 'pg01'
+HOST_IP_PG01: '10.51.21.65'
+
+HOST_NAME_PG02: 'pg02'
+HOST_IP_PG02: '10.51.21.66'
+
+HOST_NAME_PG03: 'pg03'
+HOST_IP_PG03: '10.51.21.67'
+
+
+
+HOST_NAME_HL_CLIENT: 'client'
+HOST_IP_HL_CLIENT: '10.51.21.70'

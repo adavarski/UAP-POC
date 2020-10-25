@@ -1,0 +1,96 @@
+version: "3.1"
+
+networks:
+  zabbix:
+    driver: bridge
+    ipam:
+         config:
+         - subnet: 10.20.0.0/16
+
+services:
+  mysql:
+    networks:
+      - zabbix
+    container_name: mysql
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: saas
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: saas
+    volumes:
+      - './zabbix/mysql:/var/lib/data'
+  zabbix:
+    networks:
+       zabbix:
+           ipv4_address: 10.20.0.5
+    container_name: zabbix-server
+    image: zabbix/zabbix-server-mysql:ubuntu-5.0.1
+    restart: always
+    links:
+      - mysql
+    ports:
+      - '10050-10050'
+    environment:
+      DB_SERVER_HOST: mysql
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: saas
+    depends_on:
+      - mysql
+  zabbix-frontend:
+    networks:
+      - zabbix
+    container_name: zabbix-frontend
+    image: zabbix/zabbix-web-nginx-mysql:ubuntu-5.0.1
+    links:
+      - mysql
+    restart: always
+    ports:
+      - '80:8080'
+      - '443:8443'
+    environment:
+      DB_SERVER_HOST: mysql
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: saas
+      PHP_TZ: Europe/Sofia
+    depends_on:
+      - mysql
+  grafana:
+    networks:
+      - zabbix
+    container_name: grafana
+    image: grafana/grafana
+    links:
+      - mysql
+      - zabbix
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,alexanderzobnin-zabbix-app
+    depends_on:
+      - mysql
+      - zabbix
+  zabbix-agent:
+    container_name: zabbix-agent
+    image: zabbix/zabbix-agent2:alpine-5.0.1
+    user: root
+    networks:
+       zabbix:
+           ipv4_address: 10.20.0.6         
+    links:
+      - zabbix
+    restart: always
+    privileged: true
+    volumes:
+      - /var/run:/var/run
+    ports:
+      - '10050:10050'
+    environment:
+      - ZBX_HOSTNAME=zabbix
+      - ZBX_SERVER_HOST= 10.20.0.5
+
+

@@ -1,0 +1,3 @@
+---
+java_version: 8
+java_symlink: "/opt/java{{ java_version }}"

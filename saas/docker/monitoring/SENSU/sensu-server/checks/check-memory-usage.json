@@ -1,0 +1,13 @@
+{
+    "checks": {
+      "memory-usage": {
+        "type": "metric",
+        "command": "check-memory-percent.rb -w 80 -c 90",
+        "subscribers": [
+          "general"
+        ],
+        "interval": 60,
+        "handlers": ["default"]
+      }
+    }
+  }

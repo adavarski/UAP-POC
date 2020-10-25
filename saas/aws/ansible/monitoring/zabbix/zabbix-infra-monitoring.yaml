@@ -1,0 +1,55 @@
+- hosts: zabbix_server
+  become: yes
+  roles:
+     - { role: geerlingguy.mysql }
+     - { role: geerlingguy.apache }
+     - { role: dj-wasabi.zabbix-server, zabbix_server_database: mysql, zabbix_server_database_long: mysql, zabbix_server_dbport: 3306 }
+     - { role: dj-wasabi.zabbix-web, zabbix_url: monitoring.infra.saas.com, zabbix_server_database: mysql, zabbix_server_database_long: mysql, zabbix_server_dbport: 3306}
+
+
+- hosts: zabbix_server_agent
+  roles:
+     - role: dj-wasabi.zabbix-agent
+       zabbix_agent_server: XXX.XXX.XXX.XXX
+       zabbix_agent_serveractive: XXX.XXX.XXX.XXX
+       zabbix_url: http://monitoring.noc.infra.saas.com
+       zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+       zabbix_api_user: Admin
+       zabbix_api_pass: "XXXXX"
+       zabbix_create_host: present
+       zabbix_host_groups:
+         - Zabbix Servers
+       zabbix_link_templates:
+         - Template OS Linux
+
+
+- hosts: noc-dev-infraapi
+  roles:
+     - role: dj-wasabi.zabbix-agent
+       zabbix_agent_server: XXX.XXX.XXX.XXX
+       zabbix_agent_serveractive: XXX.XXX.XXX.XXX
+       zabbix_url: http://monitoring.noc.infra.saas.com
+       zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+       zabbix_api_user: Admin
+       zabbix_api_pass: "XXXXX"
+       zabbix_create_host: present
+       zabbix_host_groups:
+         - noc-dev-infraapi
+       zabbix_link_templates:
+         - Template OS Linux
+
+
+- hosts: all
+  roles:
+     - role: dj-wasabi.zabbix-agent
+       zabbix_agent_server: XXX.XXX.XXX.XXX
+       zabbix_agent_serveractive: XXX.XXX.XXX.XXX
+       zabbix_url: http://monitoring.noc.infra.saas.com
+       zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+       zabbix_api_user: Admin
+       zabbix_api_pass: "XXXXX"
+       zabbix_create_host: present
+       zabbix_host_groups:
+         - Linux Servers
+       zabbix_link_templates:
+         - Template OS Linux

@@ -1,0 +1,8 @@
+[influxdb]
+influxdb ansible_host=127.0.0.1 ansible_port=2251 ansible_private_key_file=.vagrant/machines/influxdb/virtualbox/private_key
+
+[grafana]
+grafana ansible_host=127.0.0.1 ansible_port=2252 ansible_private_key_file=.vagrant/machines/grafana/virtualbox/private_key
+
+[telegraf]
+telegraf ansible_host=127.0.0.1 ansible_port=2253 ansible_private_key_file=.vagrant/machines/telegraf/virtualbox/private_key

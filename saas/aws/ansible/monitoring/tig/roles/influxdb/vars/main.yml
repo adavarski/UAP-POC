@@ -1,0 +1,5 @@
+influxdb_user: influxdb
+influxdb_password: scale250
+db_user: grafana
+db_password: scale250
+db_name: grafana

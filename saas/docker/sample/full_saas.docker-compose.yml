@@ -1,0 +1,161 @@
+version: '3.5'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.0
+    container_name: elasticsearch-${CONTAINER_GROUP:-dev}
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - network.publish_host=127.0.0.1
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.7.0
+    container_name: logstash-${CONTAINER_GROUP:-dev}
+    user: logstash
+    tty: true
+    environment:
+      - xpack.monitoring.enabled=false
+      - log.level=info
+    ports:
+      - 9600:9600
+      - 4560:4560
+      - 4561:4561
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    container_name: kibana-${CONTAINER_GROUP:-dev}
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    environment:
+      xpack.monitoring.enabled: 'false'
+  grafana:
+    image: grafana/grafana:6.0.2
+    container_name: grafana-${CONTAINER_GROUP:-dev}
+    ports:
+      - 3000:3000
+    user: "104"
+  fake-smtp:
+    image: gessnerfl/fake-smtp-server
+    container_name: fake-smtp-${CONTAINER_GROUP:-dev}
+    ports:
+      - 5025:5025
+      - 5080:5080
+      - 5081:5081
+
+  influxdb:
+    image: influxdb
+    container_name: influxdb-${CONTAINER_GROUP:-dev}
+    restart: always
+    ports:
+      - 8086:8086
+    environment:
+      - INFLUXDB_DB=telegraf
+      - INFLUXDB_USER=telegraf
+      - INFLUXDB_ADMIN_ENABLED=true
+
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=Welcome1 
+
+  telegraf:
+    image: telegraf
+    container_name: telegraf-${CONTAINER_GROUP:-dev}
+    restart: always
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-${CONTAINER_GROUP:-dev}
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka-${CONTAINER_GROUP:-dev}
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+      - "9092:9092"
+      - "9093:9093"
+  
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    hostname: schema-registry
+    container_name: schema-registry-${CONTAINER_GROUP:-dev}
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8081:8081"
+
+  connect:
+    image: confluentinc/cp-kafka-connect:latest
+    hostname: connect
+    container_name: connect-${CONTAINER_GROUP:-dev}
+    depends_on:
+      - zookeeper
+      - kafka
+      - schema-registry
+    ports:
+      - "8083:8083"
+  consul:
+    container_name: consul-${CONTAINER_GROUP:-dev}
+    image: consul
+    command: agent -dev
+    ports:
+    - 8500:8500
+ 
+  redis:
+    image: redis
+    container_name: redis-${CONTAINER_GROUP:-dev}
+    ports:
+    - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-${CONTAINER_GROUP:-dev}
+    ports:
+      - "5671:5671"
+      - "5672:5672"
+      - "15672:15672"
+
+  sensu:
+    image: stevenayers/sensu
+    container_name: sensu-${CONTAINER_GROUP:-dev}
+    ports:
+      - "4567:4567"
+    links:
+      - redis
+      - rabbitmq
+
+  uchiwa:
+    image: uchiwa/uchiwa
+    container_name: uchiwa-${CONTAINER_GROUP:-dev}
+    ports:
+      - "3001:3001"
+    links:
+      - sensu
+
+volumes:
+  esdata1:
+    driver: local
+
+

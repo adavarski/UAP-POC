@@ -1,0 +1,20 @@
+- name: Download Logstash
+  get_url:
+    url: https://download.elastic.co/logstash/logstash/packages/centos/logstash-2.4.0.noarch.rpm 
+    dest: /home/vagrant/logstash-2.4.0.noarch.rpm
+    mode: 0664
+
+- name: Install Logstash form package
+  shell: yum localinstall -y /home/vagrant/logstash-2.4.0.noarch.rpm
+
+- name: enable Redhat /etc/sysconfig/logstash config file
+  lineinfile:
+    path: /etc/sysconfig/logstash
+    backup: yes
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: "^#LS_CONF_DIR=/etc/logstash/conf.d", line: "LS_CONF_DIR=/etc/logstash/conf.d" }
+    - { regexp: "^#LS_HEAP_SIZE=",                    line: 'LS_HEAP_SIZE="4g"' }
+  notify:
+    - restart_logstash_service

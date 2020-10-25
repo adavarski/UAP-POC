@@ -1,0 +1,78 @@
+[all:vars]
+ansible_connection: ssh
+ansible_user: centos
+ansible_become: true
+ansible_ssh_private_key_file: /home/davar/saas-noc.pem
+
+[dcs]
+dcs01 ansible_host= ansible_port= ansible_private_key_file=private_key
+dcs02 ansible_host= ansible_port= ansible_private_key_file=private_key
+dcs03 ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[database]
+pg01 ansible_host= ansible_port= ansible_private_key_file=private_key
+pg02 ansible_host= ansible_port= ansible_private_key_file=private_key
+pg03 ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[influxdb]
+influxdb ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[grafana]
+grafana ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[elasticsearch:children]
+datanodes
+masternodes
+mixednodes
+
+[datanodes]
+
+[datanodes:vars]
+nodemaster=false
+nodedata=true
+nodeingest=true
+
+[masternodes]
+elasticnode1 ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[masternodes:vars]
+nodemaster=true
+nodedata=false
+nodeingest=false
+
+[mixednodes]
+elasticnode2 ansible_host= ansible_port= ansible_private_key_file=private_key
+elasticnode3 ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[mixednodes:vars]
+nodemaster=true
+nodedata=true
+nodeingest=true
+
+[kibana]
+kibana ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[logstash]
+logstash ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[zookeeper]
+zoo01 zoo_id=1 zoo_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+zoo02 zoo_id=2 zoo_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+zoo03 zoo_id=3 zoo_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[kafka]
+kafka01 broker_id=0 kafka_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+kafka02 broker_id=2 kafka_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+kafka03 broker_id=3 kafka_server_address= ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[schema_registry]
+schemaregistry schema_registry_address= ansible_host= ansible_port= ansible_private_key_file=
+
+[kafka_connect]
+kafkaconnect kafka_connect_address= ansible_host= ansible_port= ansible_private_key_file=
+
+[orchestrator]
+orchestrator ansible_host= ansible_port= ansible_private_key_file=private_key
+
+[infraapi]
+infraapi ansible_host= ansible_port= ansible_private_key_file=private_key

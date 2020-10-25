@@ -1,0 +1,21 @@
+---
+- name: fetch influxdb
+  get_url: url=https://dl.influxdata.com/telegraf/releases/telegraf-1.8.3-1.x86_64.rpm
+           dest=/tmp/telegraf-1.8.3-1.x86_64.rpm
+
+- name: install telegraf
+  shell: yum localinstall -y /tmp/telegraf-1.8.3-1.x86_64.rpm
+
+- name: setup influxdb service
+  service: name=telegraf state=started enabled=yes
+
+- name: wait 10 seconds for the service get up
+  shell: sleep 10
+
+- name: Set Telegraf conf file
+  template:
+    src: "templates/telegraf.conf.j2"
+    dest: "/etc/telegraf/telegraf.conf"
+  notify: Restart Telegraf
+
+

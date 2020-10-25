@@ -1,0 +1,30 @@
+---
+    artifactory_url: "http://artifactory.infra.saas.com/ext-packages"
+
+    zoo_version: "3.4.13"
+
+    zoo_server_address: ansible_ssh_host
+    zoo_ansible_host_group: zookeeper
+    zoo_id: 0
+
+    zoo_tick_time: 2000
+    zoo_init_limit: 10
+    zoo_sync_limit: 5
+    zoo_data_dir: /var/zookeeper/
+    zoo_client_port: 2181
+    zoo_max_client_cnxns: 60
+
+    zoo_leader_port: 2888
+    zoo_election_port: 3888
+
+    zoo_log_dir: /var/log/zookeeper
+
+    zoo_4lw_whitelist: []
+    
+    # Supported Java Versions
+    # CentOS 7: latest, 11, 8, or 7
+    # CentOS 8: latest, 11, 8
+    # Ubuntu 18.04: 11 or 8
+    # Ubuntu 20.04: 14, 13, 11, or 8
+    zoo_java_version: 11
+    zoo_java_install: true

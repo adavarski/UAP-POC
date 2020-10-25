@@ -1,0 +1,5 @@
+kibana:
+  user: kibana
+  version: 6.5.4
+
+clustername: local-elk

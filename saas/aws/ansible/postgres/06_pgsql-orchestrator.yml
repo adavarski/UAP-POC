@@ -1,0 +1,6 @@
+- name: 06_pgsql-orchestrator
+  hosts:
+    - pg01
+  become: true
+  roles:
+    - roles/06_pgsql-orchestrator

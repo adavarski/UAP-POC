@@ -1,0 +1,90 @@
+---
+
+- name: add Confluent repository key
+  rpm_key:
+    key: https://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+
+- name: Add Confluent.dist repository
+  yum_repository:
+    name: Confluent.dist
+    description: Confluent repository (dist)
+    file: confluent
+    baseurl: http://packages.confluent.io/rpm/{{ confluent_version }}/7
+    gpgcheck: yes
+    gpgkey: http://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+
+
+- name: Add Confluent repository
+  yum_repository:
+    name: Confluent
+    description: Confluent repository
+    file: confluent
+    baseurl: http://packages.confluent.io/rpm/{{ confluent_version }}
+    gpgcheck: yes
+    gpgkey: http://packages.confluent.io/rpm/{{ confluent_version }}/archive.key
+    state: present
+    
+- name: Install Java
+  yum: 
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items: "{{ kafka_java_package[kafka_java_version|string] }}"
+
+#- name: install Kafka Connect
+#  yum:
+#    name: confluent-kafka-connect
+#    state: present
+
+# Install Packages
+- name: Install the Kafka Connect Packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items: "{{ kafka_connect_packages }}"
+
+# Configure environment
+- name: Kafka Connect Group
+  group:
+    name: "{{kafka_connect_default_group}}"
+
+- name: Kafka Connect User
+  user:
+    name: "{{kafka_connect_default_user}}"
+    comment: "Kafka Connect User"
+    system: true
+    group: "{{kafka_connect_default_group}}"
+
+- name: Create Kafka Connect Config
+  template:
+    src: connect-distributed.properties.j2
+    dest: "/etc/kafka/connect-distributed.properties"
+    mode: 0640
+    owner: "{{kafka_connect_default_user}}"
+    group: "{{kafka_connect_default_group}}"
+  notify: restart connect distributed
+
+#- name: Create Logs Directory
+#  file:
+#    path: "{{kafka_connect.appender_log_path}}"
+#    state: directory
+#    group: "{{kafka_connect_default_group}}"
+#    owner: "{{kafka_connect_default_user}}"
+#    mode: '764'
+
+- name: Create Kafka Connect log4j Config
+  template:
+    src: connect-log4j.properties.j2
+    dest: "/etc/kafka/connect-log4j.properties"
+    mode: 0640
+    owner: "{{kafka_connect_default_user}}"
+    group: "{{kafka_connect_default_group}}"
+  notify: restart connect distributed
+
+- name: Start Kafka Connect Service
+  systemd:
+    name: "{{kafka_connect_service_name}}"
+    enabled: true
+    state: started

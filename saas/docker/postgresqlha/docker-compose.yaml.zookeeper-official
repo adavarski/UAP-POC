@@ -1,0 +1,59 @@
+version: '3.1'
+
+services:
+  haproxy:
+    build: 'haproxy'
+    ports:
+      - 5432:5432
+      - 7000:7000
+    depends_on:
+      - zoo1
+      - pg-master
+      - pg-slave
+
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    expose:
+      - 2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+      ZOO_STANDALONE_ENABLED: 'true'
+
+
+  pg-master:
+    build: 'postgres'
+    restart: always
+    hostname: pg-master
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    expose:
+      - 5432
+      - 8008
+    ports:
+      - 5433:5432
+    volumes:
+     - '/var/lib/postgresql/data'
+    command: su - postgres -c 'patroni /postgres0.yml'
+
+  pg-slave:
+    build: 'postgres'
+    restart: always
+    hostname: pg-slave
+    expose:
+      - 5432
+      - 8008
+    ports:
+      - 5434:5432
+    volumes:
+     - '/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+      #REPLICATE_FROM: 'pg-master'
+    command: su - postgres -c 'patroni /postgres1.yml'

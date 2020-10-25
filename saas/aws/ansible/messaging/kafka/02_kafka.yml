@@ -1,0 +1,6 @@
+- name: 02_kafka
+  hosts:
+    - kafka
+  become: true
+  roles:
+    - 02_kafka

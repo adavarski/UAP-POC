@@ -1,0 +1,16 @@
+---
+HOSTS_FILE: '/etc/hosts'
+#HOSTS_FILE: '/etc/cloud/templates/hosts.redhat.tmpl'
+
+########## hosts ##########
+
+HOST_NAME_INFLUXDB: 'influxdb'
+HOST_IP_INFLUXDB: '10.51.21.61'
+
+HOST_NAME_GRAFANA: 'grafana'
+HOST_IP_GRAFANA: '10.51.21.62'
+
+HOST_NAME_TELEGRAF: 'telegraf'
+HOST_IP_TELEGRAF: '10.51.21.63'
+
+

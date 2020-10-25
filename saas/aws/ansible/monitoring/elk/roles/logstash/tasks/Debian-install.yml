@@ -1,0 +1,34 @@
+## this is a kludge to install this old package on debian systems
+# behind a proxy server and until Elastic.co fixes their debian install repo. 
+# It currently lacks a Release file and installing their repo breaks apt-get 
+# so...this workaround 201808.17MeV
+
+- name: getting logstash deb file (this may take a couple minutes)
+  shell: "wget https://download.elastic.co/logstash/logstash/packages/debian/logstash-2.4.0_all.deb"
+  args:
+    warn: false # set warn=false to prevent warning
+    creates: logstash-2.4.0_all.deb
+  register: logstash_wget_result
+# - debug: var=logstash_wget_result
+
+- name: installing deb file
+  apt:
+    deb: ./logstash-2.4.0_all.deb
+    # deb: https://artifacts.elastic.co/downloads/logstash/logstash-6.3.2.deb
+    state: present
+    allow_unauthenticated: True
+  when: not logstash_wget_result.failed
+  register: logstash_deb_apt
+# - debug: var=logstash_deb_apt
+
+- name: enable Debian /etc/default/logstash config file
+  lineinfile:
+    path: /etc/default/logstash
+    backup: yes
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: "^#LS_CONF_DIR=/etc/logstash/conf.d", line: "LS_CONF_DIR=/etc/logstash/conf.d" }
+    - { regexp: "^#LS_HEAP_SIZE=",                    line: 'LS_HEAP_SIZE="4g"' }
+  notify:
+    - restart_logstash_service

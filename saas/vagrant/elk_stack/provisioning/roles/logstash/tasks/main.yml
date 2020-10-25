@@ -1,0 +1,24 @@
+---
+# tasks file for logstash
+
+
+# requires Java 8 + elk-repo first installed first
+- include_tasks: Debian-install.yml
+  when: ansible_os_family == 'Debian'
+
+# - name: install logstash RPM
+#   package: name=logstash-2.4.0 state=present
+- include_tasks: RedHat-install.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: logstash config files
+  copy: src={{ item.src }} dest=/etc/logstash/conf.d/
+  with_items:
+    - { src: '02-beats-input.conf' }
+    - { src: '10-syslog-filter.conf' }
+    - { src: '30-elasticsearch-output.conf' }
+  notify:
+    - restart_logstash_service
+
+- name: enable and run logstash
+  service: name=logstash state=started enabled=yes

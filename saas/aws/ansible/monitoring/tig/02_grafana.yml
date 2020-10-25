@@ -1,0 +1,6 @@
+- name: 02_grafana
+  hosts:
+    - grafana
+  become: true
+  roles:
+    - roles/grafana

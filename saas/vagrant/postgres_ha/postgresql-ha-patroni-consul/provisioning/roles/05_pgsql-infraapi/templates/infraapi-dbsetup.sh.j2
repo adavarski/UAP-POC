@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+PGPASSWORD={{ PASS_POSTGRES_FOR_DB }} psql -v ON_ERROR_STOP=1 -h localhost --username postgres<<-EOSQL
+CREATE USER {{ POSTGRES_PGMQ_USER }} WITH PASSWORD '{{ POSTGRES_PGMQ_USER_PASSWORD }}' CREATEDB;
+CREATE DATABASE {{ POSTGRES_PGMQ_DB }} OWNER {{ POSTGRES_PGMQ_USER }};
+EOSQL
+
+PGPASSWORD={{ POSTGRES_PGMQ_USER_PASSWORD }} psql -v ON_ERROR_STOP=1 -h localhost --username "{{ POSTGRES_PGMQ_USER }}" --dbname {{ POSTGRES_PGMQ_DB }}<<-EOSQL
+
+CREATE TABLE results (
+result_id serial primary key not null,
+longrunning_id varchar,
+inserted timestamp not null default NOW(),
+message text);
+EOSQL

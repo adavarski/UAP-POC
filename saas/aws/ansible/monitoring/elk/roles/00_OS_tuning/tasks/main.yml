@@ -1,0 +1,15 @@
+---
+- name: add mappings to /etc/hosts
+  blockinfile:
+    path: "{{ HOSTS_FILE }}"
+    block: |
+      {{ item.ip }} {{ item.name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+  with_items:
+    - { name: "{{ HOST_NAME_ELASTIC_NODE1 }}", ip: "{{ HOST_IP_ELASTIC_NODE1 }}" }
+    - { name: "{{ HOST_NAME_ELASTIC_NODE2 }}", ip: "{{ HOST_IP_ELASTIC_NODE2 }}" }
+    - { name: "{{ HOST_NAME_ELASTIC_NODE3 }}", ip: "{{ HOST_IP_ELASTIC_NODE3 }}" }
+    - { name: "{{ HOST_NAME_KIBANA }}", ip: "{{ HOST_IP_KIBANA }}" }
+    - { name: "{{ HOST_NAME_LOGSTASH }}", ip: "{{ HOST_IP_LOGSTASH }}" }
+  tags:
+    - update_hosts

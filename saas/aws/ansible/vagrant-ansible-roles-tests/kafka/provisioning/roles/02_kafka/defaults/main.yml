@@ -1,0 +1,33 @@
+---
+# Supported Java Versions
+# CentOS 7: latest, 11, 8, or 7
+# CentOS 8: latest, 11, 8
+# Ubuntu 18.04: 11 or 8
+# Ubuntu 20.04: 14, 13, 11, or 8
+kafka_java_version: 11
+kafka_java_install: true
+
+component_tag: saas_dev_env
+
+# Confluent settings
+confluent_version: 5.5
+scala_version: 2.12
+
+# Kafka settings
+zk_client_port: 2181
+kafka_datadir: /data/kafka
+log_retention_hours: 168
+log_retention_bytes: -1
+message_max_bytes: 20000000
+offsets_topic_replication_factor: 1
+offsets_retention_minutes: 43200   # 30 days
+transaction_state_log_replication_factor: 1
+transaction_state_log_min_isr: 1
+java_max_heap_size: 1G
+
+# Settings for SSL connection
+#attributes: "OU=MyDepartment, O=MyCompany, L=MyCity, C=AA"
+attributes: "OU=DevOps, O=SAAS, L=Sofia, C=AA"
+days_valid: 365
+
+broker_keypass_pwd: scale250

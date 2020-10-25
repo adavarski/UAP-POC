@@ -1,0 +1,15 @@
+---
+    
+    zoo_username: "zookeeper"
+    zoo_group: "zookeeper"
+
+    zoo_environment_filename: /etc/sysconfig/zookeeper
+    zoo_download_url: "https://archive.apache.org/dist/zookeeper/zookeeper-{{ zoo_version }}/zookeeper-{{ zoo_version }}.tar.gz"
+
+    installer_download_directory: "/tmp"
+
+    zoo_java_package:
+        latest: java-latest-openjdk-headless
+        "11": java-11-openjdk-headless
+        "8": java-1.8.0-openjdk-headless
+        "7": java-1.7.0-openjdk-headless

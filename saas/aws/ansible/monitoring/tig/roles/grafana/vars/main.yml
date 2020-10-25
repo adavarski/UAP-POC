@@ -1,0 +1,10 @@
+grafana_user: admin
+grafana_password: scale250
+org_id: "1"
+
+influxdb: influxdb
+ds_name: influxdb
+ds_type: "influxdb"
+ds_user: grafana
+ds_password: scale250
+db_name: grafana

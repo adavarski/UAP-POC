@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+
+  sensu-server:
+    image: $REGISTRY_URL/sensu-server
+    volumes:
+    - $PWD/sensu-server/checks/check-docker.json:/etc/sensu/conf.d/check-docker.json
+    - $PWD/sensu-server/checks/check-disk-usage.json:/etc/sensu/conf.d/check-disk-usage.json
+    - $PWD/sensu-server/checks/check-memory-usage.json:/etc/sensu/conf.d/check-memory-usage.json
+    - $PWD/sensu-server/checks/check-server-uptime.json:/etc/sensu/conf.d/check-server-uptime.json
+    ports:
+    - 4567:4567  # API PORT
+    environment:
+    - SENSU_USER
+    - SENSU_PASSWORD
+    - SLACK_HANDLER_WEBHOOK
+    - LOGSPOUT=ignore
+    depends_on:
+    - rabbitmq
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    restart: "unless-stopped"
+
+  rabbitmq:
+    image: rabbitmq:3.6-alpine
+    environment: 
+    - RABBITMQ_DEFAULT_USER=$SENSU_USER
+    - RABBITMQ_DEFAULT_PASS=$SENSU_PASSWORD
+    - RABBITMQ_DEFAULT_VHOST=/sensu
+    - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.8
+    ports:
+    - 5672:5672    # rabbitmq api
+    - 15672:15672  # rabbitmq console
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    restart: "unless-stopped"
+
+  uchiwa:
+    image: uchiwa/uchiwa
+    volumes:
+    - $PWD/sensu-server/config/uchiwa.json:/config/config.json
+    depends_on:
+    - sensu-server
+    ports:
+    - 3000:3000  # WEB UI PORT (uchiwa)
+    environment:
+    - LOGSPOUT=ignore
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    restart: "unless-stopped"

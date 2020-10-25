@@ -1,0 +1,15 @@
+{
+    "handlers": {
+        "default": {
+            "type": "set",
+            "handlers": [
+                "sysout",
+				"slack"
+            ]
+        },
+        "sysout": {
+            "type": "pipe",
+            "command": "cat"
+        }
+    }
+}

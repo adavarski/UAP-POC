@@ -1,0 +1,48 @@
+- name: Create Kibana user
+  user:
+    create_home: no
+    name: "{{ kibana.user }}"
+    state: present
+- name: Download Kibana
+  get_url:
+    url: https://artifacts.elastic.co/downloads/kibana/kibana-{{ kibana.version }}-x86_64.rpm
+    dest: /home/vagrant/kibana-{{ kibana.version }}.rpm
+    mode: 0664
+    group: "{{ kibana.user }}"
+    owner: "{{ kibana.user }}"
+
+- name: Install kibana from package
+  shell: yum localinstall -y /home/vagrant/kibana-{{ kibana.version }}.rpm
+
+- name: Set owner for files in dir with 
+  file:
+    owner: "{{ kibana.user }}"
+    group: "{{ kibana.user }}"
+    path: /usr/share/kibana/
+    recurse: yes
+    state: directory
+
+- name: Create dir for ES data and log
+  file:
+    owner: "{{ kibana.user }}"
+    group: "{{ kibana.user }}"
+    path: /kibana/
+    recurse: yes
+    state: directory
+
+- name: Copy kibana config
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+  tags:
+    - update-config
+    - update-config-kibana
+
+- name: Restart kibana service
+  service:
+    name: kibana
+    state: restarted
+    enabled: no
+  tags:
+    - update-config
+    - update-config-kibana

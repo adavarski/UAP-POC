@@ -1,0 +1,15 @@
+---
+HOSTS_FILE: '/etc/hosts'
+#HOSTS_FILE: '/etc/cloud/templates/hosts.redhat.tmpl'
+
+########## hosts ##########
+
+HOST_NAME_SENSU: 'sensu'
+HOST_IP_SENSU: '10.51.21.61'
+
+HOST_NAME_CLIENT: 'client'
+HOST_IP_CLIENT: '10.51.21.62'
+
+
+
+

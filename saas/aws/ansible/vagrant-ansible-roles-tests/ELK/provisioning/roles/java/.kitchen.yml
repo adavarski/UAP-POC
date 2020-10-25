@@ -1,0 +1,43 @@
+---
+transport:
+  max_ssh_sessions: 6 # Workaround https://github.com/test-kitchen/test-kitchen/issues/1035
+
+driver:
+  name: docker
+  use_sudo: false
+  privileged: true
+  provision_command: /usr/sbin/sshd -o UseDNS=no -o UsePAM=no -o PasswordAuthentication=yes -o UsePrivilegeSeparation=no -o PidFile=/tmp/sshd.pid
+
+platforms:
+  - name: centos-7
+    driver:
+      run_command: /usr/sbin/init
+      provision_command:
+        - yum install net-tools -y
+        - yum install iproute -y
+  - name: ubuntu-16.04
+    driver:
+      run_command: /sbin/init
+
+provisioner:
+  name: ansible_playbook
+  hosts: localhost
+  role_name: contentwise.java
+  ansible_verbose: true
+  idempotency_test: true
+  require_chef_for_busser: true
+  require_ruby_for_busser: false
+
+suites:
+  - name: default
+  - name: java7
+    excludes: 
+      - ubuntu-16.04
+    provisioner:
+      playbook: test/integration/java7.yml
+  - name: java78
+    excludes: 
+      - ubuntu-16.04
+    provisioner:
+      playbook: test/integration/java78.yml
+      idempotency_test: false

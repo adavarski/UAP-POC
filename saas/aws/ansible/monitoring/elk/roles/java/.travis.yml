@@ -1,0 +1,8 @@
+sudo: required
+language: ruby
+services:
+- docker
+install:
+- bundle install
+script:
+- kitchen test

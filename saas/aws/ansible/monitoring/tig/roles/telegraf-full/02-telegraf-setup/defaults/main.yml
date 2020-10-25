@@ -1,0 +1,23 @@
+---
+
+# Global defaults
+# https_proxy: ""
+group: false
+module: false
+debug: false
+
+telegraf_aws_package: telegraf
+
+telegraf_aws_user: telegraf
+telegraf_aws_group: telegraf
+
+telegraf_aws_service: telegraf
+
+telegraf_aws_clean_deploy: false
+
+telegraf_aws_kapacitor_urls: 
+  - http://localhost:9092/kapacitor/v1/debug/vars
+
+
+telegraf_with_proxy: false
+zone: ""

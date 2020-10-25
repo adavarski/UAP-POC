@@ -1,0 +1,6 @@
+- name: 05_pgsql-infraapi
+  hosts:
+    - pg01
+  become: true
+  roles:
+    - roles/05_pgsql-infraapi
