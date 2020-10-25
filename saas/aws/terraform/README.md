@@ -50,5 +50,5 @@ For Jenkinsfile CloudBees AWS Credentials" J.plugin and setup J.Credentials (ID:
 
 Note: Generate current graph infra example with "terraform graph | dot -Tpng > SaaS-DEV-TF-graph.png"
 
-<img src="https://github.com/SaaS-DEV-TF-graph.png?raw=true" width="650">
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/aws/terraform/SaaS-DEV-TF-graph.png?raw=true" width="650">
 
