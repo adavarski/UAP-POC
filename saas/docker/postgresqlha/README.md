@@ -16,7 +16,7 @@ Default PostgreSQL port exposed on `localhost:5432`. (login: _postgres/grespost_
 
 Test with DataGrip: 
 
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/postgresqlha/screens/pg-datagrip-test.png?raw=true" width="650">
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/docker/postgresqlha/screens/pg-datagrip-test.png?raw=true" width="650">
 
 
 Check HA:
@@ -65,7 +65,7 @@ me=walreceiver sslmode=prefer sslcompression=0 gssencmode=prefer krbsrvname=post
 ```
 Check HAProxy:
 
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/postgresqlha/screens/haproxy-pg-master.png?raw=true" width="650">
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/docker/postgresqlha/screens/haproxy-pg-master.png?raw=true" width="650">
 
 
 Stop/start master
@@ -115,7 +115,7 @@ root@pg-master:/# exit
 ```
 Check HAproxy:
 
-<img src="https://github.com/SAASInc/saas-dev-env/blob/master/saas/docker/postgresqlha/screens/haproxy-pg-slave.png?raw=true" width="650">
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/docker/postgresqlha/screens/haproxy-pg-slave.png?raw=true" width="650">
 
 
 ### Note: Setup of PostgreSQL High Available using Patroni with Zookeeper cluster (3-nodes) and HAProxy 
