@@ -14,6 +14,9 @@ Packer for creating custom AMI images on AWS cloud
 #### Terraform 
 for Infrastructure/Cloud Orchestration: create, change, and improve SAAS infrastructure. Terraform will be used because we will have to support multiple clouds long term: Azure, Oracle, Google, Hybrid, etc. TF can be used to provision and manage any cloud, infrastructure, or service)
 
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/aws/terraform/SaaS-DEV-TF-graph.png?raw=true" width="650">
+
+
 
 ###  SaaS
 
