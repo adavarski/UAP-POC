@@ -28,7 +28,7 @@ telegraf                  running (virtualbox)
 ```
 ### Import Grafana dashboards: example https://grafana.com/grafana/dashboards/10581
 
-<img src="https://github.com/ExampleInc/TIG-vagrant-grafana-import-dashboard-host-10581.png?raw=true" width="650">
+<img src="https://github.com/adavarski/SaaS-FULL-POC/blob/main/saas/vagrant/tig_stack/diagrams/TIG-vagrant-grafana-import-dashboard-host-10581.png?raw=true" width="650">
 
 <img src="https://github.com/ExampleInc//TIG-vagrant-grafana.png?raw=true" width="650">
 
