@@ -9,7 +9,7 @@ SaaS: HashiCorp Vault container + Monitoring/Debugging and Log management contai
 
 
 
-### Example (run all SaaS services: one docker-compose file for all services):
+### Example (run all SaaS services : docker-compose ):
 
 ```
 ./bin/run_saas_all.sh
