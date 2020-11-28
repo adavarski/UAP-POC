@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: kibana
+  namespace: data
+  labels:
+    app: kibana
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: kib.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: kibana
+              servicePort: 80
+            path: /
+  tls:
+    - hosts:
+        - kib.data.davar.com
+      secretName: data-production-tls
+
