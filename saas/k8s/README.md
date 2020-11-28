@@ -466,12 +466,28 @@ $ curl -sLSf https://cli.openfaas.com | sudo sh
 $ faas-cli
 ```
 
-### GitLab in-cluster CI/CD
+### GitLab (in-cluster CI/CD)
 
 Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
 
 ### k8s Operators
 
 For k8s Operators creation refer to HOWTO: https://github.com/adavarski/k8s-operators-playground
+
+### Extend k3s cluster: Add k3s worker (bare-metal)
+
+Install Ubuntu on some bare-metal server/workstation and setup resolvconf.service to use local DNS server.
+
+```
+$ sudo su -
+$ apt update && apt upgrade -y
+$ apt install -y apt-transport-https ca-certificates gnupg-agent software-properties-common
+$ apt install -y linux-headers-$(uname -r)
+$ export K3S_CLUSTER_SECRET="<PASTE VALUE>"
+$ export K3S_URL="https://dev-k3s.davar.com:6443"
+$ curl -sfL https://get.k3s.io | sh -s - agent 
+```
+Fix k3s CoreDNS for local development to use local DNS server if needed.
+
 
 
