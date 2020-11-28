@@ -1,4 +1,4 @@
-# Local & AWS SaaS development k8s-based environment
+# Local & AWS SaaS development k8s environment
 
 ## AWS (build k8s cluster with KOPS)
 
@@ -106,7 +106,7 @@ Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-ope
 
 k3s is 40MB binary that runs “a fully compliant production-grade Kubernetes distribution” and requires only 512MB of RAM. k3s is a great way to wrap applications that you may not want to run in a full production Cluster but would like to achieve greater uniformity in systems deployment, monitoring, and management across all development operations.
 
-# ===== k3s: (Default) k8s local development environment HOWTO ====
+# k3s: (Default) k8s local development environment HOWTO 
 
 k3s is deafult k8s developlent environment, because k3s is closer to a production style deployment, than minikube & kubespary .
 
