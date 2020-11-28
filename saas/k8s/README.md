@@ -470,7 +470,7 @@ $ faas-cli
 
 Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
 
-### k8s Operators
+## k8s Operators
 
 For k8s Operators creation refer to HOWTO: https://github.com/adavarski/k8s-operators-playground
 
