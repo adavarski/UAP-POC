@@ -474,7 +474,7 @@ Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes wi
 
 For k8s Operators creation refer to HOWTO: https://github.com/adavarski/k8s-operators-playground
 
-### Extend k3s cluster: Add k3s worker (bare-metal)
+## Extend k3s cluster: Add k3s worker (bare-metal)
 
 Install Ubuntu on some bare-metal server/workstation and setup resolvconf.service to use local DNS server.
 
