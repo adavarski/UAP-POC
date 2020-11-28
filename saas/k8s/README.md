@@ -280,6 +280,7 @@ Before you being configuring [k3s] make sure `kubectl` pointed to the correct cl
 
 ```
 $ sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/k3s-config
+$ sed -i "s/127.0.0.1/192.168.0.101/" k3s-config
 $ export KUBECONFIG=~/.kube/k3s-config
 $ kubectl cluster-info
 Kubernetes master is running at https://127.0.0.1:6443
@@ -486,8 +487,9 @@ $ apt install -y linux-headers-$(uname -r)
 $ export K3S_CLUSTER_SECRET="<PASTE VALUE>"
 $ export K3S_URL="https://dev-k3s.davar.com:6443"
 $ curl -sfL https://get.k3s.io | sh -s - agent 
+$ scp root@192.168.0.101:/etc/rancher/k3s/k3s.yaml ~/.kube/k3s-config
+$ sed -i "s/127.0.0.1/192.168.0.101/" ~/.kube/k3s-config
 ```
 Fix k3s CoreDNS for local development to use local DNS server if needed.
-
 
 
