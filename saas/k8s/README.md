@@ -4,7 +4,7 @@
 
 KOPS is based on Terraform and is working very well for AWS k8s deployments. After AWS k8s cluster has been deployed, you can use 003-data/ as base or Helm Charts or k8s Operators for SaaS services deployment @ k8s cluster (create Helm Charts: Consul cluster, Kafka cluster, Elasticsearch cluster, etc. based on stable Helm charts for all needed SaaS services: Kafka, ELK, Postgres, Consul, Grafana, Sensu, InfluxDB, etc., etc. →  Ref:https://artifacthub.io/; https://github.com/artifacthub/hub https://github.com/helm/charts (obsolete) ; etc. Better is to create k8s Operators for all needed SaaS services (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Charts, based on https://github.com/operator-framework/community-operators. There are many k8s Operators @ https://operatorhub.io/ for example https://operatorhub.io/operator/postgres-operator, https://operatorhub.io/operator/elastic-cloud-eck, https://operatorhub.io/operator/banzaicloud-kafka-operator, etc. so create own based on them. 
 
-## Local k8s dev  (minikube, kubespray, k3s, etc.) 
+## Local k8s development  (minikube, kubespray, k3s, etc.) 
 
 For setting up Kubernetes local development environment, there are three recommended methods
 
@@ -12,7 +12,7 @@ For setting up Kubernetes local development environment, there are three recomme
     - minikube https://minikube.sigs.k8s.io/docs/
     - kubespary https://kubespray.io/#/
 
-Of the three (k3s & minikube & kubespay), k3s tends to be the most viable. It is closer to a production style deployment. 
+Note: Of the three (k3s & minikube & kubespay), k3s tends to be the most viable. It is closer to a production style deployment. 
 
 ### minikube:
 ```
@@ -106,7 +106,9 @@ Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-ope
 
 k3s is 40MB binary that runs “a fully compliant production-grade Kubernetes distribution” and requires only 512MB of RAM. k3s is a great way to wrap applications that you may not want to run in a full production Cluster but would like to achieve greater uniformity in systems deployment, monitoring, and management across all development operations.
 
-# ------------------------------ k3s HOWTO ------------------------------------------------------
+# ===== k3s: (Default) k8s local development environment HOWTO ====
+
+k3s is deafult k8s developlent environment, because k3s is closer to a production style deployment, than minikube & kubespary .
 
 
 ## Prerequisite
