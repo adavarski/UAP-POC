@@ -55,6 +55,7 @@ aws ec2 describe-instances   --filter 'Name=instance-state-name,Values=running' 
 - packer: packer templates for SaaS services (AWS AMIs) to build Zoo/Consul/Postgres/etc. clusters (AWS AMIs based on ansible roles and custom scripts)
 - builder: HOWTOs docs for different saaS services build (jenkins+ansible+packer+terraform) 
 - jenkins: J.pipelines to deploy/upgrade/update/destroy infrastructure services 
+- gitlab: pipelines to deploy/upgrade/update/destroy infrastructure services
 - terraform: DEV infrastructure provisioning  (examples for VPC & EC2 & etc. DEV NOC/MC infrastructure provisioning)
 - diagrams: diagrams & pictures
 
