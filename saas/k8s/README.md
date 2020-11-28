@@ -371,8 +371,106 @@ kubectl apply -f ./003-data/000-namespace/003-issuer.yaml
 kubectl apply -f ./003-data/000-namespace/005-clusterissuer.yml
 ```
 
+## SaaS deploy 
+
+### Monitoring
+
+```
+git clone git@github.com:coreos/kube-prometheus.git
+cd kube-prometheus
+git checkout v0.1.0
+kubectl create -f manifests/
+```
+Verify the resources are ready before proceeding.
+
+```
+until kubectl get customresourcedefinitions servicemonitors.
+monitoring.coreos.com ; do date; sleep 1; echo ""; done
+until kubectl get servicemonitors --all-namespaces ; do date;
+sleep 1; echo ""; done
+```
+Apply the manifests.
+
+```
+kubectl apply -f manifests/
+```
+Note: This command sometimes may need to be done twice (to work around a race condition).
+
+Visually monitor the new cluster by port-forwarding Grafana to a local workstation:
+```
+$ kubectl --namespace monitoring port-forward svc/grafana 3000
+````
+Open http://localhost:3000 on a local workstation, and log in to Grafana with the default administrator credentials, username: admin, password: admin. Explore the prebuilt dashboards for monitoring many aspects of the Kubernetes cluster, including Nodes, Namespaces, and Pods.
+
+
+### Messaging
+
+```
+kubectl apply -f ./003-data/010-zookeeper/10-service.yml
+kubectl apply -f ./003-data/010-zookeeper/10-service-headless.yml
+kubectl apply -f ./003-data/010-zookeeper/40-statefulset.yml
+
+  
+kubectl apply -f ./003-data/020-kafka/10-service.yml  
+kubectl apply -f ./003-data/020-kafka/10-service-headless.yml
+kubectl apply -f ./003-data/020-kafka/40-statefulset.yml  
+kubectl apply -f ./003-data/020-kafka/45-pdb.yml  
+kubectl apply -f ./003-data/020-kafka/99-pod-test-client.yml
+```
+### ELK
+
+```
+kubectl apply -f ./003-data/050-elasticsearch/10-service.yml
+kubectl apply -f ./003-data/050-elasticsearch/40-statefulset.yml
+
+kubectl apply -f ./003-data/051-logstash/10-service.yml
+kubectl apply -f ./003-data/051-logstash/30-configmap-config.yml
+kubectl apply -f ./003-data/051-logstash/30-configmap-pipeline.yml
+kubectl apply -f ./003-data/051-logstash/40-deployment.yml
+
+kubectl apply -f ./003-data/052-kibana/10-service.yml
+kubectl apply -f ./003-data/052-kibana/20-configmap.yml
+kubectl apply -f ./003-data/052-kibana/30-deployment.yml
+kubectl apply -f ./003-data/052-kibana/50-ingress.yml
+```
+Note: isit https://kib.data.davar.com in a web browser for Kibana UI access.
+
+### ETL (Routing and Transformation)
+
+```
+kubectl apply -f ./003-data/060-nifi/10-service-headless.yml
+kubectl apply -f ./003-data/060-nifi/40-statefulset.yml
+kubectl apply -f ./003-data/060-nifi/60-ingress.yml
+```
+
+### Serverless (OpenFaas)
+
+```
+$ helm repo add openfaas https://openfaas.github.io/faas-netes/
+$ helm repo update
+$ helm upgrade k8s-data-openfaas –install openfaas/openfaas --namespace data --set functionNamespace=data --set exposeServices=false --set ingress.enabled=true --set generateBasicAuth=true
+
+```
+```
+kubectl apply -f ./003-data/070-openfaas/50-ingress.yml
+```
+Note: Visit https://faas.data.davar.com in a web browser for OpenFaaS UI portal. 
+
+```
+$ echo $(kubectl -n data get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)
+```
+Install faas-cli 
+
+```
+$ curl -sLSf https://cli.openfaas.com | sudo sh
+$ faas-cli
+```
+
+### GitLab in-cluster CI/CD
 
 Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
+
+### k8s Operators
 
 For k8s Operators creation refer to HOWTO: https://github.com/adavarski/k8s-operators-playground
 
