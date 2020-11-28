@@ -1,4 +1,4 @@
-# SaaS POC/DEV environmints:
+# SaaS (data-driven platform) POC/DEV environmints:
 
 Vagrant/Docker/k8s/AWS IaC-based SaaS infrastucture/environments POC: Terraform for AWS infrastructure provisioning, Vagrant/Docker for Dev environments and Ansible for CM. Used stacks and products for SaaS POC: Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Debugging and Log management stacks (ELK/EFK); Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Consul cluster; Postgres cluster with Patroni; etc.
 
