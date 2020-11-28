@@ -11,6 +11,8 @@ Note2: k8s is CaaS (Container as a Service). We will not use public CaaSs (Googl
 
 Note3: With GitLab/Jenkins in-cluster/in-platform k8s CI/CD pipelines, k8s will be transformed into PaaS/SaaS (data-driven and data-science platform), not only CaaS.
 
+Note4: GitLab is better for k8s in-platform/in-cluster CI/CD (Easy k8s integration, Private Docker Registry, etc.). 
+
 #### AWS 
 AWS IaaS platform where we would build the images and provisioning SAAS infrastructure using AWS API. 
 
