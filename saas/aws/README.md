@@ -2,8 +2,12 @@ The repo is intended for following the steps to run SaaS on top of AWS IaaS, inc
 
 ### Below are the IaC tools we will use:
 
-#### Jenkins for CI/CD 
-SAAS infrastructure orchestration with Jenkins and CI/CD pipelines
+#### GitLab/Jenkins for CI/CD (In-Platform)
+SaaS/PaaS infrastructure orchestration with GitLab/Jenkins and CI/CD pipelines. 
+
+Note1: GitLab/Jenkins deployed into AWS SaaS VPC or into k8s Cluster.
+Note2: k8s is CaaS (Container as a Service). We will not use public CaaSs (Google Container Engine:GKE, AWS:EKS&ECS, Azure:ACS, Oracle:OKE, etc.), but build cloud-native, vendor-neutral k8s clusters/k8s infrastructure (with KOPS on AWS IaaS for POC/Development environments). 
+Note3: With GitLab/Jenkins in-cluster/in-platform k8s CI/CD pipelines, k8s will be transformed into PaaS/SaaS (data-driven and data-science platform), not only CaaS.
 
 #### AWS 
 AWS IaaS platform where we would build the images and provisioning SAAS infrastructure using AWS API. 
