@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mqtt
+  namespace: data
+  labels:
+    app: mqtt
+data:
+  mosquitto.conf: |-
+    user mosquitto
+    port 1883

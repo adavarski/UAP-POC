@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: faas
+  namespace: data
+  labels:
+    app: nifi
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: faas.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: gateway
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - faas.data.davar.com
+      secretName: data-production-tls
