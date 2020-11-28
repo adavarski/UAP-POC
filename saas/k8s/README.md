@@ -467,6 +467,201 @@ $ curl -sLSf https://cli.openfaas.com | sudo sh
 $ faas-cli
 ```
 
+## Check k8s development cluster:
+
+```
+
+davar@carbon:~$ kubectl get all -n data
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nifi-1                              1/1     Running   0          22h
+pod/queue-worker-5c76c4bd84-dg9db       1/1     Running   5          22h
+pod/elasticsearch-0                     1/1     Running   4          25h
+pod/logstash-7b445484d8-tn4ww           1/1     Running   3          25h
+pod/kafka-client-util                   1/1     Running   4          26h
+pod/nifi-0                              1/1     Running   3          22h
+pod/nats-7d86c64647-lmktk               1/1     Running   3          22h
+pod/mqtt-cbdf9fb4-c2grj                 1/1     Running   4          26h
+pod/kibana-67c68595b7-hgmlb             1/1     Running   3          25h
+pod/prometheus-78dc788984-m7q4z         1/1     Running   3          22h
+pod/basic-auth-plugin-bc899c574-t55r2   1/1     Running   3          22h
+pod/alertmanager-6fcb5b9b7b-c7hqb       1/1     Running   3          22h
+pod/sentimentanalysis-9b98675f9-bf6jw   1/1     Running   7          21h
+pod/gateway-58fd85c86b-5klq4            2/2     Running   8          22h
+pod/zookeeper-1                         1/1     Running   4          26h
+pod/faas-idler-6df76476c9-6dhdp         1/1     Running   11         22h
+pod/zookeeper-0                         1/1     Running   4          26h
+pod/kafka-0                             1/1     Running   6          26h
+pod/kafka-1                             1/1     Running   6          26h
+
+NAME                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+service/zookeeper            ClusterIP   10.43.215.75    <none>        2181/TCP                     26h
+service/zookeeper-headless   ClusterIP   None            <none>        2181/TCP,3888/TCP,2888/TCP   26h
+service/kafka                ClusterIP   10.43.166.24    <none>        9092/TCP                     26h
+service/kafka-headless       ClusterIP   None            <none>        9092/TCP                     26h
+service/mqtt                 ClusterIP   10.43.133.39    <none>        1883/TCP                     26h
+service/elasticsearch        ClusterIP   10.43.243.188   <none>        9200/TCP                     25h
+service/logstash             ClusterIP   10.43.69.80     <none>        5044/TCP                     25h
+service/kibana               ClusterIP   10.43.142.124   <none>        80/TCP                       25h
+service/nifi                 ClusterIP   None            <none>        8080/TCP,6007/TCP            22h
+service/gateway              ClusterIP   10.43.169.202   <none>        8080/TCP                     22h
+service/nats                 ClusterIP   10.43.142.201   <none>        4222/TCP                     22h
+service/basic-auth-plugin    ClusterIP   10.43.70.145    <none>        8080/TCP                     22h
+service/alertmanager         ClusterIP   10.43.17.222    <none>        9093/TCP                     22h
+service/prometheus           ClusterIP   10.43.21.25     <none>        9090/TCP                     22h
+service/sentimentanalysis    ClusterIP   10.43.190.146   <none>        8080/TCP                     21h
+
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/logstash            1/1     1            1           25h
+deployment.apps/nats                1/1     1            1           22h
+deployment.apps/queue-worker        1/1     1            1           22h
+deployment.apps/mqtt                1/1     1            1           26h
+deployment.apps/kibana              1/1     1            1           25h
+deployment.apps/prometheus          1/1     1            1           22h
+deployment.apps/basic-auth-plugin   1/1     1            1           22h
+deployment.apps/alertmanager        1/1     1            1           22h
+deployment.apps/sentimentanalysis   1/1     1            1           21h
+deployment.apps/gateway             1/1     1            1           22h
+deployment.apps/faas-idler          1/1     1            1           22h
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/logstash-7b445484d8           1         1         1       25h
+replicaset.apps/nats-7d86c64647               1         1         1       22h
+replicaset.apps/queue-worker-5c76c4bd84       1         1         1       22h
+replicaset.apps/mqtt-cbdf9fb4                 1         1         1       26h
+replicaset.apps/kibana-67c68595b7             1         1         1       25h
+replicaset.apps/prometheus-78dc788984         1         1         1       22h
+replicaset.apps/basic-auth-plugin-bc899c574   1         1         1       22h
+replicaset.apps/alertmanager-6fcb5b9b7b       1         1         1       22h
+replicaset.apps/sentimentanalysis-9b98675f9   1         1         1       21h
+replicaset.apps/gateway-58fd85c86b            1         1         1       22h
+replicaset.apps/faas-idler-6df76476c9         1         1         1       22h
+
+NAME                             READY   AGE
+statefulset.apps/elasticsearch   1/1     25h
+statefulset.apps/nifi            1/2     22h
+statefulset.apps/zookeeper       2/2     26h
+statefulset.apps/kafka           2/2     26h
+
+davar@carbon:~$ kubectl get all --all-namespaces
+NAMESPACE             NAME                                          READY   STATUS      RESTARTS   AGE
+kube-system           pod/helm-install-traefik-fbmkt                0/1     Completed   0          8d
+gitlab-managed-apps   pod/install-helm                              0/1     Completed   0          7d
+data                  pod/nifi-1                                    1/1     Running     0          22h
+data                  pod/queue-worker-5c76c4bd84-dg9db             1/1     Running     5          22h
+default               pod/busybox                                   1/1     Running     72         7d5h
+data                  pod/elasticsearch-0                           1/1     Running     4          25h
+data                  pod/logstash-7b445484d8-tn4ww                 1/1     Running     3          25h
+kube-system           pod/local-path-provisioner-7ff9579c6-88rrd    1/1     Running     40         8d
+kube-system           pod/coredns-66c464876b-lpfv4                  1/1     Running     17         7d4h
+cert-manager          pod/cert-manager-5597cff495-rrl52             1/1     Running     9          2d16h
+default               pod/dnsutils                                  1/1     Running     68         7d2h
+kube-system           pod/metrics-server-7b4f8b595-964g7            1/1     Running     13         8d
+data                  pod/kafka-client-util                         1/1     Running     4          26h
+data                  pod/nifi-0                                    1/1     Running     3          22h
+data                  pod/nats-7d86c64647-lmktk                     1/1     Running     3          22h
+data                  pod/mqtt-cbdf9fb4-c2grj                       1/1     Running     4          26h
+data                  pod/kibana-67c68595b7-hgmlb                   1/1     Running     3          25h
+data                  pod/prometheus-78dc788984-m7q4z               1/1     Running     3          22h
+kube-system           pod/traefik-5dd496474-xbdg2                   1/1     Running     17         8d
+cert-manager          pod/cert-manager-cainjector-bd5f9c764-z7bh6   1/1     Running     18         2d16h
+kube-system           pod/svclb-traefik-w9lq6                       2/2     Running     26         8d
+data                  pod/basic-auth-plugin-bc899c574-t55r2         1/1     Running     3          22h
+data                  pod/alertmanager-6fcb5b9b7b-c7hqb             1/1     Running     3          22h
+data                  pod/sentimentanalysis-9b98675f9-bf6jw         1/1     Running     7          21h
+cert-manager          pod/cert-manager-webhook-5f57f59fbc-49jk7     1/1     Running     10         2d16h
+data                  pod/gateway-58fd85c86b-5klq4                  2/2     Running     8          22h
+data                  pod/zookeeper-1                               1/1     Running     4          26h
+data                  pod/faas-idler-6df76476c9-6dhdp               1/1     Running     11         22h
+data                  pod/zookeeper-0                               1/1     Running     4          26h
+data                  pod/kafka-0                                   1/1     Running     6          26h
+data                  pod/kafka-1                                   1/1     Running     6          26h
+
+NAMESPACE      NAME                           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                      AGE
+default        service/kubernetes             ClusterIP      10.43.0.1       <none>          443/TCP                      8d
+kube-system    service/metrics-server         ClusterIP      10.43.139.93    <none>          443/TCP                      8d
+kube-system    service/traefik-prometheus     ClusterIP      10.43.78.216    <none>          9100/TCP                     8d
+kube-system    service/kube-dns               ClusterIP      10.43.0.10      <none>          53/UDP,53/TCP,9153/TCP       8d
+cert-manager   service/cert-manager           ClusterIP      10.43.162.66    <none>          9402/TCP                     2d16h
+cert-manager   service/cert-manager-webhook   ClusterIP      10.43.202.9     <none>          443/TCP                      2d16h
+data           service/zookeeper              ClusterIP      10.43.215.75    <none>          2181/TCP                     26h
+data           service/zookeeper-headless     ClusterIP      None            <none>          2181/TCP,3888/TCP,2888/TCP   26h
+data           service/kafka                  ClusterIP      10.43.166.24    <none>          9092/TCP                     26h
+data           service/kafka-headless         ClusterIP      None            <none>          9092/TCP                     26h
+data           service/mqtt                   ClusterIP      10.43.133.39    <none>          1883/TCP                     26h
+data           service/elasticsearch          ClusterIP      10.43.243.188   <none>          9200/TCP                     25h
+data           service/logstash               ClusterIP      10.43.69.80     <none>          5044/TCP                     25h
+data           service/kibana                 ClusterIP      10.43.142.124   <none>          80/TCP                       25h
+data           service/nifi                   ClusterIP      None            <none>          8080/TCP,6007/TCP            22h
+data           service/gateway                ClusterIP      10.43.169.202   <none>          8080/TCP                     22h
+data           service/nats                   ClusterIP      10.43.142.201   <none>          4222/TCP                     22h
+data           service/basic-auth-plugin      ClusterIP      10.43.70.145    <none>          8080/TCP                     22h
+data           service/alertmanager           ClusterIP      10.43.17.222    <none>          9093/TCP                     22h
+data           service/prometheus             ClusterIP      10.43.21.25     <none>          9090/TCP                     22h
+data           service/sentimentanalysis      ClusterIP      10.43.190.146   <none>          8080/TCP                     21h
+kube-system    service/traefik                LoadBalancer   10.43.100.221   192.168.0.101   80:31768/TCP,443:30058/TCP   8d
+
+NAMESPACE     NAME                           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+kube-system   daemonset.apps/svclb-traefik   1         1         1       1            1           <none>          8d
+
+NAMESPACE      NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+cert-manager   deployment.apps/cert-manager              1/1     1            1           2d16h
+data           deployment.apps/logstash                  1/1     1            1           25h
+data           deployment.apps/nats                      1/1     1            1           22h
+data           deployment.apps/queue-worker              1/1     1            1           22h
+kube-system    deployment.apps/coredns                   1/1     1            1           8d
+kube-system    deployment.apps/local-path-provisioner    1/1     1            1           8d
+kube-system    deployment.apps/metrics-server            1/1     1            1           8d
+data           deployment.apps/mqtt                      1/1     1            1           26h
+data           deployment.apps/kibana                    1/1     1            1           25h
+data           deployment.apps/prometheus                1/1     1            1           22h
+kube-system    deployment.apps/traefik                   1/1     1            1           8d
+cert-manager   deployment.apps/cert-manager-cainjector   1/1     1            1           2d16h
+data           deployment.apps/basic-auth-plugin         1/1     1            1           22h
+data           deployment.apps/alertmanager              1/1     1            1           22h
+data           deployment.apps/sentimentanalysis         1/1     1            1           21h
+cert-manager   deployment.apps/cert-manager-webhook      1/1     1            1           2d16h
+data           deployment.apps/gateway                   1/1     1            1           22h
+data           deployment.apps/faas-idler                1/1     1            1           22h
+
+NAMESPACE      NAME                                                DESIRED   CURRENT   READY   AGE
+cert-manager   replicaset.apps/cert-manager-5597cff495             1         1         1       2d16h
+data           replicaset.apps/logstash-7b445484d8                 1         1         1       25h
+data           replicaset.apps/nats-7d86c64647                     1         1         1       22h
+data           replicaset.apps/queue-worker-5c76c4bd84             1         1         1       22h
+kube-system    replicaset.apps/coredns-66c464876b                  1         1         1       8d
+kube-system    replicaset.apps/local-path-provisioner-7ff9579c6    1         1         1       8d
+kube-system    replicaset.apps/metrics-server-7b4f8b595            1         1         1       8d
+data           replicaset.apps/mqtt-cbdf9fb4                       1         1         1       26h
+data           replicaset.apps/kibana-67c68595b7                   1         1         1       25h
+data           replicaset.apps/prometheus-78dc788984               1         1         1       22h
+kube-system    replicaset.apps/traefik-5dd496474                   1         1         1       8d
+cert-manager   replicaset.apps/cert-manager-cainjector-bd5f9c764   1         1         1       2d16h
+data           replicaset.apps/basic-auth-plugin-bc899c574         1         1         1       22h
+data           replicaset.apps/alertmanager-6fcb5b9b7b             1         1         1       22h
+data           replicaset.apps/sentimentanalysis-9b98675f9         1         1         1       21h
+cert-manager   replicaset.apps/cert-manager-webhook-5f57f59fbc     1         1         1       2d16h
+data           replicaset.apps/gateway-58fd85c86b                  1         1         1       22h
+data           replicaset.apps/faas-idler-6df76476c9               1         1         1       22h
+
+NAMESPACE   NAME                             READY   AGE
+data        statefulset.apps/elasticsearch   1/1     25h
+data        statefulset.apps/nifi            1/2     22h
+data        statefulset.apps/zookeeper       2/2     26h
+data        statefulset.apps/kafka           2/2     26h
+
+NAMESPACE     NAME                             COMPLETIONS   DURATION   AGE
+kube-system   job.batch/helm-install-traefik   1/1           44s        8d
+
+davar@carbon:~$ kubectl get ingress --all-namespaces
+NAMESPACE   NAME               CLASS    HOSTS                    ADDRESS         PORTS     AGE
+data        kibana             <none>   kib.data.davar.com       192.168.0.101   80, 443   24h
+data        nifi               <none>   nifi.data.davar.com      192.168.0.101   80, 443   22h
+data        openfaas-ingress   <none>   gateway.openfaas.local                   80        22h
+data        faas               <none>   faas.data.davar.com      192.168.0.101   80, 443   22h
+
+
+```
+
 ### GitLab (in-cluster CI/CD)
 
 Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
