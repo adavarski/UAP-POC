@@ -377,28 +377,10 @@ kubectl apply -f ./003-data/000-namespace/005-clusterissuer.yml
 ### Monitoring
 
 ```
-git clone git@github.com:coreos/kube-prometheus.git
-cd kube-prometheus
-git checkout v0.1.0
+# Create the namespace and CRDs, and then wait for them to be availble before creating the remaining resources
+kubectl create -f manifests/setup
+until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
 kubectl create -f manifests/
-```
-Verify the resources are ready before proceeding.
-
-```
-until kubectl get customresourcedefinitions servicemonitors.
-monitoring.coreos.com ; do date; sleep 1; echo ""; done
-until kubectl get servicemonitors --all-namespaces ; do date;
-sleep 1; echo ""; done
-```
-Apply the manifests.
-
-```
-kubectl apply -f manifests/
-```
-Note: This command sometimes may need to be done twice (to work around a race condition).
-
-Visually monitor the new cluster by port-forwarding Grafana to a local workstation:
-```
 $ kubectl --namespace monitoring port-forward svc/grafana 3000
 ````
 Open http://localhost:3000 on a local workstation, and log in to Grafana with the default administrator credentials, username: admin, password: admin. Explore the prebuilt dashboards for monitoring many aspects of the Kubernetes cluster, including Nodes, Namespaces, and Pods.
