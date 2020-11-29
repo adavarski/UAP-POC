@@ -377,6 +377,8 @@ kubectl apply -f ./003-data/000-namespace/005-clusterissuer.yml
 ### Monitoring
 
 ```
+git clone git@github.com:coreos/kube-prometheus.git
+cd kube-prometheus
 # Create the namespace and CRDs, and then wait for them to be availble before creating the remaining resources
 kubectl create -f manifests/setup
 until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
