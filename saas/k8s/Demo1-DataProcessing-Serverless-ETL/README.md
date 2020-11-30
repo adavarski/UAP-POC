@@ -259,7 +259,7 @@ values to floats:
 df = df.set_index(['Date'])
 df = df.astype(float)
 ```
-Print the first five records (as shown in Figure 9-11):
+Print the first five records:
 ```
 df.head()
 ```
