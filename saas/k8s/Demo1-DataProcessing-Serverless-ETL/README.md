@@ -16,7 +16,7 @@ Test serverless function:
 $ echo "Kubernetes is easy" | faas-cli invoke sentimentanalysis -g https://faas.data.davar.com/ --tls-no-verify
 {"polarity": 0.43333333333333335, "sentence_count": 1, "subjectivity": 0.8333333333333334}
 
-# Finally, test public access to the new Function with cURL:
+# Test public access to the new Function with cURL:
 $ curl -k -X POST -d "People are kind"  https://faas.data.davar.com/function/sentimentanalysis
 {"polarity": 0.6, "sentence_count": 1, "subjectivity": 0.9}
 ```
