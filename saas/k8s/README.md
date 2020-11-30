@@ -673,4 +673,10 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 
 ## Demo1: [DataProcessing: Serverless:OpenFaaS+ETL:Apache Nifi](https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/README.md)
 
+## Clean environment
+
+```
+kubectl delete -f ./cluster-davar-eth/000-global/00-namespace.yml
+```
+Note: all resources/objects into data namespace will be auto-removed by k8s.
 
