@@ -4,7 +4,7 @@ The following example ETL data pipeline extracts messages from Twitter with the 
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/8-ETL_NiFi_OpenFaaS_demo_architecture.png" width="800">
 
-Prerequisite:
+### Prerequisite:
 [Setup k8s environment](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s#k3s-default-k8s-local-development-environment-howto)
 
 ###  Sererless: OpenFaaS -> Install Sentiment Analysis
