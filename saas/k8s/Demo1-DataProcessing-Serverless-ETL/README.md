@@ -82,8 +82,146 @@ Example output:
 
 ```
 
+### JupyterLab 
 
+Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
+Build custom JupyterLab docker image
+```
+$ cd ./JupyterLab
+$ docker build -t jupyterlab-eth .
+$ docker tag jupyterlab-eth:latest davarski/jupyterlab-eth:latest
+$ docker login 
+$ docker push davarski/jupyterlab-eth:latest
+```
+Run Jupyter Notebook
+
+```
+$ sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/k3s-config-jupyter
+$ sed -i "s/127.0.0.1/192.168.0.101/" ~/.kube/k3s-config-jupyter
+$ docker run --rm --name jl -p 8888:8888 \
+   -v "$(pwd)":"/home/jovyan/work" \
+   -v "$HOME/.kube/k3s-config-jupyter":"/home/jovyan/.kube/config" \
+   --user root \
+   -e GRANT_SUDO=yes \
+   -e JUPYTER_ENABLE_LAB=yes -e RESTARTABLE=yes \
+   davarski/jupyterlab-eth:latest
+```
+Example:
+```
+$ docker run --rm --name jl -p 8888:8888 \
+>    -v "$(pwd)":"/home/jovyan/work" \
+>    -v "$HOME/.kube/k3s-config-jupyter":"/home/jovyan/.kube/config" \
+>    --user root \
+>    -e GRANT_SUDO=yes \
+>    -e JUPYTER_ENABLE_LAB=yes -e RESTARTABLE=yes \
+>    davarski/jupyterlab-eth:latest
+
+Set username to: jovyan
+usermod: no changes
+Granting jovyan sudo access and appending /opt/conda/bin to sudo PATH
+Executing the command: jupyter lab
+[I 21:37:15.811 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 21:37:16.594 LabApp] Loading IPython parallel extension
+[I 21:37:16.614 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 21:37:16.614 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[W 21:37:16.623 LabApp] JupyterLab server extension not enabled, manually loading...
+[I 21:37:16.638 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 21:37:16.638 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[I 21:37:16.639 LabApp] Serving notebooks from local directory: /home/jovyan
+[I 21:37:16.639 LabApp] The Jupyter Notebook is running at:
+[I 21:37:16.639 LabApp] http://(e1696ffe20ab or 127.0.0.1):8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+[I 21:37:16.639 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 21:37:16.648 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-17-open.html
+    Or copy and paste one of these URLs:
+        http://(e1696ffe20ab or 127.0.0.1):8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+```
+Open IDE in browser: http://127.0.0.1:8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+
+Within the Docker container (at localhost:8888), under the section titled Other within the running Jupyter Notebook, chose Terminal. Once the terminal launches, provide the following command to port-forward all services running in the data Namespace on the k8s cluster 
+```
+sudo kubefwd svc -n data
+```
+<img src="https://github.com/adavarski/k8s-Blockchain-Ethereum-playground/blob/main/pictures/JupyterLab-kubefwd.png" width="800">
+
+The utility kubefwd connects and port-forwards Pods backing Services on a remote Kubernetes cluster to a matching set of DNS names and ports on the local workstation (in this case a Jupyter Notebook). Once kubefwd is running, connections to services such as http://eth-geth-tx:8545 are possible just as they are from within the remote cluster.
+
+Create a new Python 3 Jupyter Notebook; copy and execute the following code examples within individual cells.
+
+```
+!pip install elasticsearch==7.6.0
+```
+```
+from elasticsearch import Elasticsearch
+import pandas as pd
+from matplotlib import pyplot
+```
+Create an Elasticsearch client connected to the elasticsearch service
+running in the Kubernetes Namespace data:
+
+```
+es = Elasticsearch(["elasticsearch:9200"])
+```
+
+Use the Elasticsearch client’s search function to query the index
+pattern sentiment-*, and store the results in the variable response:
+```
+response = es.search(
+    index="sentiment-*",
+    body={
+        "size": 10000,
+        "query": {
+            "range": {
+                "Date": {
+                    "gt": "now-1h"
+                }
+            }
+        },
+        "_source": [
+            "Date",
+            "polarity",
+            "subjectivity" ],
+    }
+)
+```
+Map and transpose the response from Elasticsearch into Pandas
+DataFrame:
+```
+
+df = pd.concat(map(pd.DataFrame.from_dict,
+                   response['hits']['hits']),
+               axis=1)['_source'].T
+```
+
+Convert the Date column to a Python Datetime data type:
+```
+datefmt = '%a, %d %b %Y %H:%M:%S GMT'
+df['Date'] = pd.to_datetime(df['Date'], format=datefmt)
+```
+
+Assign the Date field to the DataFrame index and convert all numeric
+values to floats:
+```
+df = df.set_index(['Date'])
+df = df.astype(float)
+```
+Print the first five records (as shown in Figure 9-11):
+```
+df.head()
+```
+Sample Sentiment Analysis DataFrame rows
+
+<img>
+
+Finally, plot sentiment by calling the plot function of the DataFrame,
+assigning polarity to the y axis :
+
+```
+df.plot(y=["polarity"], figsize=(13,5))
+```
 
 
 
