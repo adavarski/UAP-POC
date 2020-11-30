@@ -237,7 +237,7 @@ response = es.search(
         "query": {
             "range": {
                 "Date": {
-                    "gt": "now-1h"
+                    "gt": "now-5h"
                 }
             }
         },
