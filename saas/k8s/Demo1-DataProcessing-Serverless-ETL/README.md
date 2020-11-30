@@ -2,7 +2,7 @@
 
 The following example ETL data pipeline extracts messages from Twitter with the NiFi Twitter processor and publishes them to Apache Kafka topic. Subsequently, a Kafka processor consumes messages in the topic, preparing and sending them to the OpenFaaS SentimentAnalysis Function, finally storing the results in an Elasticsearch index for analysis within a JupyterLab environment. This example demonstrates the ease in which Kubernetes manages all the required workloads in a distributed, highly available, monitored, and unified control plane.
 
-<img>
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/8-ETL_NiFi_OpenFaaS_demo_architecture.png" width="800">
 
 ###  Sererless: OpenFaaS -> Install Sentiment Analysis
 
@@ -196,7 +196,7 @@ Within the Docker container (at localhost:8888), under the section titled Other 
 ```
 sudo kubefwd svc -n data
 ```
-<img src="https://github.com/adavarski/k8s-Blockchain-Ethereum-playground/blob/main/pictures/JupyterLab-kubefwd.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/ETL-JupyterLab-forward-svc.png" width="800">
 
 The utility kubefwd connects and port-forwards Pods backing Services on a remote Kubernetes cluster to a matching set of DNS names and ports on the local workstation (in this case a Jupyter Notebook). Once kubefwd is running, connections to services such as http://eth-geth-tx:8545 are possible just as they are from within the remote cluster.
 
