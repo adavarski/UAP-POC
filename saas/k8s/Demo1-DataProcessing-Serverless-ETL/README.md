@@ -24,7 +24,7 @@ The OpenFaaS Sentiment Analysis Function is an excellent example of a focused, s
 
 ### ETL: Apache NiFi (Example ETL Data Pipeline)
 
-#### Upload template [nifi-demo](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/nifi-demo) and polulate NiFi GetTwitter processor with credentials.
+#### Upload template [nifi-demo](https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/nifi-demo/templates/Twitter_Sentiment.xml) and polulate NiFi GetTwitter processor with credentials.
 
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/Nifi-GetTwitter-populate-credentials.png" width="800">
