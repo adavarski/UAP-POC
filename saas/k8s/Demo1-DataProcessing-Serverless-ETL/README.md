@@ -273,9 +273,6 @@ Print the first five records:
 ```
 df.head()
 ```
-Sample Sentiment Analysis DataFrame rows
-
-<img>
 
 Finally, plot sentiment by calling the plot function of the DataFrame,
 assigning polarity to the y axis :
@@ -283,6 +280,9 @@ assigning polarity to the y axis :
 ```
 df.plot(y=["polarity"], figsize=(13,5))
 ```
+
+Example Output:
+
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-PythonNotebook.png" width="800">
 
 
