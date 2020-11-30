@@ -28,7 +28,7 @@ The OpenFaaS Sentiment Analysis Function is an excellent example of a focused, s
 
 Apache NiFi flow overvew:
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/Nifi-DataFlow.png.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/Nifi-DataFlow.png" width="800">
 
 GetTwitter processor (credentials):
 
