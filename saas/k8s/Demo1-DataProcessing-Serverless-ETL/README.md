@@ -79,8 +79,59 @@ The following query aggregates the last hour of the polarity metric from Sentime
 
 Example output:
 ```
-
+./PostSentimentAnalysisQuery.sh |  python -m json.tool
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   659  100   336  100   323    962    925 --:--:-- --:--:-- --:--:--  1888
+{
+  "took": 5,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 2276,
+      "relation": "eq"
+    },
+    "max_score": null,
+    "hits": []
+  },
+  "aggregations": {
+    "polarity": {
+      "buckets": [
+        {
+          "key": -1,
+          "doc_count": 40
+        },
+        
+        {
+          "key": -0.5,
+          "doc_count":
+        },
+        {
+          "key": 0,
+          "doc_count":
+        },
+        {
+          "key": 0.5,
+          "doc_count":
+        },
+        {
+          "key": 1,
+          "doc_count":
+        }
+      ]
+    }
+  }
+}
 ```
+The example results show there were more negative Twitter posts ("doc_count": 40) regarding COVID-19 than
+positive ("doc_count": 4) in the last hour.
+
 
 ### JupyterLab 
 
