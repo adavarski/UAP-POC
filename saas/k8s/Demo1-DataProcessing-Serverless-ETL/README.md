@@ -4,6 +4,9 @@ The following example ETL data pipeline extracts messages from Twitter with the 
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/8-ETL_NiFi_OpenFaaS_demo_architecture.png" width="800">
 
+Prerequisite:
+[Setup k8s environment](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s#k3s-default-k8s-local-development-environment-howto)
+
 ###  Sererless: OpenFaaS -> Install Sentiment Analysis
 
 Cloud vendors market the central appeal of Serverless technology, the ability to allow developers to focus solely on business logic, abstracting and managing infrastructure, operating systems, and runtime and application layers. The major cloud vendors’ offerings include Amazon’s AWS Lambda, Microsoft’s Azure Functions, Google Cloud Functions, and IBM Cloud Functions. These products can significantly reduce time to market and technical debt for many organizations, albeit at the cost of vendor lock-in. Organizations already invested in Kubernetes, however, can take advantage of the growing number of open source, vendor-neutral Serverless platforms such as Apache OpenWhisk, Kubeless, and OpenFaaS. Knative is a popular choice for those looking to develop a custom Serverless platform. We will use OpenFaaS in this demo ETL application and how Serverless/Functions as a Service(FaaS) can make an excellent addition to any data platform.
