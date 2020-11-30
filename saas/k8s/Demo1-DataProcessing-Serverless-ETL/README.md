@@ -198,7 +198,7 @@ sudo kubefwd svc -n data
 ```
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/ETL-JupyterLab-forward-svc.png" width="800">
 
-The utility kubefwd connects and port-forwards Pods backing Services on a remote Kubernetes cluster to a matching set of DNS names and ports on the local workstation (in this case a Jupyter Notebook). Once kubefwd is running, connections to services such as http://eth-geth-tx:8545 are possible just as they are from within the remote cluster.
+The utility kubefwd connects and port-forwards Pods backing Services on a remote Kubernetes cluster to a matching set of DNS names and ports on the local workstation (in this case a Jupyter Notebook). Once kubefwd is running, connections to services such as http://elasticsearch:9200 are possible just as they are from within the remote cluster.
 
 Create a new Python 3 Jupyter Notebook; copy and execute the following code examples within individual cells.
 
