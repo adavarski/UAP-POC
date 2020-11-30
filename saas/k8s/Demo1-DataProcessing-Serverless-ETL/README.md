@@ -143,7 +143,7 @@ The example results show there were more negative Twitter posts ("doc_count": 40
 positive ("doc_count": 4) in the last hour.
 
 
-### JupyterLab 
+#### JupyterLab 
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
@@ -286,7 +286,7 @@ Example Output:
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-PythonNotebook.png" width="800">
 
 
-#### Kibana
+### Kibana
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/Kibana.png" width="800">
 
