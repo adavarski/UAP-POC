@@ -201,6 +201,7 @@ stats.eth      IN       A       192.168.0.101
 kib.data       IN       A       192.168.0.101
 nifi.data      IN       A       192.168.0.101
 faas.data      IN       A       192.168.0.101
+minio.data     IN       A       192.168.0.101
 
 
 ;CNAME Record
@@ -451,6 +452,13 @@ $ curl -sLSf https://cli.openfaas.com | sudo sh
 $ faas-cli
 ```
 
+### mqtt
+```
+kubectl apply -f ./003-data/040-mqtt/10-service-headless.yml
+kubectl apply -f ./003-data/040-mqtt/20-configmap.yml
+kubectl apply -f ./003-data/040-mqtt/30-deployment.yml
+```
+
 ## Check k8s development cluster:
 
 ```
@@ -644,6 +652,26 @@ data        openfaas-ingress   <none>   gateway.openfaas.local                  
 data        faas               <none>   faas.data.davar.com      192.168.0.101   80, 443   22h
 
 
+```
+
+### MinIO 
+
+Install the operator by running the following command:
+```
+$ kubectl create -f https://operatorhub.io/install/minio-operator.yaml
+```
+This Operator will be installed in the "my-minio-operator" namespace and will be usable from this namespace only.
+
+After install, watch your operator come up using next command.
+```
+    $ kubectl get csv -n my-minio-operator
+```
+Setup MinIO :
+```
+sudo mkdir /mnt/disks/minio
+kubectl apply -f ./003-data/080-minio/10-LocalPV.yml
+kubectl apply -f ./003-data/080-minio/40-cluster.yml
+kubectl apply -f ./003-data/080-minio/50-ingress.ym
 ```
 
 ### GitLab (in-cluster CI/CD)
