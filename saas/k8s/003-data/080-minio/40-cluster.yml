@@ -5,8 +5,8 @@ metadata:
   name: minio-creds-secret
 type: Opaque
 stringData:
-  accesskey: REPLACE_WITH_STRONG_PASSWORD
-  secretkey: REPLACE_WITH_STRONG_PASSWORD
+  accesskey: davar
+  secretkey: Sam0traki!
 ---
 apiVersion: minio.min.io/v1
 kind: Tenant
