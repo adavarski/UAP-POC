@@ -5,8 +5,8 @@ metadata:
   name: minio-creds-secret
 type: Opaque
 stringData:
-  accesskey: davar
-  secretkey: Sam0traki!
+  accesskey: bWluaW8=
+  secretkey: bWluaW8xMjM=
 ---
 apiVersion: minio.min.io/v1
 kind: Tenant
