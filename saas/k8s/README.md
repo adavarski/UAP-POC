@@ -657,14 +657,8 @@ data        faas               <none>   faas.data.davar.com      192.168.0.101  
 ### MinIO 
 
 Install the operator by running the following command:
-```
-$ kubectl create -f https://operatorhub.io/install/minio-operator.yaml
-```
-This Operator will be installed in the "my-minio-operator" namespace and will be usable from this namespace only.
-
-After install, watch your operator come up using next command.
-```
-    $ kubectl get csv -n my-minio-operator
+```shell script
+kubectl apply -k github.com/minio/operator
 ```
 Setup MinIO :
 ```
