@@ -1,11 +1,13 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: data
+  namespace: data  
   name: minio-creds-secret
 type: Opaque
 stringData:
+  ## Access Key for MinIO Tenant, base64 encoded (echo -n 'minio' | base64)
   accesskey: bWluaW8=
+  ## Secret Key for MinIO Tenant, base64 encoded (echo -n 'minio123' | base64)
   secretkey: bWluaW8xMjM=
 ---
 apiVersion: minio.min.io/v1
@@ -24,7 +26,7 @@ spec:
   zones:
     - name: "zone-0"
       servers: 1
-      volumesPerServer: 1
+      volumesPerServer: 4
       volumeClaimTemplate:
         metadata:
           name: miniodata
