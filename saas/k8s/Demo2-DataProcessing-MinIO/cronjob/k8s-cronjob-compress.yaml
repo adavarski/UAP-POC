@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: compress
+  namespace: data
+spec:
+  schedule: "0,5,10,15,20,25,30,35,40,45,50,55  * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: compress
+              image: davarski/compressor:v1.0.0
+              args: ["-f=upload", "-k=donors.csv", "-t=processed"]
+              env:
+                - name: ENDPOINT
+                  value: "minio-service.data:9000"
+                - name: ACCESS_KEY_ID
+                  value: "minio123"
+                - name: ACCESS_KEY
+                  value: "minio"
+                - name: ENDPOINT_SSL
+                  value: "false"
