@@ -58,7 +58,7 @@ $ mc admin service restart minio-cluster ## optional
 
 ```
 
-
+```
 wget https://golang.org/dl/go1.15.5.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.15.5.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
@@ -135,6 +135,7 @@ Note As of Go 1.14, 11 Go Modules are ready for production use and
 considered the official dependency management system for Go. All
 developers are encouraged to use Go Modules for new projects along
 with migrating any existing projects.
+```
 
 $ export ENDPOINT=minio.data.davar.com
 $ export ACCESS_KEY_ID=minio
