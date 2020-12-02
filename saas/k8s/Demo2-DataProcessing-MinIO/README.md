@@ -9,7 +9,7 @@
 $ wget https://dl.min.io/client/mc/release/linux-amd64/mc && chmod +x mc && sudo mv mc /usr/local/bin
 ```
 
-### Configure mc and create buckets 
+### Configure mc and create MinIO buckets 
 ```
 $ mc config host add minio-cluster https://minio.data.davar.com minio minio123 --insecure
 mc: Configuration written to `/home/davar/.mc/config.json`. Please update your access credentials.
@@ -76,7 +76,6 @@ __confluent.support.metrics
 __consumer_offsets
 messages
 metrics
-test
 twitter
 upload
 root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 3
@@ -160,10 +159,7 @@ $ go env
 
 OR logout/login from console (go version)
 
-Note As of Go 1.14, Go Modules are ready for production use and
-considered the official dependency management system for Go. All
-developers are encouraged to use Go Modules for new projects along
-with migrating any existing projects.
+Note: As of Go 1.14, Go Modules are ready for production use and considered the official dependency management system for Go. All developers are encouraged to use Go Modules for new projects along with migrating any existing projects.
 ```
 ### Create Go compressor app
 ```
@@ -171,8 +167,8 @@ mkdir -p ~/workspace/compressor
 cd ~/workspace/compressor/
 go mod init github.com/compressor
 mkdir cmd
-cp GIT_CLONE_LOCATION/composer/compressor.go cmd/
-cp GIT_CLONE_LOCATION/composer/Dockerfile .
+cp GIT_CLONE_REPO_LOCATION/composer/compressor.go cmd/
+cp GIT_CLONE_REPO_LOCATION/composer/Dockerfile .
 
 ```
 Test go app (execute the compressor application configured with the
@@ -197,7 +193,7 @@ go run ./cmd/compressor.go -f upload -k donors.csv -t processed
 $ mc rm minio-cluster/processed/donors.csv.gz
 
 ```
-### Build/Test/Push go compressor app
+### Build/Push/Test go compressor app docker image
 
 ```
 docker build -t davarski/compressor:v1.0.0 .
@@ -212,7 +208,7 @@ $ docker run -e ENDPOINT=$ENDPOINT -e ACCESS_KEY_ID=$ACCESS_KEY_ID -e ACCESS_KEY
 2020/12/02 18:06:49 COMPLETE PutObject
 
 ```
-Check kafka topic and elasticsearch index:
+Check kafka topic upload and elasticsearch processed index:
 
 ```
 $ kubectl exec -it kafka-client-util bash -n data
@@ -222,12 +218,11 @@ __confluent.support.metrics
 __consumer_offsets
 messages
 metrics
-test
 twitter
 upload
 
-kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 1|python -m json.tool
-kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 5
+root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 1|python -m json.tool
+root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 5
 
 root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning  -max-messages 9 |tail -n1
 Processed a total of 9 messages
@@ -293,6 +288,10 @@ Processed a total of 9 messages
 Open a terminal and port-forward Elasticsearch:
 ```
 $ kubectl port-forward elasticsearch-0 9200:9200 -n data
+Forwarding from 127.0.0.1:9200 -> 9200
+Forwarding from [::1]:9200 -> 9200
+Handling connection for 9200
+Handling connection for 9200
 ```
 
 The following command returns all records from indexes beginning with processed-:
@@ -392,4 +391,6 @@ $ kubectl create -f cronjob/k8s-cronjob-compress.yaml
 ```
 
 ### Serverless Object Processing
-Automating the processes developed using Serverless (Functions as a Service) : OpenFaaS function.
+TODO: Automating the processes developed using Serverless (Functions as a Service) : OpenFaaS function.
+
+
