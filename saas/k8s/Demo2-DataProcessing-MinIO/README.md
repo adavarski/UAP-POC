@@ -187,7 +187,7 @@ $  mc ls minio-cluster/upload
 [2020-12-02 10:42:59 EET]    10B test.csv
 
 ```
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/minio-bucket-upload.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/minio-bucket-upload.png" width="800">
 
 ```
 $ export ENDPOINT=minio.data.davar.com
@@ -383,7 +383,7 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
 
 ### Kibana : create index pattern (processed-*) and Discover
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/kibana-minio-processed--index-discovery.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/kibana-minio-processed--index-discovery.png" width="800">
 
 
 ### k8s cronjob test (Object processing using k8s cronjob)
