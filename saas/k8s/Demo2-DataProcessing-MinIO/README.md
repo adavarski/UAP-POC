@@ -18,16 +18,20 @@ mc: Initialized share uploads `/home/davar/.mc/share/uploads.json` file.
 mc: Initialized share downloads `/home/davar/.mc/share/downloads.json` file.
 Added `minio-cluster` successfully.
 ```
-Note: --insecure, because of self-signed sertificate (ingress)
+Note: --insecure, because of self-signed certificate (ingress)
 
 Edit /home/davar/.mc/config.json and change "url": "https://minio.data.davar.com" to "url": "http://minio.data.davar.com", because we will not use TLS (`mc --insecure`, if we use https) during this demo.
 
 ```
-mc mb minio-cluster/upload
-mc mb minio-cluster/processed
-mc mb minio-cluster/twitter
-mc ls minio-cluster
-mc config host list
+$ mc mb minio-cluster/upload
+$ mc mb minio-cluster/processed
+$ mc mb minio-cluster/twitter
+$ mc config host list
+$ mc ls minio-cluster 
+[2020-12-02 09:56:08 EET]     0B processed/
+[2020-12-02 09:56:20 EET]     0B twitter/
+[2020-12-02 09:55:57 EET]     0B upload/
+$ mc ls minio-cluster/upload
 ```
 ### Configure MinIO Events 
 ```
@@ -60,14 +64,13 @@ $ mc event add minio-cluster/processed arn:minio:sqs::1:elasticsearch --event pu
 $ mc admin service restart minio-cluster ## optional
 
 ```
-### Test MinIO Events/Notifications: Create test.cvs file and cp to upload bucket and check kafka topic: upload
+### Test MinIO Events/Notifications: Create test.cvs file, mc cp to upload bucket and check kafka topic: upload
 
 ```
 $ echo test > test.csv
 $ mc cp test1.csv minio-cluster/upload
 
-kubectl exec -it kafka-client-util bash -n data
-kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
+$ kubectl exec -it kafka-client-util bash -n data
 root@kafka-client-util:/# kafka-topics --zookeeper zookeeper-headless:2181 --list
 __confluent.support.metrics
 __consumer_offsets
@@ -78,8 +81,7 @@ twitter
 upload
 root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 3
 {"EventName":"s3:ObjectCreated:Put","Key":"upload/test.csv","Records":[{"eventVersion":"2.0","eventSource":"minio:s3","awsRegion":"","eventTime":"2020-12-02T08:42:59.822Z","eventName":"s3:ObjectCreated:Put","userIdentity":{"principalId":"minio"},"requestParameters":{"accessKey":"minio","region":"","sourceIPAddress":"10.42.0.1"},"responseElements":{"content-length":"0","x-amz-request-id":"164CD9BE9FBE5C85","x-minio-deployment-id":"85826866-b2ff-4c9e-80c6-48d91e742c43","x-minio-origin-endpoint":"http://10.42.0.135:9000"},"s3":{"s3SchemaVersion":"1.0","configurationId":"Config","bucket":{"name":"upload","ownerIdentity":{"principalId":"minio"},"arn":"arn:aws:s3:::upload"},"object":{"key":"test.csv","eTag":"d41d8cd98f00b204e9800998ecf8427e","contentType":"text/csv","userMetadata":{"content-type":"text/csv"},"sequencer":"164CD9BEA0672963"}},"source":{"host":"10.42.0.1","port":"","userAgent":"MinIO (linux; amd64) minio-go/v7.0.6 mc/2020-11-25T23:04:07Z"}}]}
-{"EventName":"s3:ObjectCreated:Put","Key":"upload/test1.csv","Records":[{"eventVersion":"2.0","eventSource":"minio:s3","awsRegion":"","eventTime":"2020-12-02T08:44:29.800Z","eventName":"s3:ObjectCreated:Put","userIdentity":{"principalId":"minio"},"requestParameters":{"accessKey":"minio","region":"","sourceIPAddress":"10.42.0.1"},"responseElements":{"content-length":"0","x-amz-request-id":"164CD9D392DE414D","x-minio-deployment-id":"85826866-b2ff-4c9e-80c6-48d91e742c43","x-minio-origin-endpoint":"http://10.42.0.135:9000"},"s3":{"s3SchemaVersion":"1.0","configurationId":"Config","bucket":{"name":"upload","ownerIdentity":{"principalId":"minio"},"arn":"arn:aws:s3:::upload"},"object":{"key":"test1.csv","size":10,"eTag":"71f74d0894d9ce89e22c678f0d8778b2","contentType":"text/csv","userMetadata":{"content-type":"text/csv"},"sequencer":"164CD9D393844E8B"}},"source":{"host":"10.42.0.1","port":"","userAgent":"MinIO (linux; amd64) minio-go/v7.0.6 mc/2020-11-25T23:04:07Z"}}]}
-^CProcessed a total of 2 messages
+^CProcessed a total of 1 messages
 
 root@kafka-client-util:/# kafka-console-consumer --bootstrap-server kafka:9092 --topic upload --from-beginning -max-messages 1|python -m json.tool
 Processed a total of 1 messages
@@ -140,9 +142,10 @@ Processed a total of 1 messages
 
 ### Install/Configure Go  
 ```
-wget https://golang.org/dl/go1.15.5.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.15.5.linux-amd64.tar.gz
+$ wget https://golang.org/dl/go1.15.5.linux-amd64.tar.gz
+$ sudo tar -C /usr/local -xzf go1.15.5.linux-amd64.tar.gz
 
+# setup go dev environment
 $ tail -n5 ~/.bashrc 
 
 export GOROOT=/usr/local/go
@@ -153,13 +156,9 @@ export PATH=${GOPATH}/bin:${PATH}
 davar@carbon:~$ source ~/.bashrc 
 davar@carbon:~$ go version
 go version go1.15.5 linux/amd64
-
-OR logout/login from console:
-
-$ go version
-go version go1.15.5 linux/amd64
 $ go env
 
+OR logout/login from console (go version)
 
 Note As of Go 1.14, Go Modules are ready for production use and
 considered the official dependency management system for Go. All
@@ -176,15 +175,21 @@ cp GIT_CLONE_LOCATION/composer/compressor.go cmd/
 cp GIT_CLONE_LOCATION/composer/Dockerfile .
 
 ```
-Test app:Execute the compressor application configured with the
-buckets upload and processed along with the object upload/donors.csv
+Test go app (execute the compressor application configured with the
+buckets upload and processed along with the object upload/donors.csv)
 
 ```
 $ for i in {1..1000000};do echo "test$i" >> donors.csv;done
 $ mc cp donors.csv minio-cluster/upload 
 donors.csv:                                   10.39 MiB / 10.39 MiB ┃▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┃ 171.63 MiB/s
+$  mc ls minio-cluster/upload
+[2020-12-02 20:06:16 EET]  10MiB donors.csv
+[2020-12-02 10:42:59 EET]    10B test.csv
 
+```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/minio-bucket-upload.png" width="600">
 
+```
 $ export ENDPOINT=minio.data.davar.com
 $ export ACCESS_KEY_ID=minio
 $ export ACCESS_KEY_SECRET=minio123
@@ -192,7 +197,7 @@ go run ./cmd/compressor.go -f upload -k donors.csv -t processed
 $ mc rm minio-cluster/processed/donors.csv.gz
 
 ```
-### Build/GitHub Push/Test go compressor app
+### Build/Test/Push go compressor app
 
 ```
 docker build -t davarski/compressor:v1.0.0 .
@@ -286,7 +291,9 @@ Processed a total of 9 messages
 ```
 
 Open a terminal and port-forward Elasticsearch:
+```
 $ kubectl port-forward elasticsearch-0 9200:9200 -n data
+```
 
 The following command returns all records from indexes beginning with processed-:
 
@@ -373,6 +380,11 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
     "took": 213
 }
 ```
+
+### Kibana : create index pattern (processed-*) and Discover
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/kibana-minio-processed--index-discovery.png" width="600">
+
 
 ### k8s cronjob test (Object processing using k8s cronjob)
 ```
