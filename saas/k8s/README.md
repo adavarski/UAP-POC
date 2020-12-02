@@ -735,7 +735,7 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 ## Clean environment
 
 ```
-kubectl delete -f ./003-data/000-global/00-namespace.yml
+kubectl delete -f ./003-data/000-namespace/00-namespace.yml
 ```
 Note: all resources/objects into data namespace will be auto-removed by k8s.
 
