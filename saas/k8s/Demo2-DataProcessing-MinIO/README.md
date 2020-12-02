@@ -57,23 +57,10 @@ $ mc event add minio-cluster/processed arn:minio:sqs::1:elasticsearch --event pu
 $ mc admin service restart minio-cluster ## optional
 
 ```
-
+### Install/Configure Go  
 ```
 wget https://golang.org/dl/go1.15.5.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.15.5.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
-export GOROOT=/usr/local/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-go version
-go env 
-mkdir -p ~/workspace/compressor
-cd ~/workspace/compressor/
-go mod init github.com/compressor
-mkdir cmd
-cp GIT_CLONE_LOCATION/composer/compressor.go cmd/
-cp GIT_CLONE_LOCATION/composer/Dockerfile .
-docker build -t davarski/compressor:v0.0.1 .
-docker push davarski/compressor:v0.0.1
 
 davar@carbon:~$ tail -n5 ~/.bashrc 
 
@@ -82,53 +69,15 @@ export PATH=${GOROOT}/bin:${PATH}
 export GOPATH=$HOME/go
 export PATH=${GOPATH}/bin:${PATH}
 
-davar@carbon:~$ go version
-go version go1.10.4 linux/amd64
 davar@carbon:~$ source ~/.bashrc 
 davar@carbon:~$ go version
 go version go1.15.5 linux/amd64
-
-
 
 OR logout and login :
 
 davar@carbon:~$ go version
 go version go1.15.5 linux/amd64
 davar@carbon:~$ go env
-GO111MODULE=""
-GOARCH="amd64"
-GOBIN=""
-GOCACHE="/home/davar/.cache/go-build"
-GOENV="/home/davar/.config/go/env"
-GOEXE=""
-GOFLAGS=""
-GOHOSTARCH="amd64"
-GOHOSTOS="linux"
-GOINSECURE=""
-GOMODCACHE="/home/davar/go/pkg/mod"
-GONOPROXY=""
-GONOSUMDB=""
-GOOS="linux"
-GOPATH="/home/davar/go"
-GOPRIVATE=""
-GOPROXY="https://proxy.golang.org,direct"
-GOROOT="/usr/local/go"
-GOSUMDB="sum.golang.org"
-GOTMPDIR=""
-GOTOOLDIR="/usr/local/go/pkg/tool/linux_amd64"
-GCCGO="gccgo"
-AR="ar"
-CC="gcc"
-CXX="g++"
-CGO_ENABLED="1"
-GOMOD=""
-CGO_CFLAGS="-g -O2"
-CGO_CPPFLAGS=""
-CGO_CXXFLAGS="-g -O2"
-CGO_FFLAGS="-g -O2"
-CGO_LDFLAGS="-g -O2"
-PKG_CONFIG="pkg-config"
-GOGCCFLAGS="-fPIC -m64 -pthread -fmessage-length=0 -fdebug-prefix-map=/tmp/go-build282563002=/tmp/go-build -gno-record-gcc-switches"
 
 
 Note As of Go 1.14, 11 Go Modules are ready for production use and
@@ -136,10 +85,31 @@ considered the official dependency management system for Go. All
 developers are encouraged to use Go Modules for new projects along
 with migrating any existing projects.
 ```
+### Create Go compress app
+```
+mkdir -p ~/workspace/compressor
+cd ~/workspace/compressor/
+go mod init github.com/compressor
+mkdir cmd
+cp GIT_CLONE_LOCATION/composer/compressor.go cmd/
+cp GIT_CLONE_LOCATION/composer/Dockerfile .
+```
+Test app:
+```
 
 $ export ENDPOINT=minio.data.davar.com
 $ export ACCESS_KEY_ID=minio
 $ export ACCESS_KEY_SECRET=minio123
+go run ./cmd/compressor.go -f upload -k donors.csv -t processed
+$ mc rm minio-cluster/processed/donors.csv.gz
+
+```
+### Build/Push/Test go compress app
+
+```
+docker build -t davarski/compressor:v1.0.0 .
+docker login
+docker push davarski/compressor:v1.0.0
 
 $ docker run -e ENDPOINT=$ENDPOINT -e ACCESS_KEY_ID=$ACCESS_KEY_ID -e ACCESS_KEY_SECRET=$ACCESS_KEY_SECRET -e ENDPOINT_SSL=false davarski/compressor:v1.0.0 -f=upload -k=donors.csv -t=processed
 2020/12/02 18:06:49 Starting download stream upload/donors.csv.
@@ -147,6 +117,10 @@ $ docker run -e ENDPOINT=$ENDPOINT -e ACCESS_KEY_ID=$ACCESS_KEY_ID -e ACCESS_KEY
 2020/12/02 18:06:49 Compress and stream.
 2020/12/02 18:06:49 Compressed: 10890288 bytes
 2020/12/02 18:06:49 COMPLETE PutObject
+
+$ mc rm minio-cluster/processed/donors.csv.gz
+```
+Check kafka topic and elasticsearch index
 
 ```
 $ kubectl exec -it kafka-client-util bash -n data
@@ -311,4 +285,9 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
     "timed_out": false,
     "took": 213
 }
+```
+
+### k8s cronjob test
+```
+$ kubectl create -f cronjob/k8s-cronjob-compress.yaml
 ```
