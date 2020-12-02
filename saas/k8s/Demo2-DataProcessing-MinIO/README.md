@@ -374,7 +374,10 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
 }
 ```
 
-### k8s cronjob test
+### k8s cronjob test (Object processing using k8s cronjob)
 ```
 $ kubectl create -f cronjob/k8s-cronjob-compress.yaml
 ```
+
+### Serverless Object Processing
+Automating the processes developed using Serverless (Functions as a Service) : OpenFaaS function.
