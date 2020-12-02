@@ -3,6 +3,9 @@
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/6-DataLakes_object_processin_pipeline.png" width="800">
 
+Data Lake as Object Storage: Build a Data Lake with Object Storage, implemented with MinIO. MinIO provides a distributed, fault-tolerant object storage system compatible with Amazon S3. MinIO is horizontally scalable and supports objects up to five terabytes, with no limit to the number of objects it may store. These capabilities alone meet the basic conceptual requirements of a Data Lake. However, MinIO is extensible though its support for events and a powerful S3-compatible query system. Transactional databases, data warehouses, and data marts are all technologies that intend to store and retrieve data in known structures. Organizations often need to store new and varied types of data, often whose form is not known or suitable for structured data systems. The concept of managing this idea of unlimited data in any conceivable form is known as a Data Lake. Traditionally, filesystems and block storage solutions store most file-based data that an organization wishes to gather and maintain outside of its database management systems. Filesystems and block storage systems are challenging to scale, with varying degrees of fault tolerance, distribution, and limited support for metadata and analytics. HDFS (Hadoop Distributed File System) has been a popular choice for organizations needing the conceptual advantage of a Data Lake. HDFS is complicated to set up and maintain, typically requiring dedicated infrastructure and one or more experts to keep it operational and performant.
+
+
 ### Install MinIO client
 
 ```
