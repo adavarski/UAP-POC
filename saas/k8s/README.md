@@ -421,6 +421,38 @@ kubectl apply -f ./003-data/052-kibana/50-ingress.yml
 ```
 Note: isit https://kib.data.davar.com in a web browser for Kibana UI access.
 
+```
+$ kubectl port-forward elasticsearch-0 9200:9200 -n data
+$ curl http://localhost:9200/_cluster/health
+```
+Note: Elasticsearch is designed to shard and replicate data across a large cluster of nodes. Single-node development clusters only support a single
+shard per index and are unable to replicate data because there are no other nodes available. Using curl, POST a (JSON) template to this single-node
+cluster, informing Elasticsearch to configure any new indexes with one shard and zero replicas.
+```
+$ cat <<EOF | curl -X POST \
+-H "Content-Type: application/json" \
+-d @- http://localhost:9200/_template/all
+{
+  "index_patterns": "*",
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  }
+}
+EOF
+```
+Test Logstash(Kafka)/Elasticsearch:
+```
+$ kubectl -n data exec -it kafka-client-util -- \
+bash -c "echo '{\"usr\": 1, \"msg\": \"Hello ES\" }' | \
+kafka-console-producer --broker-list kafka:9092 \
+--topic messages"
+$ curl http://localhost:9200/es-cluster-messages-*/_search
+# Review the default mapping generated for the new index
+$ curl http://localhost:9200/es-cluster-messages-*/_mapping
+
+```
+
 ### ETL (Routing and Transformation)
 
 ```
