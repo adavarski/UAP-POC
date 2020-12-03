@@ -1,0 +1,38 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: jupyter-lab
+  namespace: data
+rules:
+# Just an example, feel free to change it
+rules:
+  - apiGroups: ["","batch"]
+    resources: ["pods",
+                "pods/log",
+                "events",
+                "services",
+                "jobs",
+                "jobs/status"]
+    verbs: ["delete",
+            "create",
+            "get",
+            "watch",
+            "list",
+            "endpoints",
+            "patch",
+            "events"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: jupyter-lab
+  namespace: data
+subjects:
+  - kind: ServiceAccount
+    name: default
+roleRef:
+  kind: Role
+  name: jupyter-lab
+  apiGroup: rbac.authorization.k8s.io
