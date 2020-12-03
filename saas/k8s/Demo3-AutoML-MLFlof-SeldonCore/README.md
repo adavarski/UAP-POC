@@ -183,11 +183,12 @@ Elasticnet model (alpha=5.000000, l1_ratio=5.000000):
 
 Each run of the previous code results in a new entry into the SkLearnWineQuality experiment. Browse to https://mlflow.data.davar.com and navigate to the experiment. From there, observe the various runs and their results.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/jupyterlab-python-mlflow-notebook.png" width="800">
-
-
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/mlflow-ui-experiments.png" width="800">
 
 Click a run entry to view details along with artifacts associated with the run, including, in this case, a model package and source code 
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/mlflow-ui-packaged-model.png" width="800">
+
 
 Check MinIO bucket:
 ```
