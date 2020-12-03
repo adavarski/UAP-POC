@@ -387,6 +387,20 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/kibana-minio-processed--index-discovery.png" width="800">
 
+### Jupyter LAB/Notebooks
+
+```
+kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
+
+```
+Once the Pod is running, copy the generated token from the output logs. Jupyter Notebooks listen on port 8888 by default. In testing and demonstrations such as this, it is common to port-forward Pod containers directly to a local workstation rather than configure Services and Ingress. Caution Jupyter Notebooks intend and purposefully allow remote code execution. Exposing Jupyter Notebooks to public interfaces requires proper security considerations.
+
+Port-forward the test-notebook Pod with the following command: 
+``
+kubectl port-forward jupyter-notebook 8888:8888 -n data
+``
+Browse to http://localhost:8888/?token=3db...1e5
+
 
 ### k8s cronjob test (Object processing using k8s cronjob)
 ```
