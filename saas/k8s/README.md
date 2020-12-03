@@ -798,6 +798,8 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 
 ## Demo2: [DataProcessing-MinIO](https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/)
 
+## Demo3: [AutoML:MLFlow+SeldonCore](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/)
+
 ## Clean environment
 
 ```
