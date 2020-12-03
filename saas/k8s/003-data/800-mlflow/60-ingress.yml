@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: mlflow
+  namespace: data
+  labels:
+    app: mlflow
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: mlflow.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: mlflow
+              servicePort: 5000
+            path: /
+  tls:
+    - hosts:
+        - mlflow.data.davar.com
+      secretName: mlflow-production-tls
