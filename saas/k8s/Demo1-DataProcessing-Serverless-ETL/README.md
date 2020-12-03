@@ -288,6 +288,94 @@ Example Output:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-PythonNotebook.png" width="800">
 
+### Run Jupyter Notebook inside k8s:
+
+```
+kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
+
+```
+Example output:
+```
+davar@carbon:~$ export KUBECONFIG=~/.kube/k3s-config-jupyter 
+davar@carbon:~$ kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest
+If you don't see a command prompt, try pressing enter.
+[I 08:24:34.011 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 08:24:34.378 LabApp] Loading IPython parallel extension
+[I 08:24:34.402 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 08:24:34.402 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[W 08:24:34.413 LabApp] JupyterLab server extension not enabled, manually loading...
+[I 08:24:34.439 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 08:24:34.440 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[I 08:24:34.441 LabApp] Serving notebooks from local directory: /home/jovyan
+[I 08:24:34.441 LabApp] The Jupyter Notebook is running at:
+[I 08:24:34.441 LabApp] http://(jupyter-notebook or 127.0.0.1):8888/?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+[I 08:24:34.441 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 08:24:34.451 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-7-open.html
+    Or copy and paste one of these URLs:
+        http://(jupyter-notebook or 127.0.0.1):8888/?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+```
+
+Once the Pod is running, copy the generated token from the output logs. Jupyter Notebooks listen on port 8888 by default. In testing and demonstrations such as this, it is common to port-forward Pod containers directly to a local workstation rather than configure Services and Ingress. Caution Jupyter Notebooks intend and purposefully allow remote code execution. Exposing Jupyter Notebooks to public interfaces requires proper security considerations.
+
+Port-forward the test-notebook Pod with the following command: 
+``
+kubectl port-forward jupyter-notebook 8888:8888 -n data
+``
+Browse to http://localhost:8888//?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+```
+!pip install elasticsearch==7.6.0
+```
+```
+from elasticsearch import Elasticsearch
+import pandas as pd
+from matplotlib import pyplot
+```
+```
+es = Elasticsearch(["elasticsearch.data:9200"])
+```
+```
+response = es.search(
+    index="sentiment-*",
+    body={
+        "size": 10000,
+        "query": {
+            "range": {
+                "Date": {
+                    "gt": "now-200h"
+                }
+            }
+        },
+        "_source": [
+            "Date",
+            "polarity",
+            "subjectivity" ],
+    }
+)
+```
+```
+df = pd.concat(map(pd.DataFrame.from_dict,
+                   response['hits']['hits']),
+               axis=1)['_source'].T
+```
+```
+datefmt = '%a, %d %b %Y %H:%M:%S GMT'
+df['Date'] = pd.to_datetime(df['Date'], format=datefmt)
+```
+```
+df = df.set_index(['Date'])
+df = df.astype(float)
+```
+```
+df.head()
+```
+```
+df.plot(y=["polarity"], figsize=(13,5))
+```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-elasticsearch-sanimentanalytics-inside-k8s" width="800">
+
 
 ### Kibana
 
