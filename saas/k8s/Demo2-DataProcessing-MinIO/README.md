@@ -394,7 +394,18 @@ Setup RBAC (Role&RoleBinding)  for default service account (permissions to creat
 ```
 kubectl apply -f ./jupyterlab/juputer-role.yml
 ```
-Run jypyter-notebook 
+Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
+
+Build custom JupyterLab docker image
+```
+$ cd ./jupyterlab
+$ docker build -t jupyterlab-eth .
+$ docker tag jupyterlab-eth:latest davarski/jupyterlab-eth:latest
+$ docker login 
+$ docker push davarski/jupyterlab-eth:latest
+```
+Run Jupyter Notebook inside k8s:
+
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
 
