@@ -288,7 +288,7 @@ Example Output:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-PythonNotebook.png" width="800">
 
-### Run Jupyter Notebook inside k8s:
+##### Run Jupyter Notebook inside k8s:
 
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
@@ -374,7 +374,7 @@ df.head()
 ```
 df.plot(y=["polarity"], figsize=(13,5))
 ```
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-elasticsearch-sanimentanalytics-inside-k8s" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-elasticsearch-sanimentanalytics-inside-k8s.png" width="800">
 
 
 ### Kibana
