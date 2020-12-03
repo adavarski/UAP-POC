@@ -389,17 +389,158 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
 
 ### Jupyter LAB/Notebooks
 
+Setup RBAC (Role&RoleBinding)  for default service account (permissions to create resource "jobs" in API group "batch" in the namespace "data": {"group":"batch","kind":"jobs"}"
+
+```
+kubectl apply -f ./jupyterlab/juputer-role.yml
+```
+Run jypyter-notebook 
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
 
 ```
+Example output:
+```
+davar@carbon:~$ export KUBECONFIG=~/.kube/k3s-config-jupyter 
+davar@carbon:~$ kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest
+If you don't see a command prompt, try pressing enter.
+[I 08:24:34.011 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 08:24:34.378 LabApp] Loading IPython parallel extension
+[I 08:24:34.402 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 08:24:34.402 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[W 08:24:34.413 LabApp] JupyterLab server extension not enabled, manually loading...
+[I 08:24:34.439 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 08:24:34.440 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[I 08:24:34.441 LabApp] Serving notebooks from local directory: /home/jovyan
+[I 08:24:34.441 LabApp] The Jupyter Notebook is running at:
+[I 08:24:34.441 LabApp] http://(jupyter-notebook or 127.0.0.1):8888/?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+[I 08:24:34.441 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 08:24:34.451 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-7-open.html
+    Or copy and paste one of these URLs:
+        http://(jupyter-notebook or 127.0.0.1):8888/?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+```
+
 Once the Pod is running, copy the generated token from the output logs. Jupyter Notebooks listen on port 8888 by default. In testing and demonstrations such as this, it is common to port-forward Pod containers directly to a local workstation rather than configure Services and Ingress. Caution Jupyter Notebooks intend and purposefully allow remote code execution. Exposing Jupyter Notebooks to public interfaces requires proper security considerations.
 
 Port-forward the test-notebook Pod with the following command: 
 ``
 kubectl port-forward jupyter-notebook 8888:8888 -n data
 ``
-Browse to http://localhost:8888/?token=3db...1e5
+Browse to http://localhost:8888//?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
+```
+!pip install kubernetes
+```
+```
+from os import path
+import yaml
+import time
+from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+from IPython.display import clear_output
+```
+```
+envs = [
+    client.V1EnvVar("ENDPOINT", "minio-service.data:9000"),
+    client.V1EnvVar("ACCESS_KEY_ID", "minio"),
+    client.V1EnvVar("ACCESS_KEY_SECRET", "minio123"),
+    client.V1EnvVar("ENDPOINT_SSL", "false"),
+]
+```
+```
+container = client.V1Container(
+    name="compressor",
+    image="davarski/compressor:v1.0.0",
+    env=envs,
+    args=["-f=upload",
+          "-k=donors.csv",
+          "-t=processed"])
+```          
+          
+```
+podTmpl = client.V1PodTemplateSpec(
+    metadata=client.V1ObjectMeta(
+        labels={"app": "compress-donors"}
+    ),
+    spec=client.V1PodSpec(
+        restart_policy="Never",
+        containers=[container]))
+```
+```
+job = client.V1Job(
+    api_version="batch/v1",
+    kind="Job",
+    metadata=client.V1ObjectMeta(
+        name="compress-donors"
+    ),
+    spec=client.V1JobSpec(
+        template=podTmpl,
+        backoff_limit=2)
+    )
+```
+```
+config.load_incluster_config()
+batch_v1 = client.BatchV1Api()
+```
+```
+resp = batch_v1.create_namespaced_job(
+    body=job,
+    namespace="data")
+```
+
+```
+completed = False
+while completed == False:
+    time.sleep(1)
+    try:
+        resp = batch_v1.read_namespaced_job_status(
+            name="compress-donors",
+            namespace="data", pretty=False)
+    except ApiException as e:
+        print(e.reason)
+        break
+    clear_output(True)
+    print(resp.status)
+    if resp.status.conditions is None:
+        continue
+    if len(resp.status.conditions) > 0:
+        clear_output(True)
+        print(resp.status.conditions)
+        if resp.status.conditions[0].type == "Failed":
+            print("FAILED -- Pod Log --")
+            core_v1 = client.CoreV1Api()
+            pod_resp = core_v1.list_namespaced_pod(
+                namespace="data",
+                label_selector="app=compress-donors",
+                limit=1
+            )
+            log_resp = core_v1.read_namespaced_pod_log(
+                name=pod_resp.items[0].metadata.name,
+                namespace='data')
+            print(log_resp)
+        print("Removing Job...")
+        resp = batch_v1.delete_namespaced_job(
+            name="compress-donors",
+            namespace="data",
+            body=client.V1DeleteOptions(
+                propagation_policy='Foreground',
+                grace_period_seconds=5))
+        break
+```
+Example Output:
+```
+[{'last_probe_time': datetime.datetime(2020, 12, 3, 9, 7, 13, tzinfo=tzlocal()),
+ 'last_transition_time': datetime.datetime(2020, 12, 3, 9, 7, 13, tzinfo=tzlocal()),
+ 'message': None,
+ 'reason': None,
+ 'status': 'True',
+ 'type': 'Complete'}]
+Removing Job...
+```
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/MinIO-JupyterLab.png" width="800">
 
 
 ### k8s cronjob test (Object processing using k8s cronjob)
