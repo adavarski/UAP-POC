@@ -24,7 +24,18 @@ MLflow API endpoint for tracking model development at http://mlflow.data:5000.
 
 Jupyter environment: 
 
-Note: The following exercise is an adaptation of an official MLflow tutorial (https://github.com/mlflow/mlflow/blob/master/examples/sklearn_elasticnet_wine/train.ipynb; https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html) using the scikit-learn ElasticNet (https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html) linear regression model using the Wine Quality Data Set.
+Note1: The following exercise is an adaptation of an official MLflow tutorial (https://github.com/mlflow/mlflow/blob/master/examples/sklearn_elasticnet_wine/train.ipynb; https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html) using the scikit-learn ElasticNet (https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html) linear regression model using the Wine Quality Data Set.
+
+Note2: The dataset used here is Wine Quality Data set from UCI Machine Learning Repository. The csv file needed "winequality-red.csv" is attached in the repository. The same can also be found here https://archive.ics.uci.edu/ml/datasets/Wine+Quality
+```
+$ wget 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv' -qO - |head -n5
+"fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
+7.4;0.7;0;1.9;0.076;11;34;0.9978;3.51;0.56;9.4;5
+7.8;0.88;0;2.6;0.098;25;67;0.9968;3.2;0.68;9.8;5
+7.8;0.76;0.04;2.3;0.092;15;54;0.997;3.26;0.65;9.8;5
+11.2;0.28;0.56;1.9;0.075;17;60;0.998;3.16;0.58;9.8;6
+
+```
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
@@ -263,7 +274,7 @@ Returned prediction is 5.703684339252623:
 {"data":{"names":[],"ndarray":[5.703684339252623]},"meta":{}}
 ```
 
-Input variables (based on physicochemical tests):
+Note: Input variables (based on physicochemical tests):
 
     fixed acidity
     volatile acidity
@@ -279,15 +290,7 @@ Input variables (based on physicochemical tests):
 
 Output variable (based on sensory data): quality (score between 0 and 10)
 
-```
-$ wget 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv' -qO - |head -n5
-"fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
-7.4;0.7;0;1.9;0.076;11;34;0.9978;3.51;0.56;9.4;5
-7.8;0.88;0;2.6;0.098;25;67;0.9968;3.2;0.68;9.8;5
-7.8;0.76;0.04;2.3;0.092;15;54;0.997;3.26;0.65;9.8;5
-11.2;0.28;0.56;1.9;0.075;17;60;0.998;3.16;0.58;9.8;6
 
-```
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
 
 
