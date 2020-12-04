@@ -18,7 +18,7 @@ kubectl create -f 60-ingress.yml -f 50-service.yml -f 40-statefulset.yml
 
 ```
 
-### Tracking Models
+### Training/Tracking Models
 
 MLflow API endpoint for tracking model development at http://mlflow.data:5000.
 
