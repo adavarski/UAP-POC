@@ -225,6 +225,19 @@ flavors:
     sklearn_version: 0.23.1
 run_id: e22b3108e7b04c269d65b3f081f44166
 utc_time_created: '2020-12-03 16:48:15.286116'
+
+$ mc cat minio-cluster//mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/conda.yaml
+channels:
+- defaults
+dependencies:
+- python=3.7.3
+- scikit-learn=0.23.1
+- pip
+- pip:
+  - mlflow
+  - cloudpickle==1.6.0
+name: mlflow-env
+
 ```
 
 .
