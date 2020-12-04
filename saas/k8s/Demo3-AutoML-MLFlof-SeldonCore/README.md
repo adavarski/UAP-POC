@@ -255,7 +255,7 @@ $ kubectl apply -f 000-sd-s3-secret.yml
 ```
 Change the modelUri: value to the location of the MLflow model configuration. The additional componentSpecs: are optional and configured with more extended wait periods for the readiness and liveness probes to better account for the resource constrained k8s demo cluster.
 
-100-sd-quality.yml ---> modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel
+100-sd-quality.yml ---> modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model
 
 
 Apply the SeldonDeployment and Ingress:
