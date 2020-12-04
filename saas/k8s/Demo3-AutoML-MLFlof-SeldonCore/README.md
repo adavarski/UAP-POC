@@ -262,7 +262,24 @@ Apply the SeldonDeployment and Ingress:
 ```
 $ kubectl apply -f 100-sd-quality.yml
 ```
-It may take several minutes to deploy the model. Monitor the newly generated Pod in the default namespace for status; once two of two containers report ready, the Pod can accept posted data and serve predictions. Test the deployment with curl by posting the model’s expected input, in this case a two-dimensional array (or an array of arrays), each containing the 11 values required to make a prediction. The model returns one prediction per inner array:
+It may take several minutes to deploy the model. Monitor the newly generated Pod in the default namespace for status; 
+```
+$ kubectl get po
+NAME                                         READY   STATUS            RESTARTS   AGE
+busybox                                      1/1     Running           154        13d
+dnsutils                                     1/1     Running           150        13d
+quality-default-0-quality-768c545657-2dqrk   0/2     PodInitializing   0          77s
+
+$ kubectl logs quality-default-0-quality-768c545657-2dqrk -c quality-model-initializer
+[I 201204 10:50:10 initializer-entrypoint:13] Initializing, args: src_uri [s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel] dest_path[ [/mnt/models]
+[I 201204 10:50:10 storage:35] Copying contents of s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel to local
+[I 201204 10:50:10 storage:60] Successfully copied s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel to /mnt/models
+$ kubectl logs quality-default-0-quality-768c545657-2dqrk -c quality
+$ kubectl logs quality-default-0-quality-768c545657-2dqrk -c seldon-container-engine
+
+```
+
+once two of two containers report ready, the Pod can accept posted data and serve predictions. Test the deployment with curl by posting the model’s expected input, in this case a two-dimensional array (or an array of arrays), each containing the 11 values required to make a prediction. The model returns one prediction per inner array:
 ```
 $ curl -X POST https://quality.data.davar.com/api/v1.0/
 predictions \
