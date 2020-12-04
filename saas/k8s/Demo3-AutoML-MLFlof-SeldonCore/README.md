@@ -263,6 +263,22 @@ Returned prediction is 5.703684339252623:
 {"data":{"names":[],"ndarray":[5.703684339252623]},"meta":{}}
 ```
 
+Input variables (based on physicochemical tests):
+
+    fixed acidity
+    volatile acidity
+    citric acid
+    residual sugar
+    chlorides
+    free sulfur dioxide
+    total sulfur dioxide
+    density
+    pH
+    sulphates
+    alcohol
+
+Output variable (based on sensory data): quality (score between 0 and 10)
+
 ```
 $ wget 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv' -qO - |head -n5
 "fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
