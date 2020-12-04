@@ -102,7 +102,7 @@ import mlflow
 import mlflow.sklearn
 np.random.seed(70)
 ```
-Next, create a function for evaluating model performance:
+Create a function for evaluating model performance:
 
 ```
 def eval_metrics(actual, pred):
@@ -111,21 +111,21 @@ def eval_metrics(actual, pred):
     r2 = r2_score(actual, pred)
     return rmse, mae, r2
 ```
-Next, download and split data into training and test sets:
+Download and split data into training and test sets:
 
 ```
 csv_url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
 data = pd.read_csv(csv_url, sep=';')
 train, test = train_test_split(data)
 ```
-Next, prepare test and training sets by separating the quality column:
+Prepare test and training sets by separating the quality column:
 ```
 train_x = train.drop(["quality"], axis=1)
 test_x = test.drop(["quality"], axis=1)
 train_y = train[["quality"]]
 test_y = test[["quality"]]
 ```
-Next, create a new MLflow experiment if one does not exist:
+Create a new MLflow experiment if one does not exist:
 ```
 experiment_name = 'SkLearnWineQuality'
 experiment = mlflow.get_experiment_by_name(experiment_name)
@@ -134,7 +134,7 @@ if experiment == None:
     experiment = mlflow.get_experiment_by_name(experiment_name)
 mlflow.set_experiment(experiment.name)
 ```
-Next, train the model, logging metrics, and parameters to MLflow,
+Train the model, logging metrics, and parameters to MLflow,
 along with trained model and source code:
 
 ```
@@ -249,13 +249,7 @@ Apply the SeldonDeployment and Ingress:
 ```
 $ kubectl apply -f 100-sd-quality.yml
 ```
-It may take several minutes to deploy the model. Monitor the newly
-generated Pod in the default namespace for status; once two of two containers
-report ready, the Pod can accept posted data and serve predictions.
-Test the deployment with curl by posting the model’s expected
-input, in this case a two-dimensional array (or an array of arrays), each
-containing the 11 values required to make a prediction. The model returns
-one prediction per inner array:
+It may take several minutes to deploy the model. Monitor the newly generated Pod in the default namespace for status; once two of two containers report ready, the Pod can accept posted data and serve predictions. Test the deployment with curl by posting the model’s expected input, in this case a two-dimensional array (or an array of arrays), each containing the 11 values required to make a prediction. The model returns one prediction per inner array:
 ```
 $ curl -X POST https://quality.data.davar.com/api/v1.0/
 predictions \
