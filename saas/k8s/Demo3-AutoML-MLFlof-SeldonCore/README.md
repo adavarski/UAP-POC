@@ -26,7 +26,7 @@ Jupyter environment:
 
 Note1: The following exercise is an adaptation of an official MLflow tutorial (https://github.com/mlflow/mlflow/blob/master/examples/sklearn_elasticnet_wine/train.ipynb; https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html) using the scikit-learn ElasticNet (https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html) linear regression model using the Wine Quality Data Set.
 
-Note2: The dataset used here is Wine Quality Data set from UCI Machine Learning Repository. The csv file needed "winequality-red.csv" is attached in the repository. The same can also be found here https://archive.ics.uci.edu/ml/datasets/Wine+Quality
+Note2: The DataSet used here is Wine Quality Data set from UCI Machine Learning Repository. The csv file needed "winequality-red.csv" is attached in the repository. The same can also be found here https://archive.ics.uci.edu/ml/datasets/Wine+Quality
 ```
 $ wget 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv' -qO - |head -n5
 "fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
@@ -274,7 +274,9 @@ Returned prediction is 5.703684339252623:
 {"data":{"names":[],"ndarray":[5.703684339252623]},"meta":{}}
 ```
 
-Note: Input variables (based on physicochemical tests):
+Note: Given a set of features as inputs, the task here is to predict the quality of wine on a scale of [0-10]. 
+
+Input variables (based on physicochemical tests):
 
     fixed acidity
     volatile acidity
