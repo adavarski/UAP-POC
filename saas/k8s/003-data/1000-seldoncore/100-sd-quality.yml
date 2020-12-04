@@ -8,7 +8,7 @@ spec:
     - graph:
         children: []
         implementation: MLFLOW_SERVER
-        modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel
+        modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model
         envSecretRefName: seldon-s3-model-secret
         name: quality
       name: default
