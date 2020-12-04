@@ -269,6 +269,7 @@ NAME                                         READY   STATUS    RESTARTS   AGE
 busybox                                      1/1     Running   154        13d
 dnsutils                                     1/1     Running   150        13d
 quality-default-0-quality-6d4664bd99-pl28n   2/2     Running   0          3m39s
+$ kubectl logs quality-default-0-quality-6d4664bd99-pl28n -c seldon-container-engine
 $ kubectl logs quality-default-0-quality-6d4664bd99-pl28n -c quality-model-initializer
 [I 201204 11:27:40 initializer-entrypoint:13] Initializing, args: src_uri [s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model] dest_path[ [/mnt/models]
 [I 201204 11:27:40 storage:35] Copying contents of s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model to local
