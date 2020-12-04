@@ -542,7 +542,7 @@ $ helm install seldon-core seldon-core-operator \
 100-sd-quality.yml Change the modelUri: value to the location of the MLflow
 model configuration:
 
-modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/MLmodel
+modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model
 
 ```
 kubectl apply -f ./003-data/1000-seldoncore/000-sd-s3-secret.yml
