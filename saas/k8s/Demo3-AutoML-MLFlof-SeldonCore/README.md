@@ -22,7 +22,9 @@ kubectl create -f 60-ingress.yml -f 50-service.yml -f 40-statefulset.yml
 
 MLflow API endpoint for tracking model development at http://mlflow.data:5000.
 
-Jupyter environment: The following exercise is an adaptation of an official MLflow tutorial (https://github.com/mlflow/mlflow/blob/master/examples/sklearn_elasticnet_wine/train.ipynb; https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html) using the scikit-learn ElasticNet (https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html) linear regression model using the Wine Quality Data Set.
+Jupyter environment: 
+
+Note: The following exercise is an adaptation of an official MLflow tutorial (https://github.com/mlflow/mlflow/blob/master/examples/sklearn_elasticnet_wine/train.ipynb; https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html) using the scikit-learn ElasticNet (https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html) linear regression model using the Wine Quality Data Set.
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
