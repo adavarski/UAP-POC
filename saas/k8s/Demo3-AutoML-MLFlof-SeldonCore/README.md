@@ -670,16 +670,15 @@ starting microservice
 ```
 
 once two of two containers report ready, the Pod can accept posted data and serve predictions. Test the deployment with curl by posting the model’s expected input, in this case a two-dimensional array (or an array of arrays), each containing the 11 values required to make a prediction. The model returns one prediction per inner array:
-```
-$ curl -X POST https://quality.data.davar.com/api/v1.0/
-predictions \
-      -H 'Content-Type: application/json' \
-      -d '{ "data": { "ndarray": [[ 6.4, 0.57, 0.02, 1.8,
-0.067, 4.0, 11.0, 0.997, 3.46, 0.68, 9.5]] } }'
 
-Returned prediction is 5.703684339252623:
-{"data":{"names":[],"ndarray":[5.703684339252623]},"meta":{}}
+Example output:
 ```
+$ curl -k -X POST https://quality.data.davar.com/api/v1.0/predictions -H 'Content-Type: application/json' -d '{ "data": { "ndarray": [[ 6.4, 0.57, 0.02, 1.8, 0.067, 4.0, 11.0, 0.997, 3.46, 0.68, 9.5]] } }'
+{"data":{"names":[],"ndarray":[5.644703919933278]},"meta":{"requestPath":{"quality":"seldonio/mlflowserver:1.5.0"}}}
+
+```
+Returned prediction is 5.644703919933278 ("ndarray":[5.644703919933278]})
+
 
 Note: Given a set of features as inputs, the task here is to predict the quality of wine on a scale of [0-10]. 
 
