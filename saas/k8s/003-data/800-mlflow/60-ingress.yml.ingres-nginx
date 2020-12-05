@@ -10,7 +10,7 @@ metadata:
     ingress.kubernetes.io/auth-secret: "sysop-basic-auth"
 spec:
   rules:
-    - host: mlflow.hc1.apk8s.dev
+    - host: mlflow.data.davar.com
       http:
         paths:
           - backend:
@@ -19,5 +19,5 @@ spec:
             path: /
   tls:
     - hosts:
-        - mlflow.hc1.apk8s.dev
+        - mlflow.data.davar.com
       secretName: mlflow-production-tls
