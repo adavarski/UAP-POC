@@ -1,3 +1,8 @@
+Continuous Delivery for Machine Learning:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/cd4ml-end-to-end.png" width="800">
+
+Model Building/Deploiyment High Level:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/ml-silos.png" width="800">
 
