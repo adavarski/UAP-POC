@@ -720,7 +720,7 @@ Output variable (based on sensory data): quality (score between 0 and 10)
 
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
 
-### TODO:WIP CI/CD and GitOps (MLOps) ---> Automate with MinoIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin) and Argo CD.
+### TODO:WIP MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
 
 One of the core tenets of data science that differentiates it from software engineering is its focus on experimentation. With software, you develop, you test, and you push features that are primarily code-based. In data science, on the other hand, you conduct heaps of experiments while making changes in configuration, data, features, etc. The output isn’t even necessarily “completed code,” but artifacts such as model weights.
 
@@ -774,6 +774,10 @@ mc admin config set s3 notify_webhook:1 queue_limit="0" queue_dir='.' endpoint="
 mc admin service restart s3
 mc event add s3/mlflow arn:minio:sqs::1:webhook --suffix .pkl
 ```
+
+  - Configure Jenkins to build when new models are trained and pushed to S3 or GCS
+  - Configure ml-app code so that it always pulls the latest model
+  - Build and test the model container with the new artifact so that it’s verified to escalate to production!
 
 ### Argo CD - 
 
