@@ -724,7 +724,13 @@ This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface o
 
 ### Continuous Delivery for Machine Learning 
 
-### TODO:Continuous Delivery for Machine Learning: MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
+Note: New concepts like GitOps aim to completely manage the active configuration state directly with Git. GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to git push events. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration (www.weave.works/technologies/gitops/ ; www.gitops.tech/) residing in a Git repository. On a simplistic level, GitOps aims to replace kubectl apply with git push. Popular and well-supported GitOps implementations include ArgoCD, Flux, and Jenkins X, GitLab.
+
+### TODO:Continuous Delivery for Machine Learning: MLOps CI/CD 
+- 1. Jenkins CI/CD   
+- 2. Jenkins X (GitOps)
+- 2. GitLAb (GitOps)
+- 3. Argo CD (GitOps).
 
 
 ML CD High Level Overview: 
@@ -737,11 +743,12 @@ One of the core tenets of data science that differentiates it from software engi
 Git-oriented source control isn’t the right tool for this problem. To create a robust training pipeline, you’d have to build quite a bit. Here, we’ll just ignore any restrictions on the model training approach and offload the results of our experiments in a central, shared repository (MinIO). Mlflow has become one of the most popular tools for experiment management. While it does offer a lot more than simple tracking functions.
 
 We definitely don’t want to run things manually every time we update our code or model, so let’s welcome some automation.
-Jenkins for CI/CD
 
 CI/CD refer to continuous integration and continuous delivery. The former involves frequent and iterative merge/build/testing of code to mitigate the risk of things breaking. The latter aims to ensure rapid and easy production deployments. There’s probably some overlap and ambiguity in the responsibilities of each, at least from my persepctive. I recommend looking it up if you’re interested in the specifics.
 
 #### Jenkins
+
+Note: Automate MLOps CD pipeline with Jenkins for CI/CD: MinIO (notifications/events:notify_webhook) + J.plugin(generic-webhook-trigger plugin)
 
 Jenkins is typically used in tandem with a source control management (SCM) tool like Github. Jenkins projects are often configured to trigger builds or run scripts when people push or merge branches in their repo. However, there are a number of available hooks. It can also be used to automate:
 
@@ -749,7 +756,69 @@ Jenkins is typically used in tandem with a source control management (SCM) tool 
     Unit tests, integration tests, etc…
     Deployment to dev/stage/prod environments (if you use it for CD)
 
-Run jenkins pod inside k8s 
+Build jenkins container with docker inside
+
+```
+### Dockerfile
+FROM jenkins/jenkins:latest
+
+USER root
+RUN apt-get -y update && \
+ apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common && \
+ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+ add-apt-repository \
+ "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+ $(lsb_release -cs) \
+ stable" && \
+ apt-get update && \
+ apt-get -y install docker-ce docker-ce-cli containerd.io
+RUN curl -L "https://github.com/docker/compose/releases/download/1.27.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+ chmod +x /usr/local/bin/docker-compose && \
+ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+ ARG HOST_GID=999
+ ARG HOST_UID=501
+
+```
+```
+### .env 
+HOST_WWW=8180
+HOST_OTHER=8181
+HOST_DOCKER=/var/run/docker.sock
+HOST_JENKINS_DATA=~/jenkins_home
+HOST_GID=999
+HOST_UID=501
+
+```
+```
+### docker-compose.yaml
+version: '3.1'
+services:
+    jenkins:
+        build:
+            context: .
+            args:
+                HOST_UID: ${HOST_UID}
+                HOST_GID: ${HOST_GID}
+        restart: unless-stopped
+        environment:
+          - "JAVA_OPTS=-Xmx3g -Xms2G"
+        restart: unless-stopped
+        volumes:
+            - ${HOST_DOCKER}:/var/run/docker.sock
+            - ${HOST_JENKINS_DATA}:/var/jenkins_home
+        ports:
+            - "${HOST_WWW}:8080"
+            - "${HOST_OTHER}:50000"
+
+```
+```
+docker tag ...
+docker login 
+docker push ... 
+```
+
+Run jenkins inside k8s pod (CinfigMap.yml, Deployment.yml, Servcie.yml, Ingress.yml)
 
 Install J.plugin 
 ```
@@ -786,10 +855,20 @@ mc event add s3/mlflow arn:minio:sqs::1:webhook --suffix .pkl
 ```
 
   - Configure Jenkins to build when new models are trained and pushed to S3 or GCS
-  - Configure ml-app code so that it always pulls the latest model
-  - Build and test the model container with the new artifact so that it’s verified to escalate to production!
+  - Configure ML app code so that it always pulls the latest model
+  - Build and test the model container with the new artifact so that it’s verified to escalate to production.
+  
+### Jenkins X(GitOps):
 
-### Argo CD 
+Ref: https://github.com/SeldonIO/jenkins-x-seldon-core-sandbox
+  
+### GitLab(GitOps)
+
+GitLab k8s integration supports GitOps.
+
+Ref: https://github.com/adavarski/k3s-GitLab-development
+
+### Argo CD(GitOps)
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/ML_mlflow-1024x652.png" width="800">
 
 
