@@ -721,9 +721,11 @@ Output variable (based on sensory data): quality (score between 0 and 10)
 
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
 
-### TODO:Continuous Delivery for Machine Learning: MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
 
 ### Continuous Delivery for Machine Learning 
+
+### TODO:Continuous Delivery for Machine Learning: MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
+
 
 ML CD High Level Overview: 
 
