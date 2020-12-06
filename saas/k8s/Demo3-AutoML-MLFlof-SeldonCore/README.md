@@ -779,7 +779,9 @@ mc event add s3/mlflow arn:minio:sqs::1:webhook --suffix .pkl
   - Configure ml-app code so that it always pulls the latest model
   - Build and test the model container with the new artifact so that it’s verified to escalate to production!
 
-### Argo CD - 
+### Argo CD 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/ML_mlflow-1024x652.png" width="800">
+
 
 Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 
