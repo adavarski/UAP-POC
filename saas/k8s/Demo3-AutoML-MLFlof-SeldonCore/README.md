@@ -720,4 +720,79 @@ Output variable (based on sensory data): quality (score between 0 and 10)
 
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
 
+### TODO:WIP CI/CD and GitOps (MLOps) ---> Automate with MinoIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin) and Argo CD.
 
+One of the core tenets of data science that differentiates it from software engineering is its focus on experimentation. With software, you develop, you test, and you push features that are primarily code-based. In data science, on the other hand, you conduct heaps of experiments while making changes in configuration, data, features, etc. The output isn’t even necessarily “completed code,” but artifacts such as model weights.
+
+Git-oriented source control isn’t the right tool for this problem. To create a robust training pipeline, you’d have to build quite a bit. Here, we’ll just ignore any restrictions on the model training approach and offload the results of our experiments in a central, shared repository (MinIO). Mlflow has become one of the most popular tools for experiment management. While it does offer a lot more than simple tracking functions.
+
+We definitely don’t want to run things manually every time we update our code or model, so let’s welcome some automation.
+Jenkins for CI/CD
+
+CI/CD refer to continuous integration and continuous delivery. The former involves frequent and iterative merge/build/testing of code to mitigate the risk of things breaking. The latter aims to ensure rapid and easy production deployments. There’s probably some overlap and ambiguity in the responsibilities of each, at least from my persepctive. I recommend looking it up if you’re interested in the specifics.
+
+#### Jenkins
+
+Jenkins is typically used in tandem with a source control management (SCM) tool like Github. Jenkins projects are often configured to trigger builds or run scripts when people push or merge branches in their repo. However, there are a number of available hooks. It can also be used to automate:
+
+    Building/tagging/pushing of software (Docker images)
+    Unit tests, integration tests, etc…
+    Deployment to dev/stage/prod environments (if you use it for CD)
+
+Run jenkins pod inside k8s 
+
+Install J.plugin 
+```
+def pluginParameter="generic-webhook-trigger"
+	def plugins = pluginParameter.split()
+	println(plugins)
+	def instance = Jenkins.getInstance()
+	def pm = instance.getPluginManager()
+	def uc = instance.getUpdateCenter()
+	def installed = false
+	
+	plugins.each {
+	  if (!pm.getPlugin(it)) {
+	    def plugin = uc.getPlugin(it)
+	    if (plugin) {
+	      println("Installing " + it)
+	      plugin.deploy()
+	      installed = true
+	    }
+	  }
+	}
+	
+	instance.save()
+```
+
+Configure MinIO notifications:
+
+```
+mc alias set s3 http://localhost:9000
+mc ls s3/mlflow
+mc admin config set s3 notify_webhook:1 queue_limit="0" queue_dir='.' endpoint="http://JENKINS_URL/generic-webhook-trigger/invoke"
+mc admin service restart s3
+mc event add s3/mlflow arn:minio:sqs::1:webhook --suffix .pkl
+```
+
+### Argo CD - 
+
+Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
+
+Setup Argo CD
+
+The other thing we need to install is argo CD. We could’ve done the deployment to k8s using Jenkins, but I really wanted to try this one out.
+```
+kubectl create ns argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+This will create a bunch more resources.
+
+
+We can configure argo to run deployments for us instead of kubectl apply -f. The goal here to always have our deployment in sync with the representation of our deployment (YAML).
+
+We’re going to make it so we can access Argo via HTTP. In a new terminal, run:
+
+`kubectl port-forward -n argocd svc/argocd-server 8080:80`
+
+Wait until the pods come up. You can go to localhost:8080 to access Argo. By default, the user is “admin” and the password is the name of the server pod. You can get this by running: `kubectl get po -n argocd | grep argocd-server`
