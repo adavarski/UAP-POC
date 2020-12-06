@@ -1,7 +1,3 @@
-Continuous Delivery for Machine Learning:
-
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/cd4ml-end-to-end.png" width="800">
-
 Model Building/Deploiyment High Level:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/ml-silos.png" width="800">
@@ -725,7 +721,14 @@ Output variable (based on sensory data): quality (score between 0 and 10)
 
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
 
-### TODO:WIP MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
+### TODO:Continuous Delivery for Machine Learning: MLOps CI/CD --->  Jenkins CI/CD and Argo CD GitOps ---> Jenkins: Automate with MinIO(notifications/events:notify_webhook) + Jenkins(generic-webhook-trigger plugin)  && Argo CD (GitOps).
+
+### Continuous Delivery for Machine Learning 
+
+ML CD High Level Overview: 
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/cd4ml-end-to-end.png" width="800">
+
 
 One of the core tenets of data science that differentiates it from software engineering is its focus on experimentation. With software, you develop, you test, and you push features that are primarily code-based. In data science, on the other hand, you conduct heaps of experiments while making changes in configuration, data, features, etc. The output isn’t even necessarily “completed code,” but artifacts such as model weights.
 
