@@ -1,5 +1,5 @@
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="600">
 
 ### Python’s Machine Learning Libraries (Ref)
 
@@ -30,16 +30,18 @@ TensorFlow consists of two main components, as follows:
 
 [Tensors] can be defined as multi-dimensional arrays. A single number is known as a scalar. More than one number arranged in a one-dimensional list (array) is known as a vector. More than one number arranged in a two-dimensional manner is known as a matrix.Technically speaking, scalars, vectors, and matrices are all tensors.
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a_scalar_vector_and_matrix.png" width="600">
+
 • Scalars are zero-dimensional tensors.
 
 • Vectors are one-dimensional tensors.
 
 • Matrices are two-dimensional tensors.
 
-However, it is a universally accepted practice that when we have more than one number arranged in three or more dimensions, we refer to such an arrangement as a tensor. We can picture a tensor in the shape of a Rubik’s cube. From the picture, we can see that tensors have a great capacity for data
-storage, as they have n dimensions. The n here is used as a proxy for the
-actual number of dimensions, where n>=3. To better understand the relationship between scalars, vectors,
-matrices, and tensors, we can depict them as shown
+However, it is a universally accepted practice that when we have more than one number arranged in three or more dimensions, we refer to such an arrangement as a tensor. We can picture a tensor in the shape of a Rubik’s cube. From the picture, we can see that tensors have a great capacity for data storage, as they have n dimensions. The n here is used as a proxy for the actual number of dimensions, where n>=3. To better understand the relationship between scalars, vectors, matrices, and tensors, we can depict them as shown:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-notational_representation_of_a_scalar_vector_matrix_and_tensor.png" width="600">
+
 
 As you can see, the four data structures are quite similar to each other notation-wise as well, differing with respect to their capacity. Although tensors usually hold numbers, they can also hold text and strings. Tensors are capable of containing large amounts of data in a compact form. This makes it easier to handle the computation of our program, even when we have enormous amounts of data that we need to use to train our machine.
 
@@ -69,6 +71,9 @@ operations = graph.get_operations()
 operations
 ```
 Executing this gives us the result shown
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-operations-within-a-computation-graph.png" width="600">
+
 
 This shows us the number of nodes present in our graph. We had entered four different nodes, which are displayed here along with their names (a, b, c, and d) and their types (constant, constant, addition, multiplication, respectively)
 We can now run any or all of these nodes in a session, as shown below. As you can see, we have executed node a and node e:
@@ -217,6 +222,8 @@ Deep learning goes a step further in machine learning. It allows the machine to 
 
 The basic function of these three sections is as follows:
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Basic-neural-network.png" width="800">
+
 1. The input layer, as the name implies, is made of the input signals that will be further transmitted into the neural network.
 
 2. The hidden layer is where all the important computations occur. The input that is fed to it is taken, calculations are performed on it, and then this input is sent to the next layer, which is the output layer. The hidden layer can have any number of neurons within it. There can also be more than one hidden layer, depending on our requirements and arrangement.
@@ -284,6 +291,8 @@ Based on the kind of data being used, there are two main types of machine learni
 
 • Unsupervised learning: This method uses unlabeled data
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Supervised_Unsupervised_Learning_diff.png" width="600">
+
 
 Each type of learning method has various types of algorithms that can be used to solve a machine learning problem. Let’s take a look at some important ones.
 
@@ -333,20 +342,12 @@ called outliers. For example, credit card fraud can be discovered by detecting u
 
 Note: Do a little more research on machine learning algorithms. You can even compare them with each other, as this will broaden your understanding of these algorithms to help you decide which one to use for any future projects you might have.
 
-Apart from supervised and unsupervised machine learning, there are
-also two lesser-known methods of machine learning, as follows:
+Apart from supervised and unsupervised machine learning, there are also two lesser-known methods of machine learning, as follows:
 
-• Semi-supervised learning: This method uses some
-labeled data and a larger proportion of unlabeled data
+• Semi-supervised learning: This method uses some labeled data and a larger proportion of unlabeled data
 for training.
 
-• Reinforcement learning: This method is similar to
-training a pet. It sends positive signals to the machine
-when it gives the desired output, to let it know that it
-is right and to help it learn better. Similarly, it sends
-negative signals to a machine if it provides an incorrect
-output.
-
+• Reinforcement learning: This method is similar to training a pet. It sends positive signals to the machine when it gives the desired output, to let it know that it is right and to help it learn better. Similarly, it sends negative signals to a machine if it provides an incorrect output.
 
 
 ### Machine Learning Programming with Tensorflow 2.0
