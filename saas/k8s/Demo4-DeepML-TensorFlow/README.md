@@ -548,4 +548,509 @@ kubectl port-forward jupyter-notebook 8888:8888 -n data
 Browse to http://localhost:8888//?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
 
 
+### Programs/Notebooks (examples)
+
+Program 1: Image Classification Using a Pre-Trained Model
+
+Import TensorFlow and Keras utilities into the notebook.
+```
+import tensorflow as tf
+import tensorflow.keras
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
+from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
+
+```
+Load the model into the notebook.
+```
+# ResNet50() or VGG16() 
+model = ResNet50()
+```
+Load an image into the notebook.
+```
+image = load_img('Kitten1.jpg', target_size=(224, 224))
+image
+```
+Note: Upload Kitten1.jpg into Jupyter Notebook it in the same folder as the Jupyter notebook that you are working in.
+
+Prepare the image for the model.
+```
+image = img_to_array(image)
+image = image.reshape((1, image.shape[0], image.shape[1],
+image.shape[2]))
+image = preprocess_input(image)
+```
+Make the prediction.
+```
+result = model.predict(image)
+label = decode_predictions(result)
+label = label[0][0]
+
+```
+Display the classification.
+```
+print('%s (%.2f%%)' % (label[1], label[2]*100))
+
+```
+The output will come like this:
+Egyptian_cat (87.00%)
+
+The ResNet50 model also gives the prediction: 87.00% percent sure of its answer.
+
+Program 2: Handwriting Recognition Using Keras in TensorFlow (Single Layer, Multi-class)
+
+Import TensorFlow into your kernel.
+```
+import tensorflow as tf
+```
+Load the MNIST dataset.
+```
+data = tf.keras.datasets.mnist
+(ip_train, op_train), (ip_test, op_test) = data.load_data()
+```
+Prepare the data.
+```
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+```
+Build the neural network.
+```
+model = tf.keras.models.Sequential([
+     tf.keras.layers.Flatten(input_shape = (28,28)),
+     tf.keras.layers.Dense(10, activation = 'softmax')
+])
+```
+
+Compile the model.
+```
+model.compile(optimizer = 'adam',
+                         loss = 'sparse_categorical_crossentropy',
+                         metrics = ['accuracy'])
+```
+View the model.
+```
+model.summary()
+```
+Train the model.
+```
+model.fit(ip_train, op_train, epochs = 6)
+```
+Test the model.
+```
+model.evaluate(ip_test, op_test)
+```
+Carry out inference.
+```
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[9999]
+plt.imshow(test_image.reshape(28,28))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1,28,28)
+result = model.predict(test_image)
+result
+np.around(result)
+array([[0., 0., 0., 0., 0., 0., 1., 0., 0., 0.]], dtype=float32)
+(np.around(result)).argmax()
+
+```
+This gives the output like this:
+6
+
+Program 3: Clothing Classification Using Keras in TensorFlow (Multi-layer, Multi-class)
+
+In a new Jupyter notebook, import the TensorFlow library and
+Keras utilities.
+```
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+```
+Load the Fashion MNIST dataset.
+```
+data = datasets.fashion_mnist
+(ip_train, op_train), (ip_test, op_test) = data.load_data()
+```
+Check the shape of the images.
+```
+print(ip_train.shape, ip_test.shape)
+```
+Step 4: Reshape the input values.
+```
+ip_train = ip_train.reshape((60000, 28, 28, 1))
+ip_test = ip_test.reshape((10000, 28, 28, 1))
+print(ip_train.shape, ip_train.shape)
+
+```
+Prepare the data.
+
+```
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+```
+Build the neural network.
+```
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28, 1)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(1000, activation='relu'),
+    layers.Dropout(0.5),
+    layers.Dense(10, activation='softmax')
+])
+```
+Compile the model.
+```
+model.compile(optimizer = 'adam', loss = 'sparse_categorical_crossentropy', metrics = ['accuracy'])
+```
+View the model.
+```
+model.summary()
+```
+Train the model.
+```
+model.fit(ip_train, op_train, epochs = 5)
+```
+Test the model.
+```
+model.evaluate(ip_test, op_test, verbose = 2)
+```
+Carry out inference.
+```
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
+'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[5000]
+plt.imshow(test_image.reshape(28,28))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1, 28, 28, 1)
+result = model.predict(test_image)
+result
+np.around(result)
+n=(np.around(result)).argmax()
+print(n)
+```
+This gives us the following output:
+
+2
+This output is very vague. All it tells us is the position of the predicted
+class, but not what the actual item of clothing is. Thus, we add an extra line
+of code:
+```
+print(class_names[n])
+```
+This will give us the following output:
+
+Pullover
+
+Program 4: Clothing Classification Using Convolutional Neural Networks (Multi-layer, Multi-class)
+```
+Import the TensorFlow library and Keras utilities.
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+```
+Load the Fashion MNIST dataset.
+```
+data = datasets.fashion_mnist
+(ip_train, op_train), (ip_test, op_test) = data.load_data()
+```
+Check the shape of the images.
+```
+print(ip_train.shape, ip_test.shape)
+```
+Reshape the input values.
+```
+ip_train = ip_train.reshape((60000, 28, 28, 1))
+ip_test = ip_test.reshape((10000, 28, 28, 1))
+print(ip_train.shape, ip_test.shape)
+```
+Prepare the data.
+```
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+```
+Build the convolutional neural network.
+```
+model=models.Sequential()
+model.add(layers.Conv2D(32,(3,3), activation="relu", input_shape=(28,28,1)))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(64,(3,3), activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(64,(3,3), activation="relu"))
+```
+Add the final dense layer and output layer.
+```
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(10, activation='softmax'))
+```
+Compile the model.
+```
+model.compile(optimizer = 'adam',
+                         loss = 'sparse_categorical_crossentropy',
+                         metrics = ['accuracy'])
+```                         
+View the model.
+```
+model.summary()
+```
+Train the model.
+```
+model.fit(ip_train, op_train, epochs = 5)
+```
+Test the model.
+```
+model.evaluate(ip_test, op_test, verbose = 1)
+```
+Program 5: Handwriting Recognition Using Convolutional Neural Networks (Multi-layer, Multi-class)  
+
+Import the TensorFlow library and Keras utilities.
+```
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+```
+Load the MNIST dataset.
+
+```
+data = datasets.mnist
+(ip_train, op_train), (ip_test, op_test) = data.load_data()
+```
+Reshape the input values.
+```
+ip_train = ip_train.reshape((60000, 28, 28, 1))
+ip_test = ip_test.reshape((10000, 28, 28, 1))
+print(ip_train.shape, ip_test.shape)
+```
+Prepare the data.
+```
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+````
+Build the convolutional neural network.
+```
+model=models.Sequential()
+model.add(layers.Conv2D(30,(3,3), activation="relu", input_shape=(28,28,1)))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(60,(3,3), activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(90,(3,3), activation="relu"))
+```
+Add the final dense layer, dropout layer, and output layer.
+```
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dropout(0.5))
+model.add(layers.Dense(10, activation='softmax'))
+```
+Compile the model.
+```
+model.compile(optimizer = 'adam',
+                         loss = 'sparse_categorical_crossentropy',
+                         metrics = ['accuracy'])
+```
+View the model.
+```
+model.summary()
+```
+Train the model.
+```
+model.fit(ip_train, op_train, epochs = 5)
+```
+Test the model.
+```
+model.evaluate(ip_test, op_test, verbose = 1)
+````
+Carry out inference.
+```
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[180]
+plt.imshow(test_image.reshape(28,28))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1,28,28,1)
+result = model.predict(test_image)
+result
+np.around(result)
+(np.around(result)).argmax()
+```
+We will get the output as 1. This shows that the model has correctly
+predicted the class of the image.
+
+Program 6: Image Classification for CIFAR-10 Using Convolutional Neural Networks (Multi-layer, Multi-class)
+
+```
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+from tensorflow.keras.datasets import cifar10
+(ip_train, op_train), (ip_test, op_test) = cifar10.load_data()
+print(ip_train.shape, ip_test.shape)
+ip_train = ip_train.reshape(ip_train.shape[0], 32, 32, 3)
+ip_test = ip_test.reshape(ip_test.shape[0], 32, 32, 3)
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+model=models.Sequential()
+model.add(layers.Conv2D(32,(3,3), activation="relu", input_shape=(32,32,3)))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(64,(3,3), activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(64,(3,3), activation="relu"))
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(10, activation='softmax'))
+model.compile(optimizer = 'adam',
+                         loss = 'sparse_categorical_crossentropy',
+                         metrics = ['accuracy'])
+model.summary()
+model.fit(ip_train, op_train, epochs = 10)
+model.evaluate(ip_test, op_test, verbose = 2)
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[20]
+plt.imshow(test_image.reshape(32,32,3))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+classes = ["airplane", "automobile", "bird", "cat", "deer",
+"dog", "frog", "horse", "ship", "truck"]
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1,32,32,3)
+result = model.predict(test_image)
+result
+np.around(result)
+n=(np.around(result)).argmax()
+print(classes[n])
+```
+
+Program 7: Dogs vs. Cats Classification Using Convolutional Neural Networks (Multi-layer, Binary)
+
+Import all the required libraries and functions into Jupyter Notebook.
+```
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D 
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+
+import os
+```
+Develop the CNN model and compile it. Here, we refer to our model as classifier. We can put any name we
+want, provided it is easily understood by anyone who reads it.
+```
+classifier = Sequential()
+classifier.add(Conv2D(64,(3,3),input_shape = (64,64,3),
+activation = 'relu'))
+classifier.add(MaxPooling2D(pool_size = (2,2)))
+classifier.add(Conv2D(64,(3,3), activation = 'relu'))
+classifier.add(MaxPooling2D(pool_size = (2,2)))
+classifier.add(Conv2D(64,(3,3), activation = 'relu'))
+classifier.add(MaxPooling2D(pool_size = (2,2)))
+classifier.add(Flatten())
+classifier.add(Dense(units = 128, activation = 'relu'))
+classifier.add(Dense(units = 1, activation = 'sigmoid'))
+classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics =
+['accuracy'])
+```
+Transform the imported data.
+```
+from tensorflow.keras.preprocessing.image import
+ImageDataGenerator
+train_datagen = ImageDataGenerator(
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+test_datagen = ImageDataGenerator(rescale=1./255)
+```
+Download the dataset.
+The dataset needs to be downloaded from a specific link. In this
+section of code, we tell our program to download the data from the given
+url, and then we store it on our system.
+```
+_URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_
+dogs_filtered.zip'
+path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
+PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
+```
+Set up the directories.
+We need to set up different directories for the training and testing data,
+and then separate out the cat and dog images accordingly.
+```
+trainingdir = os.path.join(data_path, 'train')
+testingdir = os.path.join(data_path, 'validation')
+# directory with the training cat pictures
+cats_train = os.path.join(trainingdir, 'cats')
+# directory with the training dog pictures
+dogs_train = os.path.join(trainingdir, 'dogs')
+# directory with the testing cat pictures
+cats_test = os.path.join(testingdir, 'cats')
+# directory with the testing dog pictures
+dogs_test = os.path.join(testingdir, 'dogs')
+```
+Find the number of elements in each directory.
+```
+cats_train_num = len(os.listdir(cats_train))
+dogs_train_num = len(os.listdir(dogs_train))
+cats_test_num = len(os.listdir(cats_test))
+dogs_test_num = len(os.listdir(dogs_test))
+train_tot = cats_train_num + dogs_train_num
+test_tot = cats_test_num + dogs_test_num
+print(cats_train_num)
+print(dogs_train_num)
+print(cats_test_num)
+print(dogs_test_num)
+print(train_tot)
+print(test_tot)
+```
+Load the training data and testing data, and display the label
+map.
+```
+train_data = train_datagen.flow_from_directory(batch_size=128,
+                                                           directory=trainingdir,
+                                                           target_size=(64, 64),
+                                                           class_mode='binary')
+`
+test_data = test_datagen.flow_from_directory(batch_size=128,
+                                                              directory=testingdir,
+                                                              target_size=(64, 64),
+                                                              class_mode='binary')
+                                                              
+```
+```
+label_map = (train_data.class_indices)
+print(label_map)
+```
+Train the model.
+```
+classifier.fit(
+        train_data,
+        epochs=30,
+        validation_data=test_data)
+```
+Carry out inference.
+```
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image_1= image.load_img('Dog.jpeg', target_size = (64,64))
+test_image_2= image.load_img('Cat.jpeg', target_size = (64,64))
+test_image_1
+test_image_2
+test_image_1 = image.img_to_array(test_image_1)
+test_image_2 = image.img_to_array(test_image_2)
+test_image_1 = test_image_1.reshape(1,64,64,3)
+test_image_2 = test_image_2.reshape(1,64,64,3)
+result1 = model.predict(test_image_1)
+result2 = model.predict(test_image_2)
+print(result1, result2)
+if result1 == 1:
+    prediction1 = 'dog'
+else:
+   prediction1 = 'cat'
+print(prediction1)
+if result2 == 1:
+    prediction2 = 'dog'
+else:
+   n2 = 'cat'
+print(prediction2)
+```
 
