@@ -387,7 +387,7 @@ $ curl http://localhost:9200/processed*/_search|python -m json.tool
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/pictures/kibana-minio-processed--index-discovery.png" width="800">
 
-### Jupyter LAB/Notebooks
+### JupyterLab/Jupyter Notebook (Jupyter environment)
 
 Setup RBAC (Role&RoleBinding)  for default service account (permissions to create resource "jobs" in API group "batch" in the namespace "data": {"group":"batch","kind":"jobs"}"
 
@@ -396,7 +396,7 @@ kubectl apply -f ./jupyterlab/juputer-role.yml
 ```
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
-Build custom JupyterLab docker image
+Build custom JupyterLab docker image and pushing it into DockerHub container registry.
 ```
 $ cd ./jupyterlab
 $ docker build -t jupyterlab-eth .
@@ -404,7 +404,7 @@ $ docker tag jupyterlab-eth:latest davarski/jupyterlab-eth:latest
 $ docker login 
 $ docker push davarski/jupyterlab-eth:latest
 ```
-Run Jupyter Notebook inside k8s:
+Run Jupyter Notebook inside k8s as pod:
 
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
