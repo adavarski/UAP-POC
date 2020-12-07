@@ -1,5 +1,5 @@
 
-AI/ML/DeepML Overview:
+### AI/ML/DeepML Overview:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
 
@@ -173,7 +173,7 @@ area of artificial intelligence.
 TensorFlow, although quite unique in its structure and usage, does have some competitors in the machine learning world. These are alternative frameworks that people use to perform the same functions that TensorFlow does. Some of these libraries include the following: Theano, OpenCV, PyTorch, Apache Spark, Keras. All these libraries, although varying in functionality and capability, have similar uses in machine learning. The Keras library can be used on top of TensorFlow to develop even more effective deep learning models.
 Note: TensorFlow implemented the Keras API as a powerful tool that can be used for model building. It supports eager execution and several other functionalities of TensorFlow. It is versatile, reliable, and effective in its working. It has been added to TensorFlow 2.0 for this very reason.Keras used to be an independent package on its own, which users would download separately and use within their models. Slowly, TensorFlow added it to its framework, as tf.keras. This tf.keras sub-package was different from the main Keras package, so as to ensure compatibility and stability. Later, with the announcement of TensorFlow 2.0, the TensorFlow team stated that Keras would be the main high-level API of this version.
 
-#### Neural Networks
+### Neural Networks
 The neural network, or artificial neural network, was inspired by and modeled after the biological neural network. These networks, like the human brain, learn to perform specific tasks without being explicitly programmed. A neural network is composed of a series of neurons that are connected together to form a type of network, hence the name neural network. A neuron, or an artificial neuron, is the fundamental unit of a neural network. It is a mathematical function that replicates the neurons in the human brain, as you can see 
 
 
@@ -184,7 +184,7 @@ Comparison of biological and artificial neurons.
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
 
 
-### Working of an Artificial Neuron (Perceptron)
+#### Working of an Artificial Neuron (Perceptron)
 The perceptron follows a particular flow of steps in order to achieve its desired output. Let’s go through these steps one by one to understand how
 a perceptron works.
 
@@ -311,9 +311,9 @@ There are several algorithms that can be used to solve a machine learning proble
 2. Classification algorithms: These algorithms contain outputs that are abstract or categorical. For example, colors (orange, purple, turquoise), emotions (happy, sad, angry), or gender (girl, boy). To give you some idea of what these algorithms are, let’s go through
 three common types of algorithms that are used:
 
-• Linear regression
-• Logistic regression
-• K-Nearest neighbors
+- Linear regression
+- Logistic regression
+- K-Nearest neighbors
 
 Applications of Supervised Learning Algorithms
 
@@ -325,18 +325,13 @@ security system on our cell phones, which can scan our fingerprint and grant us 
 Unsupervised Learning Algorithms
 The goal of unsupervised learning algorithms is to discover possible patterns from the set of data that is provided. The algorithm has no prior information about the patterns and labels present in the data. There are several algorithms that can be used to solve a machine learning problem with the help of unsupervised learning. These algorithms can be segregated into the following categories:
 
-• Cluster analysis: This approach finds similarities
-among the data and then groups the common data
-together in clusters.
+• Cluster analysis: This approach finds similarities among the data and then groups the common data together in clusters.
 
-• Dimensionality reduction: This approach attempts
-to reduce the complexity of data while still keeping the
-data relevant.
+• Dimensionality reduction: This approach attempts to reduce the complexity of data while still keeping the data relevant.
 
 Two common algorithms that are used for unsupervised learning: K-means clustering and principal component analysis.
 
 -KMeans Clustering
-
 -Principal Component Analysis
 
 Applications of Unsupervised Machine Learning Algorithms
@@ -497,7 +492,7 @@ Once it has gathered its observations and made predictions that are verified to 
 In the programs that we will be going through, we will focus on instructing the computer to train and test similar image classification models with the help of neural networks. 
 
 
-### JupyterLab/Jupyter Notebooks environment
+#### JupyterLab/Jupyter Notebooks environment
 
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments) applications that allows users to create, edit, run, and share their code with ease. This application gets its name from the main languages that it supports: Julia, Python, and R.
@@ -550,7 +545,7 @@ kubectl port-forward jupyter-notebook 8888:8888 -n data
 Browse to http://localhost:8888//?token=5bebb78cc162e7050332ce46371ca3adc82306fac0bc082a
 
 
-### Programs/Notebooks (examples)
+#### Programs/Notebooks (examples)
 
 Program 1: Image Classification Using a Pre-Trained Model
 
@@ -1074,7 +1069,7 @@ else:
 print(prediction2)
 ```
 
-TODO: Applications of IoT
+TODO: DeepML of IoT
 
 Smart Homes
 Smart homes refer to the phenomenon of home automation, where the home does tasks on its own, without the need for anyone to control it. So far, smart homes have been able to do the following:
