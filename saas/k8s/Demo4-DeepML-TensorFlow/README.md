@@ -73,7 +73,7 @@ Machine learning involves data science techniques (like cleaning, manipulating, 
 These libraries have been tried and tested and were found to be easy to work with. They have thus gained popularity over the years, with numerous applications in various machine learning programs. With the growing enthusiasm toward [deep machine learning], there arose a need to create libraries that could assist with building multi-layered [neural networks]. Thus, libraries like [Theano], [PyTorch], [OpenCV], [Caffe], [Apache Spark], [Keras], and [TensorFlow] were released. These libraries enable programmers to develop large, multi-layered neural networks with less time and effort, and more efficiency. All these libraries, although varying in functionality and capability, have similar uses in deep machine learning. 
 
 
-### TensorFlow 2.0 library
+### TensorFlow 2.0 DeepML library
 
 TensorFlow consists of two main components, as follows:
 1. Tensors, in which the data is held
@@ -194,6 +194,7 @@ tf.print(b)
 As you may have already noticed, the function here is decorated with tf.function, which allows it to be executed like a graph.
 
 #### Applications of TensorFlow
+
 Despite being relatively new, TensorFlow has already served its purpose in several areas of artificial intelligence, and continues to do so. Some of its
 applications include the following:
 
@@ -216,5 +217,87 @@ area of artificial intelligence.
 TensorFlow, although quite unique in its structure and usage, does have some competitors in the machine learning world. These are alternative frameworks that people use to perform the same functions that TensorFlow does. Some of these libraries include the following: Theano, OpenCV, PyTorch, Apache Spark, Keras. All these libraries, although varying in functionality and capability, have similar uses in machine learning. The Keras library can be used on top of TensorFlow to develop even more effective deep learning models.
 Note: TensorFlow implemented the Keras API as a powerful tool that can be used for model building. It supports eager execution and several other functionalities of TensorFlow. It is versatile, reliable, and effective in its working. It has been added to TensorFlow 2.0 for this very reason.Keras used to be an independent package on its own, which users would download separately and use within their models. Slowly, TensorFlow added it to its framework, as tf.keras. This tf.keras sub-package was different from the main Keras package, so as to ensure compatibility and stability. Later, with the announcement of TensorFlow 2.0, the TensorFlow team stated that Keras would be the main high-level API of this version.
 
+#### Neural Networks
+The neural network, or artificial neural network, was inspired by and modeled after the biological neural network. These networks, like the human brain, learn to perform specific tasks without being explicitly programmed. A neural network is composed of a series of neurons that are connected together to form a type of network, hence the name neural network. A neuron, or an artificial neuron, is the fundamental unit of a neural network. It is a mathematical function that replicates the neurons in the human brain, as you can see 
+
+Comparison of biological and artificial neurons.
 
 
+### Working of an Artificial Neuron (Perceptron)
+The perceptron follows a particular flow of steps in order to achieve its desired output. Let’s go through these steps one by one to understand how
+a perceptron works.
+Step 1: Accepting Inputs
+The perceptron accepts inputs from the user in the form of digital signals provided to it. These inputs are the “features” that will be used for training the model. They are represented by x(n), where n is the number of the feature. These inputs are then fed to the first layer of the neural network through a process called forward propagation.
+Step 2: Setting the Weights and Bias
+Weights: The weights are calculated and set while training the model. They are represented by w(n), where n is the number of the weight. For example,
+the first weight will be w1, the second weight will be w2, and so on.
+Bias: The bias is used to train a model with higher speed and accuracy. We generally represent it with w0.
+Step 3: Calculating the Net Input Function
+The equation for the net input function is as follows: `I = Sum(x(n).w(n) + w0)` Thus, each input feature is multiplied by its corresponding weight, and
+the sum of all these products is taken. Then, the bias is added to this result.
+The Perceptron Learning Rule: According to this rule, the algorithm automatically determines the optimum values for the weights. The input features are then multiplied by these weights in order to determine if the perceptron should forward the signal or not. The perceptron is fed with several signals, and if the resultant sum of these signals exceeds a particular threshold, it either returns an output signal or doesn’t.
+Step 4: Passing the Values Through the Activation Function
+The activation function helps with providing nonlinearity to the perceptron. There are three types of activation functions that can be used:
+ReLU, Sigmoid, and Softmax.
+
+- ReLU
+The Rectified Linear Unit is used to eliminate negative values from our outputs. If the output is positive, it will leave it as it is. If the output is negative, it will display a zero.
+
+- Sigmoid
+It is a special mathematical function that produces an output with a probability of either 1 or 0.
+
+-Softmax
+It is generally used in the final layer of a neural network. It is generally used to convert the outputs to values that, when summed up, result in 1. Thus,
+these values will lie between 0 and 1.
+
+Note: The most common practice is to use a ReLU activation function in all the hidden layers, and then to use either a Softmax activation function (for multi-class classification) or Sigmoid activation function (for binary classification).
+Step 5: Producing the Output
+The final output is then passed from the last hidden layer to the output layer, which is then displayed to the user. Now that we know how a perceptron works, let’s go a little more in depth as to how a neural network performs a deep learning task.
+
+Digging Deeper into Neural Networks
+Deep learning goes a step further in machine learning. It allows the machine to begin thinking on its own in order to make decisions and carry out certain tasks. Neural networks are used to develop and train deep learning models. For example, consider a very simple neural network, which consists of an input layer, an output layer, and one layer of neurons, known as the hidden layer (as shown). 
+
+
+The basic function of these three sections is as follows:
+1. The input layer, as the name implies, is made of the input signals that will be further transmitted into the neural network.
+2. The hidden layer is where all the important computations occur. The input that is fed to it is taken, calculations are performed on it, and then this input is sent to the next layer, which is the output layer. The hidden layer can have any number of neurons within it. There can also be more than one hidden layer, depending on our requirements and arrangement.
+3. The output layer, as the name suggests, contains the output signals. These are nothing but the final results of all the calculations performed by the hidden layer/s.
+The Process
+There are four main steps to the neural network process that allow it to come up with the most optimal solution for any problem that is given to it.
+
+Step 1: The numerical input signals are passed into the neural network’s hidden layers.
+Step 2: The net input function is calculated with the weights and the bias that are generated during the training.
+Step 3: The activation function is applied to the net input function.
+Step 4: The result is then produced as the output of the neural network.
+Thus, deep learning, as a part of machine learning, stands out as an extremely useful technique in the area of artificial intelligence.
+
+Types of Neural Networks
+There are several types of neural networks, all based on their structure, composition, and flow. Let’s go ahead and discuss a few of the common
+and most important ones that are used by deep learning developers.
+-Single-Layer Neural Networks: A Perceptron
+The perceptron is the oldest single-layer neural network. As you have seen before, it takes the input from the user, multiplies it by the corresponding weight, adds that to the bias to get the net input function, and then passes the result through the activation function to get the final output. Every perceptron produces only a single output. This type of neural network is not very efficient due to its extremely limited complexity. Thus, researchers came up with a model that contained more than one layer of perceptrons.
+- Multi-Layer Neural Networks
+This type of neural network is used mainly for natural language processing, speech recognition, image recognition, etc. It consists of two or more
+layers of perceptrons, as follows:
+•Input layer: This is all the available numerical data that is fed into the system and then transferred to the rest of the neural network.
+• Hidden layers: This is where all the neurons are located. Every layer can have any amount of neurons. They are known as “hidden” layers because they remain hidden within the neural network as they perform the necessary computations.
+• Output layer: This is the final result of all the calculations that happened in the hidden layers
+
+- Convolutional Neural Networks
+Convolutional neural networks follow the same principle as multi-layer neural networks, the only difference being that they include “convolutional
+layers,” which make use of filters. A filter is a grid of size AxB that is moved across the image and gets multiplied several times by it to produce a new value. Each value represents a line or an edge in the image. Once the filters have been used on the image, its important characteristics can be extracted. This is done with the help of a pooling layer. These layers pool or collect the main features of each image. One popular technique of doing this is known as max pooling, which takes the largest number of each image and stores it in a separate grid. It thus compresses the main features into a single image and then passes it on to a
+regular multi-layer neural network for further processing. These neural networks are mainly used for image classification. They
+can also be used in search engines and recommender systems.
+
+-Recurrent Neural Networks
+Recurrent neural networks (RNNs) are used for temporal data; i.e., data that requires past experiences to predict future outcomes. State matrices remember previous states of data by storing the last output, and then use this data to calculate the new output.two states: long term and short term. RNNs begin in the layers after the first layer. Here, each node acts as a memory cell during the computation, which allows it to compare previous values with new values during
+back propagation. These neural networks can be used for stock market predictions, natural language processing, and price determination.
+
+-Sequence-to-Sequence Models
+A sequence-to-sequence model is mainly used when the lengths of the input data and output data are unequal. It makes use of two recurrent neural networks, along with an encoder and a decoder. The encoder processes the input data, while the decoder processes the output data. These models are usually used for chatbots and machine translation.
+
+-Modular Neural Networks
+Modular neural networks have several different networks that each work independently to complete a part of the entire task. These networks are not
+connected to each other, and so do not interact with each other during this process. This helps in reducing the amount of time taken to perform the computation by distributing the work done by each network. Each sub- task would require only a portion of the total time, power, and resources needed to complete the work.
+
+### Machine Learning Programming with Tensorflow 2.0
