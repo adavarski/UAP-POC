@@ -226,24 +226,28 @@ Comparison of biological and artificial neurons.
 ### Working of an Artificial Neuron (Perceptron)
 The perceptron follows a particular flow of steps in order to achieve its desired output. Let’s go through these steps one by one to understand how
 a perceptron works.
+
 Step 1: Accepting Inputs
 The perceptron accepts inputs from the user in the form of digital signals provided to it. These inputs are the “features” that will be used for training the model. They are represented by x(n), where n is the number of the feature. These inputs are then fed to the first layer of the neural network through a process called forward propagation.
+
 Step 2: Setting the Weights and Bias
 Weights: The weights are calculated and set while training the model. They are represented by w(n), where n is the number of the weight. For example,
 the first weight will be w1, the second weight will be w2, and so on.
 Bias: The bias is used to train a model with higher speed and accuracy. We generally represent it with w0.
+
 Step 3: Calculating the Net Input Function
 The equation for the net input function is as follows: `I = Sum(x(n).w(n) + w0)` Thus, each input feature is multiplied by its corresponding weight, and
 the sum of all these products is taken. Then, the bias is added to this result.
 The Perceptron Learning Rule: According to this rule, the algorithm automatically determines the optimum values for the weights. The input features are then multiplied by these weights in order to determine if the perceptron should forward the signal or not. The perceptron is fed with several signals, and if the resultant sum of these signals exceeds a particular threshold, it either returns an output signal or doesn’t.
+
 Step 4: Passing the Values Through the Activation Function
 The activation function helps with providing nonlinearity to the perceptron. There are three types of activation functions that can be used:
 ReLU, Sigmoid, and Softmax.
 
-- ReLU
+-ReLU
 The Rectified Linear Unit is used to eliminate negative values from our outputs. If the output is positive, it will leave it as it is. If the output is negative, it will display a zero.
 
-- Sigmoid
+-Sigmoid
 It is a special mathematical function that produces an output with a probability of either 1 or 0.
 
 -Softmax
@@ -257,18 +261,25 @@ The final output is then passed from the last hidden layer to the output layer, 
 Digging Deeper into Neural Networks
 Deep learning goes a step further in machine learning. It allows the machine to begin thinking on its own in order to make decisions and carry out certain tasks. Neural networks are used to develop and train deep learning models. For example, consider a very simple neural network, which consists of an input layer, an output layer, and one layer of neurons, known as the hidden layer (as shown). 
 
-
 The basic function of these three sections is as follows:
+
 1. The input layer, as the name implies, is made of the input signals that will be further transmitted into the neural network.
+
 2. The hidden layer is where all the important computations occur. The input that is fed to it is taken, calculations are performed on it, and then this input is sent to the next layer, which is the output layer. The hidden layer can have any number of neurons within it. There can also be more than one hidden layer, depending on our requirements and arrangement.
+
 3. The output layer, as the name suggests, contains the output signals. These are nothing but the final results of all the calculations performed by the hidden layer/s.
+
 The Process
 There are four main steps to the neural network process that allow it to come up with the most optimal solution for any problem that is given to it.
 
 Step 1: The numerical input signals are passed into the neural network’s hidden layers.
+
 Step 2: The net input function is calculated with the weights and the bias that are generated during the training.
+
 Step 3: The activation function is applied to the net input function.
+
 Step 4: The result is then produced as the output of the neural network.
+
 Thus, deep learning, as a part of machine learning, stands out as an extremely useful technique in the area of artificial intelligence.
 
 Types of Neural Networks
@@ -276,14 +287,14 @@ There are several types of neural networks, all based on their structure, compos
 and most important ones that are used by deep learning developers.
 -Single-Layer Neural Networks: A Perceptron
 The perceptron is the oldest single-layer neural network. As you have seen before, it takes the input from the user, multiplies it by the corresponding weight, adds that to the bias to get the net input function, and then passes the result through the activation function to get the final output. Every perceptron produces only a single output. This type of neural network is not very efficient due to its extremely limited complexity. Thus, researchers came up with a model that contained more than one layer of perceptrons.
-- Multi-Layer Neural Networks
+-Multi-Layer Neural Networks
 This type of neural network is used mainly for natural language processing, speech recognition, image recognition, etc. It consists of two or more
 layers of perceptrons, as follows:
-•Input layer: This is all the available numerical data that is fed into the system and then transferred to the rest of the neural network.
+• Input layer: This is all the available numerical data that is fed into the system and then transferred to the rest of the neural network.
 • Hidden layers: This is where all the neurons are located. Every layer can have any amount of neurons. They are known as “hidden” layers because they remain hidden within the neural network as they perform the necessary computations.
 • Output layer: This is the final result of all the calculations that happened in the hidden layers
 
-- Convolutional Neural Networks
+-Convolutional Neural Networks
 Convolutional neural networks follow the same principle as multi-layer neural networks, the only difference being that they include “convolutional
 layers,” which make use of filters. A filter is a grid of size AxB that is moved across the image and gets multiplied several times by it to produce a new value. Each value represents a line or an edge in the image. Once the filters have been used on the image, its important characteristics can be extracted. This is done with the help of a pooling layer. These layers pool or collect the main features of each image. One popular technique of doing this is known as max pooling, which takes the largest number of each image and stores it in a separate grid. It thus compresses the main features into a single image and then passes it on to a
 regular multi-layer neural network for further processing. These neural networks are mainly used for image classification. They
