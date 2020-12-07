@@ -9,7 +9,7 @@ Example:
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlof-SeldonCore/pictures/overview.png" width="800">
 
 
-### Build new MLFlow docker image if needed
+### Build new MLFlow docker image if needed and pushing it into DockerHub container registry.
 
 ```
 $ cd mlflow
@@ -46,7 +46,7 @@ $ wget 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/wi
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
-Build custom JupyterLab docker image
+Build custom JupyterLab docker image and pushing it into DockerHub container registry.
 ```
 $ cd ./jupyterlab
 $ docker build -t jupyterlab-eth .
@@ -54,7 +54,7 @@ $ docker tag jupyterlab-eth:latest davarski/jupyterlab-eth:latest
 $ docker login 
 $ docker push davarski/jupyterlab-eth:latest
 ```
-Run Jupyter Notebook inside k8s:
+Run Jupyter Notebook inside k8s as pod:
 
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
@@ -258,6 +258,14 @@ However, a few projects have gained significant traction in moving toward standa
 ### Seldon Core
 
 Deployment of Machine Learning–based models with Seldon Core. Seldon Core is an open source model deployment controller for Kubernetes. Seldon Core integrates well with established model packing standards, offering prebuilt inference servers, including supporting MLflow, scikit-learn, TensorFlow, and XGBoost, and provides an interface for building custom inference servers. This section uses only a small set of Seldon Core’s features needed to deploy the simple machine learning model built in the previous section.
+
+A popular way to serve machine learning artifacts, like `pickles`, is to package them with flask APIs and serve them with a production ready web server like `gunicorn`. We are going to leverage the machine learning framework seldon core to serve our models. Seldon provides out-of-the-box inference servers for libraries like sklearn and tensorflow, but you can also use seldon-core to deploy a model with our own Docker container and code. Our model.pkl we can get by copying from our local minio bucket.
+
+```
+$ mc ls minio-cluster//mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model/model.pkl
+[2020-12-03 18:48:15 EET]   633B model.pkl
+```
+Ref: modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/model
 
 Create a Namespace for Seldon Core:
 ```
