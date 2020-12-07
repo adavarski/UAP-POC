@@ -598,6 +598,9 @@ Egyptian_cat (87.00%)
 
 The ResNet50 model also gives the prediction: 87.00% percent sure of its answer.
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TesorFlow-e1.png" width="500">
+
+
 Program 2: Handwriting Recognition Using Keras in TensorFlow (Single Layer, Multi-class)
 
 Import TensorFlow into your kernel.
@@ -658,6 +661,9 @@ array([[0., 0., 0., 0., 0., 0., 1., 0., 0., 0.]], dtype=float32)
 ```
 This gives the output like this:
 6
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e2.png" width="500">
+
 
 Program 3: Clothing Classification Using Keras in TensorFlow (Multi-layer, Multi-class)
 
@@ -745,6 +751,9 @@ This will give us the following output:
 
 Pullover
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e3.png" width="500">
+
+
 Program 4: Clothing Classification Using Convolutional Neural Networks (Multi-layer, Multi-class)
 ```
 Import the TensorFlow library and Keras utilities.
@@ -802,7 +811,10 @@ model.fit(ip_train, op_train, epochs = 5)
 Test the model.
 ```
 model.evaluate(ip_test, op_test, verbose = 1)
+
 ```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e4.png" width="500">
+
 Program 5: Handwriting Recognition Using Convolutional Neural Networks (Multi-layer, Multi-class)  
 
 Import the TensorFlow library and Keras utilities.
@@ -878,6 +890,9 @@ np.around(result)
 We will get the output as 1. This shows that the model has correctly
 predicted the class of the image.
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e5.png" width="500">
+
+
 Program 6: Image Classification for CIFAR-10 Using Convolutional Neural Networks (Multi-layer, Multi-class)
 
 ```
@@ -920,6 +935,9 @@ np.around(result)
 n=(np.around(result)).argmax()
 print(classes[n])
 ```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e6-2.png" width="500">
+
+
 
 Program 7: Dogs vs. Cats Classification Using Convolutional Neural Networks (Multi-layer, Binary)
 
