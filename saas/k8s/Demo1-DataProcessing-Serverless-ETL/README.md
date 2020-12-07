@@ -146,11 +146,11 @@ The example results show there were more negative Twitter posts ("doc_count": 40
 positive ("doc_count": 4) in the last hour.
 
 
-#### JupyterLab 
+#### JupyterLab/Jupyter Notebook
 
 Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
-Build custom JupyterLab docker image
+Build custom JupyterLab docker image and pushing it into DockerHub container registry.
 ```
 $ cd ./JupyterLab
 $ docker build -t jupyterlab-eth .
@@ -288,7 +288,7 @@ Example Output:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/pictures/JupyterLab-PythonNotebook.png" width="800">
 
-##### Run Jupyter Notebook inside k8s:
+##### Run Jupyter Notebook inside k8s as pod:
 
 ```
 kubectl run -i -t jupyter-notebook --namespace=data --restart=Never --rm=true --env="JUPYTER_ENABLE_LAB=yes" --image=davarski/jupyterlab-eth:latest 
