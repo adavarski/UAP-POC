@@ -249,16 +249,22 @@ name: mlflow-env
 
 MLflow brings essential Machine Learning components, further closing the gap between raw data and machine learning–based artificial intelligence. At this point, the k8s cluster supports the gathering of raw data The final step in Machine Learning development is production deployment, covered bellow.
 
-Note: Python’s Machine Learning Libraries
+Note: Python’s Machine Learning Libraries (Ref)
+
 A library in the programming world is a collection of methods and functions that allow a user to perform various tasks without having to write the necessary code for it. We use libraries to save time while we program. Python has a huge array of open source machine learning libraries, including, but not limited to, the following:
 
 • Pandas: The Pandas library provides users with the ability to handle large datasets. It provides tools for reading and writing data, cleaning and altering data,
 and so on.
+
 • Numpy: The Numpy, or Numerical Python, library provides users with a powerful array of computing abilities. It tackles the problem of slow mathematical computations and allows users to perform huge calculations with the help of multi-dimensional arrays.
+
 • Scipy: The Scipy library is used for scientific and technical computations. It works on Numpy’s multi-dimensional arrays.
+
 • Scikit-Learn: The Scikit-Learn library consists of various features and methods that have specially been made to assist users in their machine learning
 requirements. It makes use of the Numpy library, specifically when it comes to array operations.
+
 • TensorFlow: The TensorFlow library is an increasingly popular library that provides users with a large set of flexible and accessible tools for machine learning. 
+
 
 Machine learning involves data science techniques (like cleaning, manipulating, and visualizing data), mathematical techniques, and statistical techniques. Keeping this in mind, some of the most commonly used Python libraries for [machine learning] include Matplotlib, Seaborn, Pandas, Scikit-learn, Numpy, Scipy, and so on.
 These libraries have been tried and tested and were found to be easy to work with. They have thus gained popularity over the years, with numerous applications in various machine learning programs. With the growing enthusiasm toward [deep machine learning], there arose a need to create libraries that could assist with building multi-layered [neural networks]. Thus, libraries like [Theano], [PyTorch], [OpenCV], [Caffe], [Apache Spark], [Keras], and [TensorFlow] were released. These libraries enable programmers to develop large, multi-layered neural networks with less time and effort, and more efficiency. All these libraries, although varying in functionality and capability, have similar uses in deep machine learning. 
