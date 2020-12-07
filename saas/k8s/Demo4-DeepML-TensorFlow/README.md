@@ -169,7 +169,11 @@ Note: TensorFlow implemented the Keras API as a powerful tool that can be used f
 #### Neural Networks
 The neural network, or artificial neural network, was inspired by and modeled after the biological neural network. These networks, like the human brain, learn to perform specific tasks without being explicitly programmed. A neural network is composed of a series of neurons that are connected together to form a type of network, hence the name neural network. A neuron, or an artificial neuron, is the fundamental unit of a neural network. It is a mathematical function that replicates the neurons in the human brain, as you can see 
 
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="800">
+
 Comparison of biological and artificial neurons.
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="800">
 
 
 ### Working of an Artificial Neuron (Perceptron)
@@ -204,10 +208,11 @@ It is generally used in the final layer of a neural network. It is generally use
 these values will lie between 0 and 1.
 
 Note: The most common practice is to use a ReLU activation function in all the hidden layers, and then to use either a Softmax activation function (for multi-class classification) or Sigmoid activation function (for binary classification).
+
 Step 5: Producing the Output
 The final output is then passed from the last hidden layer to the output layer, which is then displayed to the user. Now that we know how a perceptron works, let’s go a little more in depth as to how a neural network performs a deep learning task.
 
-Digging Deeper into Neural Networks
+#### Digging Deeper into Neural Networks
 Deep learning goes a step further in machine learning. It allows the machine to begin thinking on its own in order to make decisions and carry out certain tasks. Neural networks are used to develop and train deep learning models. For example, consider a very simple neural network, which consists of an input layer, an output layer, and one layer of neurons, known as the hidden layer (as shown). 
 
 The basic function of these three sections is as follows:
@@ -219,6 +224,7 @@ The basic function of these three sections is as follows:
 3. The output layer, as the name suggests, contains the output signals. These are nothing but the final results of all the calculations performed by the hidden layer/s.
 
 The Process
+
 There are four main steps to the neural network process that allow it to come up with the most optimal solution for any problem that is given to it.
 
 Step 1: The numerical input signals are passed into the neural network’s hidden layers.
@@ -232,10 +238,13 @@ Step 4: The result is then produced as the output of the neural network.
 Thus, deep learning, as a part of machine learning, stands out as an extremely useful technique in the area of artificial intelligence.
 
 Types of Neural Networks
+
 There are several types of neural networks, all based on their structure, composition, and flow. Let’s go ahead and discuss a few of the common
 and most important ones that are used by deep learning developers.
+
 -Single-Layer Neural Networks: A Perceptron
 The perceptron is the oldest single-layer neural network. As you have seen before, it takes the input from the user, multiplies it by the corresponding weight, adds that to the bias to get the net input function, and then passes the result through the activation function to get the final output. Every perceptron produces only a single output. This type of neural network is not very efficient due to its extremely limited complexity. Thus, researchers came up with a model that contained more than one layer of perceptrons.
+
 -Multi-Layer Neural Networks
 This type of neural network is used mainly for natural language processing, speech recognition, image recognition, etc. It consists of two or more
 layers of perceptrons, as follows:
@@ -261,105 +270,76 @@ Modular neural networks have several different networks that each work independe
 connected to each other, and so do not interact with each other during this process. This helps in reducing the amount of time taken to perform the computation by distributing the work done by each network. Each sub- task would require only a portion of the total time, power, and resources needed to complete the work.
 
 Types of Data
+
 The data that is collected and used can be either of the following:
 
-• Labeled: Each class/type is labeled based on certain
-characteristics so that the machine can easily identify
-and separate the data into its respective groups. For
-example, if you have a collection of pictures that are
-separated and tagged as “cat” or “fish” accordingly.
+• Labeled: Each class/type is labeled based on certain characteristics so that the machine can easily identify and separate the data into its respective groups. For example, if you have a collection of pictures that are separated and tagged as “cat” or “fish” accordingly.
 
-• Unlabeled: Each class/type is not labeled, and so the
-machine needs to figure out how many classes are
-there and which item belongs where, and then it must
-separate the data on its own. For example, if you have
-a set of pictures, but they are not separated and tagged
-as “cat” or “fish” accordingly. In this case, the machine
-would need to identify some particular features that
-differentiate one animal from the other (like a cat’s
-whiskers or a fish’s fins).
+• Unlabeled: Each class/type is not labeled, and so the machine needs to figure out how many classes are there and which item belongs where, and then it must
+separate the data on its own. For example, if you have a set of pictures, but they are not separated and tagged as “cat” or “fish” accordingly. In this case, the machine would need to identify some particular features that differentiate one animal from the other (like a cat’s whiskers or a fish’s fins).
 
-Based on the kind of data being used, there are two main types of
-machine learning methods:
+Based on the kind of data being used, there are two main types of machine learning methods:
+
 • Supervised learning: This method uses labeled data.
+
 • Unsupervised learning: This method uses unlabeled data
 
 
-
-Each type of learning method has various types of algorithms that can
-be used to solve a machine learning problem. Let’s take a look at some
-important ones.
+Each type of learning method has various types of algorithms that can be used to solve a machine learning problem. Let’s take a look at some important ones.
 
 Supervised Learning Algorithms
-The goal of every supervised learning algorithm is to map the input to the
-output, as shown in the following equation:
-y = f(x)
+The goal of every supervised learning algorithm is to map the input to the output, as shown in the following equation:
+`y = f(x)`
 
-There are several algorithms that can be used to solve a machine
-learning problem with the help of supervised learning. These algorithms
-can be segregated into the following categories:
-1. Regression algorithms: These algorithms contain
-outputs that are real or countable. For example,
-height (4 feet, 5 feet, 6 feet), age (27, 31, 65), or price
+There are several algorithms that can be used to solve a machine learning problem with the help of supervised learning. These algorithms can be segregated into the following categories:
+
+1. Regression algorithms: These algorithms contain outputs that are real or countable. For example, height (4 feet, 5 feet, 6 feet), age (27, 31, 65), or price
 (100 rupees, 20 pounds, 10 dollars)
-2. Classification algorithms: These algorithms
-contain outputs that are abstract or categorical.
-For example, colors (orange, purple, turquoise),
-emotions (happy, sad, angry), or gender (girl, boy).
-To give you some idea of what these algorithms are, let’s go through
+
+2. Classification algorithms: These algorithms contain outputs that are abstract or categorical. For example, colors (orange, purple, turquoise), emotions (happy, sad, angry), or gender (girl, boy). To give you some idea of what these algorithms are, let’s go through
 three common types of algorithms that are used:
+
 • Linear regression
 • Logistic regression
 • K-Nearest neighbors
 
 Applications of Supervised Learning Algorithms
-1. Spam detection: Remember the very first email
-segregation example that we read about? This is
-done with the help of supervised learning.
-2. Bioinformatics: This is the method of keeping a
-record of a person’s biological information for later
-use. One of the most common examples of this is the
-security system on our cell phones, which can scan
-our fingerprint and grant us access accordingly.
+
+1. Spam detection
+
+2. Bioinformatics: This is the method of keeping a record of a person’s biological information for later use. One of the most common examples of this is the
+security system on our cell phones, which can scan our fingerprint and grant us access accordingly.
 
 Unsupervised Learning Algorithms
-The goal of unsupervised learning algorithms is to discover possible
-patterns from the set of data that is provided. The algorithm has no prior
-information about the patterns and labels present in the data.
-There are several algorithms that can be used to solve a machine
-learning problem with the help of unsupervised learning. These
-algorithms can be segregated into the following categories:
+The goal of unsupervised learning algorithms is to discover possible patterns from the set of data that is provided. The algorithm has no prior information about the patterns and labels present in the data. There are several algorithms that can be used to solve a machine learning problem with the help of unsupervised learning. These algorithms can be segregated into the following categories:
+
 • Cluster analysis: This approach finds similarities
 among the data and then groups the common data
 together in clusters.
+
 • Dimensionality reduction: This approach attempts
 to reduce the complexity of data while still keeping the
 data relevant.
-Let us now have a look at two common algorithms that are used for
-unsupervised learning: K-means clustering and principal component analysis.
+
+Two common algorithms that are used for unsupervised learning: K-means clustering and principal component analysis.
+
 -KMeans Clustering
+
 -Principal Component Analysis
 
 Applications of Unsupervised Machine Learning Algorithms
-Anomaly detection is the identification of certain anomalies or observations
-that are different from the rest of the observations. These anomalies are also
-called outliers. For example, credit card fraud can be discovered by detecting
-unusual transactions made with the credit card.
-Association is the process of identifying associations between different
-observations with the help of provided data. For example, in e-commerce
-it is easy to figure out the type of products a customer might be interested
-in by analyzing previous purchases.
+Anomaly detection is the identification of certain anomalies or observations that are different from the rest of the observations. These anomalies are also
+called outliers. For example, credit card fraud can be discovered by detecting unusual transactions made with the credit card. Association is the process of identifying associations between different observations with the help of provided data. For example, in e-commerce it is easy to figure out the type of products a customer might be interested in by analyzing previous purchases.
 
-Note: Do a little more research on machine learning
-algorithms. You can even compare them with each other, as this will
-broaden your understanding of these algorithms to help you decide
-which one to use for any future projects you might have.
+Note: Do a little more research on machine learning algorithms. You can even compare them with each other, as this will broaden your understanding of these algorithms to help you decide which one to use for any future projects you might have.
 
 Apart from supervised and unsupervised machine learning, there are
 also two lesser-known methods of machine learning, as follows:
+
 • Semi-supervised learning: This method uses some
 labeled data and a larger proportion of unlabeled data
 for training.
+
 • Reinforcement learning: This method is similar to
 training a pet. It sends positive signals to the machine
 when it gives the desired output, to let it know that it
@@ -369,264 +349,148 @@ output.
 
 
 
-
-
-
-
-
-
 ### Machine Learning Programming with Tensorflow 2.0
 
-Structure of a Machine Learning Model
-Machine learning, as mentioned earlier, requires part of the work to be
-done by us. The rest of it is all done behind the scenes by the computer. In
-other words, it all happens in the backend of the code. This, in all honesty,
-saves us, as programmers, a lot of trouble. There are, however, still plenty
-of tasks that we need to carry out while creating our model in order to
-make sure that we get the output we desire.
-A machine learning developer’s task is mainly to build the model and
-then run it. There are several components to this model, depending on
-what exactly we are trying to accomplish, but the general architecture
-remains the same. Since we will be using neural networks to carry out our machine
-learning processes, we will study the structure of a deep learning model
-that uses a neural network. The overall idea for the structure of the model
-is as shown
+#### Structure of a Machine Learning Model
+Machine learning, as mentioned earlier, requires part of the work to be done by us. The rest of it is all done behind the scenes by the computer. In other words, it all happens in the backend of the code. This, in all honesty, saves us, as programmers, a lot of trouble. There are, however, still plenty of tasks that we need to carry out while creating our model in order to make sure that we get the output we desire. A machine learning developer’s task is mainly to build the model and
+then run it. There are several components to this model, depending on what exactly we are trying to accomplish, but the general architecture remains the same. Since we will be using neural networks to carry out our machine learning processes, we will study the structure of a deep learning model that uses a neural network. The overall idea for the structure of the model is as shown
 
 
-As we can see in the flowchart, there are four main steps involved in
-developing a working machine learning model, as follows:
-1. Data loading and pre-processing: This part accepts
-data, manipulates it, then prepares it for training
-and testing.
-2. Building the model: This is the part where the
-developer specifies the various components of the
-model.
-3. Training the model: This part takes the training
-data and begins performing calculations on it to get
-an optimum result.
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TenmsorFlow-Flowchart-of-a-ML-model.png" width="800">
 
-4. Testing the model: This part validates or checks the
-accuracy of the model.
-The first two steps require the time, effort, and skills of a programmer,
-since they involve the handling of data and the creation of a working
-model. For the last two steps, all the programmer has to do is set the model
-running and then kick back and relax while the machine does all the hard
-work.
-Let’s go through this structure in a little more detail to get a better idea
+As we can see in the flowchart, there are four main steps involved in developing a working machine learning model, as follows:
+
+1. Data loading and pre-processing: This part accepts data, manipulates it, then prepares it for training and testing.
+
+2. Building the model: This is the part where the developer specifies the various components of the model.
+
+3. Training the model: This part takes the training data and begins performing calculations on it to get an optimum result.
+
+4. Testing the model: This part validates or checks the accuracy of the model. The first two steps require the time, effort, and skills of a programmer,
+since they involve the handling of data and the creation of a working model. For the last two steps, all the programmer has to do is set the model
+running and then kick back and relax while the machine does all the hard work. Let’s go through this structure in a little more detail to get a better idea
 of what it does, how it works, and what needs to be done.
 
--Data Loading and Pre-Processing
-We had a look at the different methods of collecting data. We
-also learned that this data requires some pre-processing before it can be
-used for any kind of analysis in order to ensure optimal results. This means
-that we might need to add, remove, or change some values.
-Now remember, this does not mean that we are completely changing
-our data, which can result in incorrect outputs. We are just making it more
-readable for our system to take and work with.
+##### Data Loading and Pre-Processing
+We had a look at the different methods of collecting data. We also learned that this data requires some pre-processing before it can be used for any kind of analysis in order to ensure optimal results. This means that we might need to add, remove, or change some values. Now remember, this does not mean that we are completely changing our data, which can result in incorrect outputs. We are just making it more readable for our system to take and work with.
 
-Data can be altered manually. Applications like spreadsheets or
-visualization software come in handy when working with structured
-data. However, when the dataset is huge, it becomes quite tiring and
-monotonous to work with. Thus, most developers use a Python library
-called Pandas, which provides users with several tools and utilities to work
-on their data. With the help of Pandas, users can import a .csv file (csv:
-comma separated values) from their local system into a Jupyter notebook.
-In this book, we will be using image datasets that are already integrated
-within the TensorFlow library. They can easily be called with the help of a
-TensorFlow function, as we will see later on.
-The data that we use for training machine learning models is divided
-into two categories: labels and features.
--Labels: These are the components of the data that
-are to be predicted; i.e., the dependent variable or
-output. They are determined based on the features
-provided to the system.
--Features: These are the components of the data
-that are used for prediction; i.e., the independent
-variable or input. They determine the labels of the
-outputs. When choosing features, it is important to
-ensure that they are independent and distinct.
+Data can be altered manually. Applications like spreadsheets or visualization software come in handy when working with structured data. However, when the dataset is huge, it becomes quite tiring and monotonous to work with. Thus, most developers use a Python library called Pandas, which provides users with several tools and utilities to work on their data. With the help of Pandas, users can import a .csv file (csv: comma separated values) from their local system into a Jupyter notebook. We will be using image datasets that are already integrated within the TensorFlow library. They can easily be called with the help of a TensorFlow function, as we will see later on.
 
-When training a deep learning model, we can choose either of the
-following methods based on how we intend to input our features and
-labels:
-• Supervised learning: We feed the model with the
-features and the labels.
-• Unsupervised learning: We feed the model with the
-features only.
-• Semi-supervised learning: We feed the model with
-some labeled features and some unlabeled features.
+The data that we use for training machine learning models is divided into two categories: labels and features.
 
-Note The quality of the labels is proportional to that of the features.
-In other words, better features result in more accurate labels.
-Once we have finished altering our data, we need to split it into two
-parts: the training data and the test data.
-Training data: Training data is what is fed into
-the model to be used while it is training. This will
-generally be a greater proportion of the data, since
-the model requires a larger amount of data when
-training to get more accurate results.
-Test data: Test data is what is fed into the model
-after it has finished training and settled on
-optimal parameters. This will generally be a lesser
-proportion because it is only meant to help the
-model determine how accurate or inaccurate its
-prediction is.
-After we are done pre-processing the data, the next step is to build the
-model.
+-Labels: These are the components of the data that are to be predicted; i.e., the dependent variable or output. They are determined based on the features provided to the system.
+-Features: These are the components of the data that are used for prediction; i.e., the independent variable or input. They determine the labels of the outputs. When choosing features, it is important to ensure that they are independent and distinct.
 
--Building the Model
-We need to develop the architecture of our machine learning model. In
-this case, we will be using a neural network. Thus, we need to arrange the
-neural network by defining the following:
+When training a deep learning model, we can choose either of the following methods based on how we intend to input our features and labels:
+
+• Supervised learning: We feed the model with the features and the labels.
+
+• Unsupervised learning: We feed the model with the features only.
+
+• Semi-supervised learning: We feed the model with some labeled features and some unlabeled features.
+
+Note The quality of the labels is proportional to that of the features. In other words, better features result in more accurate labels.
+
+Once we have finished altering our data, we need to split it into two parts: the training data and the test data.
+
+-Training data: Training data is what is fed into the model to be used while it is training. This will generally be a greater proportion of the data, since
+the model requires a larger amount of data when training to get more accurate results.
+
+-Test data: Test data is what is fed into the model after it has finished training and settled on optimal parameters. This will generally be a lesser
+proportion because it is only meant to help the model determine how accurate or inaccurate its prediction is. After we are done pre-processing the data, the next step is to build the model.
+
+##### Building the Model
+We need to develop the architecture of our machine learning model. In this case, we will be using a neural network. Thus, we need to arrange the neural network by defining the following:
 • The number of hidden layers
+
 • The number of neurons in each layer
+
 • The weights and biases
+
 • The activation function
-We learned how neural networks work, and we studied
-their different types. For example, convolutional neural networks
-(CNNs) are best used for image classification and recognition, and
-recurrent neural networks (RNNs) are great for machine translation and
-speech recognition. We can choose our preferred neural network after
-careful consideration of our data, resources, and desired outcome, and
-accordingly build the model that we require.
 
--Training the Model
-Once the model is built, it is ready to be trained. This is where the
-programmer steps aside and gives way to the machine, which proceeds to
-do some intense work. All we need to do here is call the training data into
-the model and then start the process.
-During training, the model begins trying out different values and
-replacing the parameters, i.e., the weights and the biases, in order to come
-up with the most suitable equation that will give high accuracy and low
-error. It follows a trial-and-error manner, and keeps changing the values of
-the parameters until it gets a result that is satisfactory.
+We learned how neural networks work, and we studied heir different types. For example, convolutional neural networks (CNNs) are best used for image classification and recognition, and recurrent neural networks (RNNs) are great for machine translation and speech recognition. We can choose our preferred neural network after
+careful consideration of our data, resources, and desired outcome, and accordingly build the model that we require.
 
--Testing the Model
-Once we have our trained model, we need to feed the test data into it.
-We then allow the model to run this data through to see how accurate its
-predictions are. In this way, we validate the model.
-Depending on this accuracy, we can decide if we want to change
-certain aspects of the model and then retrain it, or leave it as it is. Of
-course, there are several other factors that can affect this decision as
-well, including time, computational power, and so on. For example, the
-programmer may not have enough resources to redesign and retrain
-the model. Or perhaps there isn’t enough time. So, before retraining the
-model, the programmer must take all of these factors into consideration.
-The machine continues to repeat this cycle of training and testing the
-model until it produces an acceptable outcome.
-The structure of a machine learning model can vary greatly with
-regard to more specific factors, depending on the type of problem that we
-are solving. Hence, as mentioned earlier, we need to correctly define our
-problem and the solution we hope to achieve, and then carefully plan out
-our model to minimize error.
+##### Training the Model
+Once the model is built, it is ready to be trained. This is where the programmer steps aside and gives way to the machine, which proceeds to do some intense work. All we need to do here is call the training data into the model and then start the process. During training, the model begins trying out different values and
+replacing the parameters, i.e., the weights and the biases, in order to come up with the most suitable equation that will give high accuracy and low error. It follows a trial-and-error manner, and keeps changing the values of the parameters until it gets a result that is satisfactory.
+
+##### Testing the Model
+Once we have our trained model, we need to feed the test data into it. We then allow the model to run this data through to see how accurate its predictions are. In this way, we validate the model. Depending on this accuracy, we can decide if we want to change certain aspects of the model and then retrain it, or leave it as it is. Of course, there are several other factors that can affect this decision as well, including time, computational power, and so on. For example, the programmer may not have enough resources to redesign and retrain the model. Or perhaps there isn’t enough time. So, before retraining the
+model, the programmer must take all of these factors into consideration. The machine continues to repeat this cycle of training and testing the
+model until it produces an acceptable outcome. The structure of a machine learning model can vary greatly with regard to more specific factors, depending on the type of problem that we are solving. Hence, as mentioned earlier, we need to correctly define our problem and the solution we hope to achieve, and then carefully plan out our model to minimize error.
 
 
-We have already heard about such problems. Under classification, we
-have two main types: binary classification and multi-class classification.
-Binary Classification
-This is a very simple type of classification problem. Here, the variable to be
-predicted can take either one of two possible values. In other words, the
-data needs to be split into two groups.
-Let’s take a very simple example. Suppose we have a set of nine
-random numbers available to us: 2, 5, 700, 75654, 8273, 9, 23, 563, and 0.
-We can separate these numbers into two groups:
+#### Classification
+We have two main types: binary classification and multi-class classification.
+
+- Binary Classification
+
+This is a very simple type of classification problem. Here, the variable to be predicted can take either one of two possible values. In other words, the data needs to be split into two groups. Let’s take a very simple example. Suppose we have a set of nine random numbers available to us: 2, 5, 700, 75654, 8273, 9, 23, 563, and 0. We can separate these numbers into two groups:
+```
 Odd Numbers (5, 8273, 9, 23, 563)
 Even Numbers (2, 700, 75654, 0)
-As you can see, we have two groups or “classes” here based on the type
-of number. Five of the given numbers are odd, and four of them are even.
-Let’s take another example. Suppose we have a set like this: “doe,”
-“ram,” stag,” “ewe,” “rooster,” “chicken.”
-This can be separated out into the following:
+```
+As you can see, we have two groups or “classes” here based on the type of number. Five of the given numbers are odd, and four of them are even. Let’s take another example. Suppose we have a set like this: “doe,” “ram,” stag,” “ewe,” “rooster,” “chicken.” This can be separated out into the following:
+```
 Male (“ram,” “stag,” “rooster”)
 Female (“doe,” “ewe,” “chicken”)
-Once again, here we have two categories based on their gender, male
-and female, each having three variables. Each variable within the set of
-data is divided accordingly.
-Other more advanced applications of binary classification include
-cancer detection (cancer present/cancer absent), spam detection (spam/
-not spam), etc.
+```
+Once again, here we have two categories based on their gender, male and female, each having three variables. Each variable within the set of
+data is divided accordingly. Other more advanced applications of binary classification include cancer detection (cancer present/cancer absent), spam detection (spam/not spam), etc.
 
-Multi-class Classification
-This is also called multinomial classification. Here, the variable to be
-predicted can take one of many possible values. In other words, the data
-needs to be separated into more than two groups.
-For example, suppose we have a set like this: “rose,” “cucumber,”
-“tulip,” “lily,” “apple,” “carrot,” “potato,” “orange,” “sunflower.”
-We can separate them into these groups:
+- Multi-class Classification
+
+This is also called multinomial classification. Here, the variable to be predicted can take one of many possible values. In other words, the data needs to be separated into more than two groups. For example, suppose we have a set like this: “rose,” “cucumber,” “tulip,” “lily,” “apple,” “carrot,” “potato,” “orange,” “sunflower.” We can separate them into these groups:
+```
 Flowers (“rose,” “tulip,” “lily,” “sunflower”)
 Fruits (“cucumber,” “apple,” “orange”)
 Vegetables (“carrot,” “potato”)
-As you can see, we have three groups into which the data is divided
-based on type: four of the variables are flowers, three of them are fruits,
-and two of them are vegetables.
-Let’s consider another example. Take a look at this set of eleven
-random numbers: 9, 55, 8, 22, 27, 16, 205, 93, 4, 49, 81.
-Any guesses on how we can divide them?
-Yes, that’s right! We can divide them into the following groups:
+```
+As you can see, we have three groups into which the data is divided based on type: four of the variables are flowers, three of them are fruits, and two of them are vegetables. Let’s consider another example. Take a look at this set of eleven random numbers: 9, 55, 8, 22, 27, 16, 205, 93, 4, 49, 81. We can divide them into the following groups:
+```
 Multiples of 2 (8, 22, 16, 4)
 Multiples of 3 (9, 27, 93, 81)
 Multiples of 5 (55, 205)
 Multiples of 7 (49)
-We have four groups here based on the highest common factor (2,
-3, 5, or 7): the multiples of 2 consisting of four variables, multiples of 3
-consisting of four variables, multiples of 5 consisting of two variables, and
-multiples of 7 consisting of one variable.
+```
+We have four groups here based on the highest common factor (2, 3, 5, or 7): the multiples of 2 consisting of four variables, multiples of 3 consisting of four variables, multiples of 5 consisting of two variables, and multiples of 7 consisting of one variable.
 
-Other more advanced applications of multi-class classification include
-eye-color recognition (blue, green, light brown, dark brown, grey), cat-
-breed identification (Persian, Munchkin, Bengal, Siamese, Sphynx), etc.
-As we can see, in all these classification examples, the variables were
-grouped together depending on the characteristics that they shared. In this
-way, data can be classified or grouped based on similarities in particular
-characteristics or features.
-We will now get into the seven programs that we spoke about at
-the beginning of this chapter. This will help illustrate all that we have
-discussed till now, and will give you a clearer picture of the entire concept
-of machine learning with the help of Python and TensorFlow, within
-Jupyter Notebook.
+Other more advanced applications of multi-class classification include eye-color recognition (blue, green, light brown, dark brown, grey), cat-
+breed identification (Persian, Munchkin, Bengal, Siamese, Sphynx), etc. As we can see, in all these classification examples, the variables were grouped together depending on the characteristics that they shared. In this way, data can be classified or grouped based on similarities in particular
+characteristics or features. 
 
 ### Programming with TensorFlow 2.0
-The programs that we will be learning comprise image classification
-problems. Before we get into them, let’s have a quick look at how such
-problems need to be dealt with in order to solve them.
+The programs that we will be learning comprise image classification problems. Before we get into them, let’s have a quick look at how such problems need to be dealt with in order to solve them.
 
-Image Classification: An Overview
-Image classification is one of the most popular areas of deep learning due
-to its vast usability in practical purposes. It is the process of separating
-images within a dataset into groups, based on their similar features.For example, suppose we had images of a goldfish, a grasshopper,
-a sparrow, a rabbit, a penguin, a cat, a vulture, and a shark.We thus have the following four classes:
+#### Image Classification: An Overview
+Image classification is one of the most popular areas of deep learning due to its vast usability in practical purposes. It is the process of separating images within a dataset into groups, based on their similar features.For example, suppose we had images of a goldfish, a grasshopper, a sparrow, a rabbit, a penguin, a cat, a vulture, and a shark.We thus have the following four classes:
+
 • Insect (grasshopper)
-• Fish (goldfish, shark)
-• Mammal (cat, rabbit)
-• Bird (vulture, penguin, sparrow)
-Having studied these subjects in school, we already know which
-of these creatures falls under which category. We can use our natural
-intelligence to distribute the images easily. But how would an artificially
-intelligent computer figure this out?
-We would have to train it to understand the ways in which some of the
-creatures relate to each other, while others don’t.
-The model can be trained by feeding it with labeled pictures of
-different kinds of creatures. The labels would inform the machine if
-the image is that of an animal, a bird, a fish, or an insect. The machine
-would then begin to observe all the images under a single class to gather
-information on any kind of common features among them.
-For example:
-• The insects have six legs and antennae.
-• The fish have streamlined bodies and fins.
-• The mammals have four legs and furry bodies.
-• The birds have wings and two legs each.
-Once it has gathered its observations and made predictions that are
-verified to be accurate, it can be used for further problem solving.
-Now, if we give it the eight images from Figure 11-2, it would solve
-the problem effortlessly and classify the images according to their type by
-studying each picture, finding its closest possible label match, and placing
-it in that class. This is how image classification is done using a machine
-learning model.
 
-In the programs that we will be going through, we will focus on
-instructing the computer to train and test similar image classification
-models with the help of neural networks.
-Let’s start with our very first deep learning program.
+• Fish (goldfish, shark)
+
+• Mammal (cat, rabbit)
+
+• Bird (vulture, penguin, sparrow)
+
+Having studied these subjects in school, we already know which of these creatures falls under which category. We can use our natural intelligence to distribute the images easily. But how would an artificially intelligent computer figure this out? We would have to train it to understand the ways in which some of the creatures relate to each other, while others don’t. The model can be trained by feeding it with labeled pictures of different kinds of creatures. The labels would inform the machine if the image is that of an animal, a bird, a fish, or an insect. The machine would then begin to observe all the images under a single class to gather
+information on any kind of common features among them.
+
+For example:
+
+• The insects have six legs and antennae.
+
+• The fish have streamlined bodies and fins.
+
+• The mammals have four legs and furry bodies.
+
+• The birds have wings and two legs each.
+
+Once it has gathered its observations and made predictions that are verified to be accurate, it can be used for further problem solving. Now, if we give it the eight images, it would solve the problem effortlessly and classify the images according to their type by studying each picture, finding its closest possible label match, and placing it in that class. This is how image classification is done using a machine learning model.
+
+In the programs that we will be going through, we will focus on instructing the computer to train and test similar image classification models with the help of neural networks. 
 
 
 ### JupyterLab/Jupyter Notebooks environment
