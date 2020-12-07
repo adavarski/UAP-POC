@@ -1,4 +1,6 @@
 
+AI/ML/DeepML Overview:
+
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
 
 ### Python’s Machine Learning Libraries (Ref)
@@ -1071,4 +1073,28 @@ else:
    n2 = 'cat'
 print(prediction2)
 ```
+
+TODO: Applications of IoT
+
+Smart Homes
+Smart homes refer to the phenomenon of home automation, where the home does tasks on its own, without the need for anyone to control it. So far, smart homes have been able to do the following:
+
+1. Switch lights on or off.
+2. Keep a check on the overall temperature of the home.
+3. Make sure all electronic devices are turned off when not in use.
+4. Monitor the health of the inhabitants of the home.
+
+Wearables
+Wearables, as the name suggests, are devices that can be worn and that collect data about the wearer for further processing. Some common wearables are as follows:
+
+1. Heart-rate monitors
+2. Fitness monitors
+3. Glucose monitors
+
+Smart Greenhouse
+The greenhouse farming technique aims to enhance crop yield by moderating temperature parameters. The problem is, this becomes difficult when it is required to be done by people. Smart greenhouses, therefore, can be used to fix this.
+
+1. Its sensors can measure the various parameters.
+2. It sends this data to the cloud, which processes this information.
+3. An appropriate action is taken with regards to the plant/s involved.
 
