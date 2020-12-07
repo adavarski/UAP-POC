@@ -178,6 +178,7 @@ The neural network, or artificial neural network, was inspired by and modeled af
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="500">
 
 Comparison of biological and artificial neurons.
+
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
 
 
