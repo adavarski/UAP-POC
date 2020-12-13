@@ -14,101 +14,12 @@ For setting up Kubernetes local development environment, there are three recomme
 
 Note: Of the three (k3s & minikube & kubespay), k3s tends to be the most viable. It is closer to a production style deployment. 
 
-### minikube:
-```
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && mv ./minikube /usr/local/bin/
-minikube start --cpus 2 --memory 6150 --insecure-registry="docker.infra.example.com"
-
-```
-Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with minikube+GitLab): https://github.com/adavarski/minikube-gitlab-development
-
-### kubespray (HA: 2 masters)
-```
-$ git clone https://github.com/kubernetes-sigs/kubespray
-$ sudo yum install python-pip; sudo pip install --upgrade pip; 
-$ sudo pip install -r requirements.txt; vagrant up
-
-On all k8s nodes fix docker networking: 
-
-/etc/docker/daemon.json
-
-{
-  "insecure-registries" : ["docker.infra.example.com"],
-  "bip": "10.30.0.1/16",
-  "default-address-pools":
-  [
-     {"base":"10.20.0.0/16","size":24}
-  ]
-}
-
-$ vagrant halt; vagrant up
-
-Kubectl: 
-
-$ vagrant ssh k8s-1 -c "sudo cat /etc/kubernetes/admin.conf" > k8s-cluster.conf
-$ export KUBECONFIG=./k8s-cluster.conf 
-$ kubectl version
-$ kubectl cluster-info
-Kubernetes master is running at https://172.17.8.101:6443
-coredns is running at https://172.17.8.101:6443/api/v1/namespaces/kube-system/services/coredns:dns/proxy
-kubernetes-dashboard is running at https://172.17.8.101:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy
-
-$ kubectl get nodes -L beta.kubernetes.io/arch -L beta.kubernetes.io/os -L beta.kubernetes.io/instance-type
-NAME    STATUS   ROLES    AGE    VERSION   ARCH    OS      INSTANCE-TYPE
-k8s-1   Ready    master   209d   v1.16.3   amd64   linux   
-k8s-2   Ready    master   209d   v1.16.3   amd64   linux   
-k8s-3   Ready    <none>   209d   v1.16.3   amd64   linux  
-
-$ kubectl get pods -o wide --sort-by="{.spec.nodeName}" --all-namespaces
-
-Helm:
-
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ ./get_helm.sh
-$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-$ helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
-$ helm repo add hashicorp https://helm.releases.hashicorp.com
-$ helm search repo stable
-$ helm search repo hashicorp/consul
-$ helm install consul hashicorp/consul --set global.name=consul
-$ helm install incubator/kafka --set global.name=kafka
-$ helm install stable/postgresql ... ; etc. etc.
-
-$ helm ls
-NAME                    	NAMESPACE	REVISION	UPDATED                                 	STATUS  	CHART              	APP VERSION
-consul-1594280853       	default  	1       	2020-07-09 10:47:36.997366559 +0300 EEST	deployed	consul-3.9.6       	1.5.3      
-fluent-bit-1594282992   	default  	1       	2020-07-09 11:23:16.306895607 +0300 EEST	deployed	fluent-bit-2.8.17  	1.3.7      
-grafana-1594282747      	default  	1       	2020-07-09 11:19:10.878858677 +0300 EEST	deployed	grafana-5.3.5      	7.0.3      
-kibana-1594282930       	default  	1       	2020-07-09 11:22:14.332304833 +0300 EEST	deployed	kibana-3.2.6       	6.7.0      
-logstash-1594282961     	default  	1       	2020-07-09 11:22:45.049385698 +0300 EEST	deployed	logstash-2.4.0     	7.1.1      
-postgresql-1594282655   	default  	1       	2020-07-09 11:17:38.550513366 +0300 EEST	deployed	postgresql-8.6.4   	11.7.0     
-telegraf-1594282866     	default  	1       	2020-07-09 11:21:09.59958005 +0300 EEST 	deployed	telegraf-1.6.1     	1.12       
-...
-...
-
-Note1: If we have working docker-compose based env, it’s easy to migrate to k8s dev env (minikube:local; kubespary:local, clouds; KOPS: AWS; etc.) 
-->  kompose convert
-
-curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose && chmod +x kompose && sudo mv ./kompose /usr/local/bin/kompose 
-./kompose convert (docker-copmose.yml)
-
-Note2: Helm (k8s) + CI/CD (Jenkins) continious deployment. 
-
-Note3: If we don’t use k8s we have to write our TF modules for SaaS (PoC: AWS) to have IaC based deployment for all services: ELK, Kafka, Consul, Grafana, Sensu, InfluxDB, etc. , etc. —> and have IaC: TF modules source @GitHub.
-
-Examples TF: 
-https://github.com/phiroict/terraform-aws-kafka-cluster; https://github.com/dwmkerr/terraform-consul-cluster, etc.
-
-Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Cahrts
-```
-
-### k3s
-
-k3s is 40MB binary that runs “a fully compliant production-grade Kubernetes distribution” and requires only 512MB of RAM. k3s is a great way to wrap applications that you may not want to run in a full production Cluster but would like to achieve greater uniformity in systems deployment, monitoring, and management across all development operations.
 
 # k3s: (Default) k8s local development environment HOWTO 
 
 k3s is deafult k8s developlent environment, because k3s is closer to a production style deployment, than minikube & kubespary .
+
+k3s is 40MB binary that runs “a fully compliant production-grade Kubernetes distribution” and requires only 512MB of RAM. k3s is a great way to wrap applications that you may not want to run in a full production Cluster but would like to achieve greater uniformity in systems deployment, monitoring, and management across all development operations.
 
 
 ## Prerequisite
@@ -376,7 +287,7 @@ kubectl apply -f ./003-data/000-namespace/003-issuer.yaml
 kubectl apply -f ./003-data/000-namespace/005-clusterissuer.yml
 ```
 
-## SaaS deploy 
+## PaaS/SaaS deploy 
 
 ### Monitoring
 
@@ -548,6 +459,22 @@ modelUri: s3://mlflow/artifacts/1/e22b3108e7b04c269d65b3f081f44166/artifacts/mod
 kubectl apply -f ./003-data/1000-seldoncore/000-sd-s3-secret.yml
 kubectl apply -f ./003-data/1000-seldoncore/100-sd-quality.yml
 ```
+
+### DWH: Hive SQL-Engine with MinIO DataLake (s3 Object Storage)
+```
+kubectl apply -f ./003-data/3000-hive/10-mysql-metadata_backend.yml
+kubectl apply -f ./003-data/3000-hive/20-service.yml
+kubectl apply -f ./003-data/3000-hive/30-deployment.yml
+```
+
+### DWH: Presto SQL-Engine with MinIO, Hive, MySql, Cassandra, etc
+```
+cd ./003-data/4000-presto/
+git clone git@github.com:apk8s/presto-chart.git
+helm upgrade --install presto-data --namespace data --values values.yml ./presto-chart/presto
+kubectl apply -f ./50-ingress.yml
+```
+
 
 ## Check k8s development cluster:
 
@@ -815,13 +742,31 @@ davar@carbon:~/Documents/0-GITHUB-SOURCE/SOURCE_REPOS.20201103/PaaS-and-SaaS-POC
 
 ```
 
-### GitLab (in-cluster CI/CD)
+Note: GitOps
+GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
 
-Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
 
-## k8s Operators
+### GitLab (in-cluster CI/CD)  
+```
+kubectl apply -f ./003-data/2000-gitlab/00-namespace.yml
+kubectl apply -f ./003-data/2000-gitlab/10-services.yml
+kubectl apply -f ./003-data/2000-gitlab/20-configmap.yml
+kubectl apply -f ./003-data/2000-gitlab/40-deployment.yml
+kubectl apply -f ./003-data/2000-gitlab/50-ingress.yml
+kubectl apply -f ./003-data/2000-gitlab/70-gitlab-admin-service-account.yaml
+```
+Integrate k8s cluster with GitLab (GitOps)
 
-For k8s Operators creation refer to HOWTO: https://github.com/adavarski/k8s-operators-playground
+Ref: Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with k3s+GitLab): https://github.com/adavarski/k3s-GitLab-development 
+
+### Argo CD (GitOps)
+
+```
+kubectl create ns argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+We can configure argo to run deployments for us instead of kubectl apply -f. The goal here to always have our ML/DeepML deployment in sync with the representation of our deployment (YAML).
+
 
 ## Extend k3s cluster: Add k3s worker (bare-metal)
 
@@ -840,6 +785,67 @@ $ sed -i "s/127.0.0.1/192.168.0.101/" ~/.kube/k3s-config
 ```
 Fix k3s CoreDNS for local development to use local DNS server if needed.
 
+##  Extend k3s cluster: Add k3s worker with NVIDIA Runtime for heavy ML workloads (bare-metal)
+
+```
+
+# Install Ubuntu 18.04 on some bare-metal server/workstation with an NVIDIA GeForce GPU (for example Gaming NVIDIA GeForce 1070 GPU)   .
+$ sudo su
+$ apt update && apt upgrade -y
+$ apt install -y apt-transport-https \
+ca-certificates gnupg-agent \
+software-properties-common
+$ apt install -y linux-headers-$(uname -r)
+# Ceph block device kernel module (for Ceph support)
+$ modprobe rbd
+# NVIDIA GeForce GPU support. Install GPU drivers along with the nvidia-container-runtime plug-in for
+containerd, the default container runtime for k3s.
+$ apt install ubuntu-drivers-common
+$ modprobe ipmi_devintf
+$ add-apt-repository -y ppa:graphics-drivers
+$ curl -s -L \
+   https://nvidia.github.io/nvidia-docker/gpgkey \
+   | sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-container-runtime/
+ubuntu18.04/nvidia-container-runtime.list | tee /etc/apt/
+sources.list.d/nvidia-container-runtime.list   
+$ apt-get install -y nvidia-driver-440
+$ apt-get install -y nvidia-container-runtime
+$ apt-get install -y nvidia-modprobe nvidia-smi
+$ /sbin/modprobe nvidia
+$ /sbin/modprobe nvidia-uvm  
+$ reboot
+$ nvidia-smi
+# k3s with NVIDIA Runtime
+sudo su -
+export K3S_CLUSTER_SECRET="<PASTE VALUE>"
+export K3S_URL="https://dev-k3s.davar.com:6443"
+export INSTALL_K3S_SKIP_START=true
+$ curl -sfL https://get.k3s.io | \
+sh -s - agent 
+$ mkdir -p /var/lib/rancher/k3s/agent/etc/containerd/
+$ cat <<"EOF" > \
+/var/lib/rancher/k3s/agent/etc/containerd/config.toml
+[plugins.opt]
+  path = "/var/lib/rancher/k3s/agent/containerd"
+[plugins.cri]
+  stream_server_address = "127.0.0.1"
+  stream_server_port = "10010"
+  sandbox_image = "docker.io/rancher/pause:3.1"
+[plugins.cri.containerd.runtimes.runc]
+  runtime_type = "io.containerd.runtime.v1.linux"
+[plugins.linux]
+  runtime = "nvidia-container-runtime"
+EOF
+$ systemctl start k3s
+$ kubectl label node gpu-metal kubernetes.io/role=gpu
+# Edit k8s Geth miners yaml ( ./cluster-davar-eth/100-eth/40-miner/30-deployment.yml) to run Pods on gpu-metal using label:gpu
+
+```
+
+Fix k3s CoreDNS for local development to use local DNS server if needed.
+
+
 ## Demo1: [DataProcessing: Serverless:OpenFaaS+ETL:Apache Nifi](https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo1-DataProcessing-Serverless-ETL/)
 
 ## Demo2: [DataProcessing-MinIO](https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo2-DataProcessing-MinIO/)
@@ -854,4 +860,100 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 kubectl delete -f ./003-data/000-namespace/00-namespace.yml
 ```
 Note: all resources/objects into data namespace will be auto-removed by k8s.
+
+
+# minikube:
+```
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && mv ./minikube /usr/local/bin/
+minikube start --cpus 2 --memory 6150 --insecure-registry="docker.infra.example.com"
+
+```
+Deploy in-Cluster GitLab for K8s Development HOWTO (Developing for Kubernetes with minikube+GitLab): https://github.com/adavarski/minikube-gitlab-development
+
+# kubespray (HA: 2 masters)
+```
+$ git clone https://github.com/kubernetes-sigs/kubespray
+$ sudo yum install python-pip; sudo pip install --upgrade pip; 
+$ sudo pip install -r requirements.txt; vagrant up
+
+On all k8s nodes fix docker networking: 
+
+/etc/docker/daemon.json
+
+{
+  "insecure-registries" : ["docker.infra.example.com"],
+  "bip": "10.30.0.1/16",
+  "default-address-pools":
+  [
+     {"base":"10.20.0.0/16","size":24}
+  ]
+}
+
+$ vagrant halt; vagrant up
+
+Kubectl: 
+
+$ vagrant ssh k8s-1 -c "sudo cat /etc/kubernetes/admin.conf" > k8s-cluster.conf
+$ export KUBECONFIG=./k8s-cluster.conf 
+$ kubectl version
+$ kubectl cluster-info
+Kubernetes master is running at https://172.17.8.101:6443
+coredns is running at https://172.17.8.101:6443/api/v1/namespaces/kube-system/services/coredns:dns/proxy
+kubernetes-dashboard is running at https://172.17.8.101:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy
+
+$ kubectl get nodes -L beta.kubernetes.io/arch -L beta.kubernetes.io/os -L beta.kubernetes.io/instance-type
+NAME    STATUS   ROLES    AGE    VERSION   ARCH    OS      INSTANCE-TYPE
+k8s-1   Ready    master   209d   v1.16.3   amd64   linux   
+k8s-2   Ready    master   209d   v1.16.3   amd64   linux   
+k8s-3   Ready    <none>   209d   v1.16.3   amd64   linux  
+
+$ kubectl get pods -o wide --sort-by="{.spec.nodeName}" --all-namespaces
+
+Helm:
+
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+$ ./get_helm.sh
+$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+$ helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
+$ helm repo add hashicorp https://helm.releases.hashicorp.com
+$ helm search repo stable
+$ helm search repo hashicorp/consul
+$ helm install consul hashicorp/consul --set global.name=consul
+$ helm install incubator/kafka --set global.name=kafka
+$ helm install stable/postgresql ... ; etc. etc.
+
+$ helm ls
+NAME                    	NAMESPACE	REVISION	UPDATED                                 	STATUS  	CHART              	APP VERSION
+consul-1594280853       	default  	1       	2020-07-09 10:47:36.997366559 +0300 EEST	deployed	consul-3.9.6       	1.5.3      
+fluent-bit-1594282992   	default  	1       	2020-07-09 11:23:16.306895607 +0300 EEST	deployed	fluent-bit-2.8.17  	1.3.7      
+grafana-1594282747      	default  	1       	2020-07-09 11:19:10.878858677 +0300 EEST	deployed	grafana-5.3.5      	7.0.3      
+kibana-1594282930       	default  	1       	2020-07-09 11:22:14.332304833 +0300 EEST	deployed	kibana-3.2.6       	6.7.0      
+logstash-1594282961     	default  	1       	2020-07-09 11:22:45.049385698 +0300 EEST	deployed	logstash-2.4.0     	7.1.1      
+postgresql-1594282655   	default  	1       	2020-07-09 11:17:38.550513366 +0300 EEST	deployed	postgresql-8.6.4   	11.7.0     
+telegraf-1594282866     	default  	1       	2020-07-09 11:21:09.59958005 +0300 EEST 	deployed	telegraf-1.6.1     	1.12       
+...
+...
+
+Note1: If we have working docker-compose based env, it’s easy to migrate to k8s dev env (minikube:local; kubespary:local, clouds; KOPS: AWS; etc.) 
+->  kompose convert
+
+curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose && chmod +x kompose && sudo mv ./kompose /usr/local/bin/kompose 
+./kompose convert (docker-copmose.yml)
+
+Note2: Helm (k8s) + CI/CD (Jenkins) continious deployment. 
+
+Note3: If we don’t use k8s we have to write our TF modules for SaaS (PoC: AWS) to have IaC based deployment for all services: ELK, Kafka, Consul, Grafana, Sensu, InfluxDB, etc. , etc. —> and have IaC: TF modules source @GitHub.
+
+Examples TF: 
+https://github.com/phiroict/terraform-aws-kafka-cluster; https://github.com/dwmkerr/terraform-consul-cluster, etc.
+
+Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Cahrts
+```
+
+
+
+
+
+
+
 
