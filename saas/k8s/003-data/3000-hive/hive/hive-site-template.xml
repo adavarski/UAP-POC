@@ -1,0 +1,42 @@
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://MYSQL_ENDPOINT/objectmetastore?createDatabaseIfNotExist=true&amp;useSSL=false</value>
+        <description>metadata is stored in a MySQL server</description>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+        <description>MySQL JDBC driver class</description>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>MYSQL_USER</value>
+        <description>user name for connecting to mysql server</description>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>MYSQL_PASSWORD</value>
+        <description>password for connecting to mysql server</description>
+    </property>
+    <property>
+        <name>fs.s3a.endpoint</name>
+        <description>AWS S3 endpoint to connect to.</description>
+        <value>S3A_ENDPOINT</value>
+    </property>
+    <property>
+        <name>fs.s3a.access.key</name>
+        <description>AWS access key ID.</description>
+        <value>S3A_ACCESS_KEY</value>
+    </property>
+    <property>
+        <name>fs.s3a.secret.key</name>
+        <description>AWS secret key.</description>
+        <value>S3A_SECRET_KEY</value>
+    </property>
+    <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>S3A_PATH_STYLE_ACCESS</value>
+        <description>Enable S3 path style access.</description>
+    </property>
+</configuration>
