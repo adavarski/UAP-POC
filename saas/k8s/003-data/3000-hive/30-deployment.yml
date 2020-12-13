@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hive
+  namespace: data
+  labels:
+    app: hive
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: hive
+  template:
+    metadata:
+      labels:
+        app: hive
+    spec:
+      containers:
+        - name: hive
+          image: davarski/hive-s3m:3.1.2-1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: MYSQL_ENDPOINT
+              value: "mysql-service:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              value: "root"
+            - name: S3A_ENDPOINT
+              value: "http://minio-service:9000"
+            - name: S3A_ACCESS_KEY
+              value: "minio"
+            - name: S3A_SECRET_KEY
+              value: "minio123"
+            - name: S3A_PATH_STYLE_ACCESS
+              value: "true"
+          ports:
+            - name: tcp-thrift-meta
+              containerPort: 9083
+            - name: tcp-thrift
+              containerPort: 10000
+            - name: http-hwi
+              containerPort: 10002
