@@ -948,7 +948,7 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 
 ## Demo3: [AutoML:MLFlow+Seldon Core](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore)
 
-## Demo4: [DeepML with TensorFlow 2.0](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo4-DeepML-TensorFlow)
+## Demo4: [DeepML with TensorFlow](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo4-DeepML-TensorFlow)
 
 ## Demo5: [BigData:MinIO Data Lake with Hive/Presto SQL-Engines](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto)
 
