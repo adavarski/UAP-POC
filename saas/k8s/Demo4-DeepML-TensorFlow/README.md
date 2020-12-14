@@ -1,7 +1,7 @@
 
 ### AI/ML/DeepML Overview:
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
 
 ### Python’s Machine Learning Libraries (Ref)
 
@@ -24,7 +24,7 @@ Machine learning involves data science techniques (like cleaning, manipulating, 
 These libraries have been tried and tested and were found to be easy to work with. They have thus gained popularity over the years, with numerous applications in various machine learning programs. With the growing enthusiasm toward [deep machine learning], there arose a need to create libraries that could assist with building multi-layered [neural networks]. Thus, libraries like [Theano], [PyTorch], [OpenCV], [Caffe], [Apache Spark], [Keras], and [TensorFlow] were released. These libraries enable programmers to develop large, multi-layered neural networks with less time and effort, and more efficiency. All these libraries, although varying in functionality and capability, have similar uses in deep machine learning. 
 
 
-### TensorFlow 2.0 DeepML library
+### TensorFlow 1.x/2.x DeepML library
 
 TensorFlow consists of two main components, as follows:
 1. Tensors, in which the data is held
@@ -32,7 +32,7 @@ TensorFlow consists of two main components, as follows:
 
 [Tensors] can be defined as multi-dimensional arrays. A single number is known as a scalar. More than one number arranged in a one-dimensional list (array) is known as a vector. More than one number arranged in a two-dimensional manner is known as a matrix.Technically speaking, scalars, vectors, and matrices are all tensors.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a_scalar_vector_and_matrix.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a_scalar_vector_and_matrix.png" width="500">
 
 • Scalars are zero-dimensional tensors.
 
@@ -42,12 +42,52 @@ TensorFlow consists of two main components, as follows:
 
 However, it is a universally accepted practice that when we have more than one number arranged in three or more dimensions, we refer to such an arrangement as a tensor. We can picture a tensor in the shape of a Rubik’s cube. From the picture, we can see that tensors have a great capacity for data storage, as they have n dimensions. The n here is used as a proxy for the actual number of dimensions, where n>=3. To better understand the relationship between scalars, vectors, matrices, and tensors, we can depict them as shown:
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-notational_representation_of_a_scalar_vector_matrix_and_tensor.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-notational_representation_of_a_scalar_vector_matrix_and_tensor.png" width="500">
 
 
 As you can see, the four data structures are quite similar to each other notation-wise as well, differing with respect to their capacity. Although tensors usually hold numbers, they can also hold text and strings. Tensors are capable of containing large amounts of data in a compact form. This makes it easier to handle the computation of our program, even when we have enormous amounts of data that we need to use to train our machine.
 
+So a tensor is also a mathematical entity with which to represent different properties, similar to a scalar, vector, or matrix. It is true that a tensor is a generalization of a scalar or vector. In short, tensors are multidimensional arrays that have some dynamic properties. A vector is a one-dimensional tensor, whereas two-dimensional tensors are matrices:
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-Tensors.png" width="500">
+
+Tensors can be of two types: constant or variable.
+
+Rank
+
+Ranking tensors can sometimes be confusing for some people, but in terms of tensors, rank simply indicates the number of directions required to
+describe the properties of an object, meaning the dimensions of the array contained in the tensor itself. Breaking this down for different objects, a
+scalar doesn’t have any direction and, hence, automatically becomes a rank 0 tensor, whereas a vector, which can be described using only one direction, becomes a first rank tensor. The next object, which is a matrix, requires two directions to describe it and becomes a second rank tensor.
+
+Shape
+
+The shape of a tensor represents the number of values in each dimension.
+```
+Scalar—32: The shape of the tensor would be [ ].
+Vector—[3, 4, 5]: The shape of the first rank tensor
+would be [3].
+         1 2 3
+Matrix = 4 5 6 : The second rank tensor would have a shape of [3, 3]
+         7 8 9
+
+```
+
 [Flow] The input of the program is taken in the form of tensors, which are then executed in distributed mode with the help of computational graphs. These graphs are used to set the flow of the entire program. A computational graph is a flowchart of operations and functions that are needed to be carried out on the input tensor. The tensor enters on one side, goes through a list of operations, then comes out the other side as the output of the code. The Tensorflow Machine Learning Library This is how TensorFlow got its name—the input tensor follows a systematic flow, thus producing the necessary output. Now that we know what TensorFlow is, let’s examine how it is useful to machine learning developers. 
+
+So flow is basically an underlying graph computation framework that uses tensors for its execution. A typical graph consists of two entities: nodes and edges, as
+shown: (Nodes are also called vertices):
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-typical-graph.png" width="500">
+
+The edges are essentially the connections between the nodes/vertices through which the data flows, and nodes are where actual computation
+takes place. Now, in general, the graph can be cyclic or acyclic, but in TensorFlow, it is always acyclic. It cannot start and end at the same node.
+Let’s consider a simple computational graph, as shown, and explore some of its attributes.
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-computational-graph.png" width="500">
+
+The nodes in the graph indicate some sort of computation, such as addition, multiplication, division, etc., except for the leaf nodes, which
+contain the actual tensors with either constant or variable values to be operated upon. These tensors flow through the edges or connections between nodes, and the computation at the next node results in formation of a new tensor. So, in the sample graph, a new tensor m is created through a computation at the node using other tensors x and y. The thing to focus on in this graph is that computations take place only at the next stage after leaf nodes, as leaf nodes can only be simple tensors, which become input for next-node computation flowing through edges. We can also represent the computations at each node through a hierarchical structure. The nodes at the same level can be executed in parallel, as there is no interdependency between them. In this case, m and n can be calculated
+in parallel at the same time. This attribute of graph helps to execute computational graphs in a distributed manner, which allows TensorFlow to be used for large-scale applications.
 
 Note: TF 1.0 specific example: TensorFlow works with the help of a computational graph. This graph consists of all the variables that we declare, all the operations that we carry out, and so on. It basically works behind the scenes of a program. In TensorFlow, every node of the graph is known as an operation, even if it is just a command that initializes a variable. We will begin by acquiring the “default graph,” like this:`graph = tf.get_default_graph()` Now, let’s try to retrieve the operations from within this graph:`graph.get_operations()`We will get an output like this:`[ ]` This is because we’ve not carried out any operations yet, so the graph has nothing to display. We will now begin adding some nodes to this graph. Let us use some of the simple commands we have learned so far, like the following:
 
@@ -74,7 +114,7 @@ operations
 ```
 Executing this gives us the result shown
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-operations-within-a-computation-graph.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-operations-within-a-computation-graph.png" width="500">
 
 
 This shows us the number of nodes present in our graph. We had entered four different nodes, which are displayed here along with their names (a, b, c, and d) and their types (constant, constant, addition, multiplication, respectively)
@@ -177,11 +217,11 @@ Note: TensorFlow implemented the Keras API as a powerful tool that can be used f
 The neural network, or artificial neural network, was inspired by and modeled after the biological neural network. These networks, like the human brain, learn to perform specific tasks without being explicitly programmed. A neural network is composed of a series of neurons that are connected together to form a type of network, hence the name neural network. A neuron, or an artificial neuron, is the fundamental unit of a neural network. It is a mathematical function that replicates the neurons in the human brain, as you can see 
 
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="500">
 
 Comparison of biological and artificial neurons.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
 
 
 #### Working of an Artificial Neuron (Perceptron)
@@ -225,13 +265,57 @@ Deep learning goes a step further in machine learning. It allows the machine to 
 
 The basic function of these three sections is as follows:
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Basic-neural-network.png" width="400">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Basic-neural-network.png" width="400">
 
 1. The input layer, as the name implies, is made of the input signals that will be further transmitted into the neural network.
 
 2. The hidden layer is where all the important computations occur. The input that is fed to it is taken, calculations are performed on it, and then this input is sent to the next layer, which is the output layer. The hidden layer can have any number of neurons within it. There can also be more than one hidden layer, depending on our requirements and arrangement.
 
 3. The output layer, as the name suggests, contains the output signals. These are nothing but the final results of all the calculations performed by the hidden layer/s.
+
+So Artificial Neural Networks (ANNs) tries to mimic the brain at its most basic level, i.e., that of the neuron. An artificial neuron has a similar structure to that of a human neuron and comprises the following sections:
+
+Input layer: This layer is similar to dendrites and takes input from other networks/neurons.
+
+Summation layer: This layer functions like the soma of neurons. It aggregates the input signal received.
+
+Activation layer: This layer is also similar to a soma, and it takes the aggregated information and fires a signal only if the aggregated input crosses a certain
+threshold value. Otherwise, it does not fire.
+
+Output layer: This layer is similar to axon terminals in that it might be connected to other neurons/networks or act as a final output layer (for predictions).
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Artificial-neural-network.png" width="400">
+
+```
+In the preceding figure, X 1 , X 2 , X 3 ,.........X n are the inputs fed to the neural network. W 1 , W 2 , W 3 ,............W n are the weights 
+associated with the inputs, and Y is the final prediction. Many activation functions can be used in the activation layer, to convert all the linear 
+details produced at the input and make the summation layer nonlinear. This helps users acquire more details about the input data that would not 
+be possible if this were a linear function. Therefore, the activation layer plays an important role in predictions. Some of the most familiar 
+types of activation functions are sigmoid, ReLU, and softmax as explained above.
+
+```
+
+Simple Neural Network Architecture : a typical neural network architecture is made up of an Input layer, Hidden layer, Output layer
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_regression.png" width="600">
+
+```
+Every input is connected to every neuron of the hidden layer and, in turn, connected to the output layer. If we are solving a 
+regression problem, the architecture looks like the one shown in above picture, in which we have the output Y p, 
+which is continuous if predicted at the output layer. If we are solving a classification (binary, in this case),
+we will have the outputs Y class1 and Y class2 , which are the probability values for each of the binary 
+classes 1 and 2 at the output layer, as shown bellow.
+```
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_classifiacation.png" width="600">
+
+Deep Neural Networks (DNNs): When a simple neural network has more than one hidden layer, it is known as a deep neural network (DNN). Architecture of a
+typical DNN:
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Deep-neural-network-with-three-hidden-layers.png" width="600">
+
+It consists of an input layer with two input variables, three hidden layers with three neurons each, and an output layer (consisting either of a single output for regression or multiple outputs for classification). The more hidden layers, the more neurons. Hence, the neural network is able to learn the nonlinear (non-convex) relation between the inputs and output.
+
 
 The Process
 
@@ -264,9 +348,7 @@ layers of perceptrons, as follows:
 
 -Convolutional Neural Networks
 Convolutional neural networks follow the same principle as multi-layer neural networks, the only difference being that they include “convolutional
-layers,” which make use of filters. A filter is a grid of size AxB that is moved across the image and gets multiplied several times by it to produce a new value. Each value represents a line or an edge in the image. Once the filters have been used on the image, its important characteristics can be extracted. This is done with the help of a pooling layer. These layers pool or collect the main features of each image. One popular technique of doing this is known as max pooling, which takes the largest number of each image and stores it in a separate grid. It thus compresses the main features into a single image and then passes it on to a
-regular multi-layer neural network for further processing. These neural networks are mainly used for image classification. They
-can also be used in search engines and recommender systems.
+layers,” which make use of filters. A filter is a grid of size AxB that is moved across the image and gets multiplied several times by it to produce a new value. Each value represents a line or an edge in the image. Once the filters have been used on the image, its important characteristics can be extracted. This is done with the help of a pooling layer. These layers pool or collect the main features of each image. One popular technique of doing this is known as max pooling, which takes the largest number of each image and stores it in a separate grid. It thus compresses the main features into a single image and then passes it on to a regular multi-layer neural network for further processing. These neural networks are mainly used for image classification. They can also be used in search engines and recommender systems.
 
 -Recurrent Neural Networks
 Recurrent neural networks (RNNs) are used for temporal data; i.e., data that requires past experiences to predict future outcomes. State matrices remember previous states of data by storing the last output, and then use this data to calculate the new output.two states: long term and short term. RNNs begin in the layers after the first layer. Here, each node acts as a memory cell during the computation, which allows it to compare previous values with new values during
@@ -294,12 +376,27 @@ Based on the kind of data being used, there are two main types of machine learni
 
 • Unsupervised learning: This method uses unlabeled data
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Supervised_Unsupervised_Learning_diff.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Supervised_Unsupervised_Learning_diff.png" width="500">
 
+A typical supervised machine learning architecture: 
+
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-supervised-ML-architecture.png" width="500">
+
+```
+Note: Within supervised learning, if we are to predict numeric values, this is called regression, whereas if we are to predict 
+classes or categorical variables, we call that classification. For example, if the aim is to predict the sales (in dollars) a 
+company is going to earn (numeric value), this comes under regression. If the aim is to determine whether a customer will 
+buy a product from an online store or to check if an employee is going to churn or not (categorical yes or no), this is a 
+classification problem. Classification can be further divided as binary and multi-class. Binary classification deals 
+with classifying two outcomes, i.e., either yes or no. Multi-class classification yields multiple outcomes. For example, 
+a customer is categorized as a hot prospect, warm prospect, or cold prospect, etc.
+```
 
 Each type of learning method has various types of algorithms that can be used to solve a machine learning problem. Let’s take a look at some important ones.
 
 Supervised Learning Algorithms
+
 The goal of every supervised learning algorithm is to map the input to the output, as shown in the following equation:
 `y = f(x)`
 
@@ -323,18 +420,21 @@ Applications of Supervised Learning Algorithms
 security system on our cell phones, which can scan our fingerprint and grant us access accordingly.
 
 Unsupervised Learning Algorithms
+
 The goal of unsupervised learning algorithms is to discover possible patterns from the set of data that is provided. The algorithm has no prior information about the patterns and labels present in the data. There are several algorithms that can be used to solve a machine learning problem with the help of unsupervised learning. These algorithms can be segregated into the following categories:
 
-• Cluster analysis: This approach finds similarities among the data and then groups the common data together in clusters.
+1. Cluster analysis: This approach finds similarities among the data and then groups the common data together in clusters.
 
-• Dimensionality reduction: This approach attempts to reduce the complexity of data while still keeping the data relevant.
+2. Dimensionality reduction: This approach attempts to reduce the complexity of data while still keeping the data relevant.
 
 Two common algorithms that are used for unsupervised learning: K-means clustering and principal component analysis.
 
--KMeans Clustering
--Principal Component Analysis
+- KMeans Clustering
+
+- Principal Component Analysis
 
 Applications of Unsupervised Machine Learning Algorithms
+
 Anomaly detection is the identification of certain anomalies or observations that are different from the rest of the observations. These anomalies are also
 called outliers. For example, credit card fraud can be discovered by detecting unusual transactions made with the credit card. Association is the process of identifying associations between different observations with the help of provided data. For example, in e-commerce it is easy to figure out the type of products a customer might be interested in by analyzing previous purchases.
 
@@ -355,7 +455,7 @@ Machine learning, as mentioned earlier, requires part of the work to be done by 
 then run it. There are several components to this model, depending on what exactly we are trying to accomplish, but the general architecture remains the same. Since we will be using neural networks to carry out our machine learning processes, we will study the structure of a deep learning model that uses a neural network. The overall idea for the structure of the model is as shown
 
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TenmsorFlow-Flowchart-of-a-ML-model.png" width="400">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TenmsorFlow-Flowchart-of-a-ML-model.png" width="400">
 
 As we can see in the flowchart, there are four main steps involved in developing a working machine learning model, as follows:
 
@@ -595,7 +695,7 @@ Egyptian_cat (87.00%)
 
 The ResNet50 model also gives the prediction: 87.00% percent sure of its answer.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TesorFlow-e1.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TesorFlow-e1.png" width="500">
 
 
 Program 2: Handwriting Recognition Using Keras in TensorFlow (Single Layer, Multi-class)
@@ -657,9 +757,10 @@ array([[0., 0., 0., 0., 0., 0., 1., 0., 0., 0.]], dtype=float32)
 
 ```
 This gives the output like this:
+
 6
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e2.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-e2.png" width="500">
 
 
 Program 3: Clothing Classification Using Keras in TensorFlow (Multi-layer, Multi-class)
@@ -738,6 +839,7 @@ print(n)
 This gives us the following output:
 
 2
+
 This output is very vague. All it tells us is the position of the predicted
 class, but not what the actual item of clothing is. Thus, we add an extra line
 of code:
@@ -748,7 +850,7 @@ This will give us the following output:
 
 Pullover
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e3.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e3.png" width="500">
 
 
 Program 4: Clothing Classification Using Convolutional Neural Networks (Multi-layer, Multi-class)
@@ -810,7 +912,7 @@ Test the model.
 model.evaluate(ip_test, op_test, verbose = 1)
 
 ```
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e4.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e4.png" width="500">
 
 Program 5: Handwriting Recognition Using Convolutional Neural Networks (Multi-layer, Multi-class)  
 
@@ -887,7 +989,7 @@ np.around(result)
 We will get the output as 1. This shows that the model has correctly
 predicted the class of the image.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e5.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e5.png" width="500">
 
 
 Program 6: Image Classification for CIFAR-10 Using Convolutional Neural Networks (Multi-layer, Multi-class)
@@ -932,7 +1034,7 @@ np.around(result)
 n=(np.around(result)).argmax()
 print(classes[n])
 ```
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e6-2.png" width="500">
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e6-2.png" width="500">
 
 
 
@@ -1069,7 +1171,300 @@ else:
 print(prediction2)
 ```
 
-TODO: DeepML of IoT
+
+### TensorFlow Models in Production
+#### Python-Based Model Deployment: Deploying a Machine Learning Model As a REST Service (Flask + joblib + Pickle)
+
+- Saving and Restoring a Machine Learning Model
+
+Saving any model is also known as serialization. This can also be done in different ways, as Python has its own way of persisting a model, known as pickle. Pickle can be used to serialize machine language models, as well as any other transformer. The other approach has the built-in functionality of sklearn, which allows saving and restoring of Python-based machine learning models. In this section, we will focus on using the joblib function to save and persist sklearn models.
+Once the model is saved on disk or at any other location, we can reload or restore it back, for making predictions on new data. In the example below, we consider the standard data set for building a linear regression model. The input data has five input columns and one output column. All the variables are numeric in nature, so little feature engineering is required. Nevertheless, the idea here is not to focus on building a perfect model but to build a baseline model, save it, and then restore it. In the first step, we load the data and create input and output feature variables (X,y).
+
+
+Jupyter Notebook (Note: running not inside k8s in this example only to create/pickle/test the model)
+
+Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
+
+Build custom JupyterLab docker image and pushing it into DockerHub container registry.
+```
+$ cd ./jupyterlab
+$ docker build -t jupyterlab-eth .
+$ docker tag jupyterlab-eth:latest davarski/jupyterlab-eth:latest
+$ docker login 
+$ docker push davarski/jupyterlab-eth:latest
+```
+Run Jupyter Notebook
+
+```
+$ sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/k3s-config-jupyter
+$ sed -i "s/127.0.0.1/192.168.0.101/" ~/.kube/k3s-config-jupyter
+$ docker run --rm --name jl -p 8888:8888 \
+   -v "$(pwd)":"/home/jovyan/work" \
+   -v "$HOME/.kube/k3s-config-jupyter":"/home/jovyan/.kube/config" \
+   --user root \
+   -e GRANT_SUDO=yes \
+   -e JUPYTER_ENABLE_LAB=yes -e RESTARTABLE=yes \
+   davarski/jupyterlab-eth:latest
+```
+Example:
+```
+$ docker run --rm --name jl -p 8888:8888 \
+>    -v "$(pwd)":"/home/jovyan/work" \
+>    -v "$HOME/.kube/k3s-config-jupyter":"/home/jovyan/.kube/config" \
+>    --user root \
+>    -e GRANT_SUDO=yes \
+>    -e JUPYTER_ENABLE_LAB=yes -e RESTARTABLE=yes \
+>    davarski/jupyterlab-eth:latest
+
+Set username to: jovyan
+usermod: no changes
+Granting jovyan sudo access and appending /opt/conda/bin to sudo PATH
+Executing the command: jupyter lab
+[I 21:37:15.811 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 21:37:16.594 LabApp] Loading IPython parallel extension
+[I 21:37:16.614 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 21:37:16.614 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[W 21:37:16.623 LabApp] JupyterLab server extension not enabled, manually loading...
+[I 21:37:16.638 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
+[I 21:37:16.638 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
+[I 21:37:16.639 LabApp] Serving notebooks from local directory: /home/jovyan
+[I 21:37:16.639 LabApp] The Jupyter Notebook is running at:
+[I 21:37:16.639 LabApp] http://(e1696ffe20ab or 127.0.0.1):8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+[I 21:37:16.639 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 21:37:16.648 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-17-open.html
+    Or copy and paste one of these URLs:
+        http://(e1696ffe20ab or 127.0.0.1):8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+```
+Open IDE in browser: http://127.0.0.1:8888/?token=f0c6d63a7ffb4e67d132716e3ed49745e97b3e7fa78db28d
+
+Create new Python 3 notebook and create/picle/test model
+
+```
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+```
+Note: Upload "Linear_regression_dataset.csv" into Jupyter Notebook it in the same folder as the Jupyter notebook that you are working in.
+
+```
+df=pd.read_csv('Linear_regression_dataset.csv',header='infer')
+X=df.loc[:,df.columns !='output']
+y=df['output']
+```
+The next step is to split the data into train and test sets. Then we build
+the linear regression model on the training data and access the coefficient
+values for all the input variables.
+```
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+lr = LinearRegression().fit(X_train, y_train)
+lr.coef_
+```
+Example output:
+
+array([ 3.33773356e-04,  6.12485115e-05,  2.57628117e-04, -6.69740154e-01,
+        5.04645773e-01])
+
+
+```
+lr.score(X_train,y_train)
+```
+Exampe Output: 
+
+0.8700856735266858
+```
+lr.score(X_test,y_test)
+```
+Exampe Output: 
+
+0.8666629982427125
+
+The performance of this baseline model seems reasonable, with an R-squared value of 87% on the training set and 86% on the test set.
+
+Now that we have the trained model available, we can save it at any location or disk, using joblib or pickle. We name the exported model linear_regression_model.pkl.
+
+```
+import joblib
+joblib.dump(lr,'linear_regression_model.pkl')
+````
+
+['linear_regression_model.pkl']
+
+Now, we create a random input feature set and predict the output, using the trained model that we just saved.
+
+```
+test_data=[600,588,90,0.358,0.333]
+pred_arr=np.array(test_data)
+print(pred_arr)
+```
+Example Output:
+
+[[6.00e+02 5.88e+02 9.00e+01 3.58e-01 3.33e-01]]
+
+In order to predict the output with the same model, we first must
+import or load the saved model, using joblib.load. Once the model is
+loaded, we can simply use the predict function, to make the prediction on
+a new data point.
+
+```
+model=open("linear_regression_model.pkl","rb")
+lr_model=joblib.load(model)
+model_prediction=lr_model.predict(preds)
+print(model_prediction)
+```
+Example Output:
+
+[0.36941795]
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-pickle-the-model.png" width="500">
+
+
+- Deploying a Machine Learning Model As a REST Service (in docker container)
+
+we can deploy the model as a REST (representational state transfer) service, in order to expose it to external users. This allows them to use the model output or prediction without having to access the underlying model. In this section, we will make use of Flask to deploy the model as a REST service. Flask is a lightweight web framework, built in Python, to deploy applications on a server.
+
+Flask app.py : First, we import all the required libraries from Python. Next, we create our first function, which is the home page that renders the HTML template to allow users to fill input values. The next function is to publish the predictions by the model on those input values provided by the user. We save the input values into five different variables coming from the user and create a list (pred_args). We then convert that into a numpy array. We reshape it into the desired form, to be able to make predictions in the same way. The next step is to load the trained model (linear_regression_ model.pkl) and make the predictions. We save the final output into a variable (model_prediction). We then publish these results via another HTML template (predict.html). Tempaltes: There are two web pages that we have to design, in order to post requests to the server and receive in return the response message, which is the prediction by the machine learning model for that particular request. we are creating a form to request five values in five different variables. We are using a standard CSS template with very basic fields. The next template is to publish the model prediction back to the user. It is less complicated, compared to the first template, as there is just one value that we have to post back to the user.
+
+We are going to use the same model that we built in the preceding section and deploy it, using the Flask server.. We can either move the model.pkl file manually to the web_app folder:
+
+```
+cd ./docker/web_app
+$ docker ps -a 
+CONTAINER ID        IMAGE                            COMMAND                  CREATED             STATUS              PORTS                    NAMES
+b9571113d5a1        davarski/jupyterlab-eth:latest   "tini -g -- start-no…"   21 minutes ago      Up 21 minutes       0.0.0.0:8888->8888/tcp   jl
+$ docker exec -it jl bash -c "ls"
+Linear_regression_dataset.csv  linear_regression_model.pkl  Untitled.ipynb  work
+$ docker cp jl:/home/jovyan/linear_regression_model.pkl .
+$ docker build -t davarski/tf-linear-regression-rest:1.0.0 .
+$ docker login 
+$ docker push davarski/tf-linear-regression-rest:1.0.0
+$ docker run -d -p 5000:5000 davarski/tf-linear-regression-rest:1.0.0 
+936ef10f86797c1a7f1987ca168deb428f700fee8434e176805d1f5123cc95d2
+$ docker logs 936ef10f8679
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+```
+
+Access  http://localhost:5000/
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-1.png" width="500">
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-2.png" width="500">
+
+Building a Keras TensorFlow-Based Model
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-sample-from-the-Fashion-MNIST-data-set.png" width="500">
+
+Execute Program3 in a new Jupyter notebook
+```
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+data = datasets.fashion_mnist
+(ip_train, op_train), (ip_test, op_test) = data.load_data()
+print(ip_train.shape, ip_test.shape)
+ip_train = ip_train.reshape((60000, 28, 28, 1))
+ip_test = ip_test.reshape((10000, 28, 28, 1))
+print(ip_train.shape, ip_train.shape)
+ip_train, ip_test = ip_train / 255.0, ip_test / 255.0
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28, 1)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(1000, activation='relu'),
+    layers.Dropout(0.5),
+    layers.Dense(10, activation='softmax')
+])
+model.summary()
+model.fit(ip_train, op_train, epochs = 5)
+model.evaluate(ip_test, op_test, verbose = 2)
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
+'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[5000]
+plt.imshow(test_image.reshape(28,28))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1, 28, 28, 1)
+result = model.predict(test_image)
+result
+np.around(result)
+n=(np.around(result)).argmax()
+print(n)
+print(class_names[n])
+```
+
+Now, we save the model as a Keras model and load it back, using load_model for prediction.
+
+```
+model.save("keras_model.h5")
+loaded_model = models.load_model("keras_model.h5")
+```
+In the following example, we load a test image (300), which is a dress, and then we will use our saved model to make a prediction about this image : result = loaded_model.predict(test_image)
+
+
+```
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
+'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+import matplotlib.pyplot as plt
+%matplotlib inline
+test_image=ip_test[300]
+plt.imshow(test_image.reshape(28,28))
+import numpy as np
+from tensorflow.keras.preprocessing import image
+test_image = image.img_to_array(test_image)
+test_image = test_image.reshape(1, 28, 28, 1)
+result = loaded_model.predict(test_image)
+result
+np.around(result)
+n=(np.around(result)).argmax()
+print(n)
+print(class_names[n])
+```
+Example Output:
+
+Dress
+
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Keras-save-load-models.png" width="500">
+
+TODO: TF ind deployment: Productionizing the machine learning model (deploy model) via Kubeflow/Seldon core (Note: package model into docker container if needed) 
+
+
+Kubeflow is a native tool for managing and deploying machine learning models on Kubernetes. Kubernetes can be defined as a container orchestration platform that allows for the running, deployment, and management of containerized applications (machine learning models, in our case). We will replicate the same model that we built previously and run it in the cloud (via Google Cloud Platform), using Kubeflow. We will also use the Kubeflow UI, to navigate and run Jupyter Notebook in the cloud. Because we are going to use Google Cloud Platform (GCP), we must have a Google account, so that we can avail ourselves of the free credits provided by Google for the use of GCP components. Go to https://console.cloud.google.com/ and create a Google user account, if you do not have one already. You will be required to provide a few additional details, along with credit card information. Once we log in to the Google console, there are many options to explore, but first, we must enable the free credits provided by Google, in order to access the cloud services for free (up to $300). Next, we must create a new project or select one of the existing projects, for users already in possession of a Google account. To use Kubeflow, the final step is to enable Kubernetes Engine APIs. In
+order to enable Kubernetes Engine APIs, we must go to the APIs & Services dashboard and search for Kubernetes Engine API. Once this shows up in the library, we must enable it.The next step is to deploy the Kubernetes cluster on GCP, using Kubeflow. Ref:  https://www.kubeflow.org/docs/gke/deploy/ Once we log in to the Kubeflow UI, we can see the Kubeflow dashboard, with its multiple options, such as Pipelines, Notebook Servers, etc. We must select Notebook Servers, to start a new notebook server. For a new notebook server, we must provide a few details regarding the desired configuration. Now we must provide a few configuration details to spin up the server, such as base image (with pre-installed libraries and dependencies), the size of CPU/GPUs, and total memory (5 CPUs and 5GB memory suffices for our model). We can select the image with TensorFlow version (2.0, if we are building the model with that version). We must also add GCP credentials, in case we want to save the model to GCP’s storage bucket and use it for serving purposes. After a while, the notebook server will be up and running, and we can click Connect, to open the Jupyter Notebook running on the Kubeflow server. Once Jupyter Notebook is up, we can select the option to create a new Python 3 notebook or simply go to its terminal and clone the required repo from Git, to download all the model files to this notebook. In our case, because we are building the model from scratch, we will create a new Python 3 notebook and replicate the same model built earlier. It should work exactly as before, the only difference being that we are now using Kubeflow to build and serve the model. In case any library is not available, we can simply pip3 install the library and use it in this notebook. Once the model is built and we have used the services of Kubeflow, we must terminate and delete all the resources, in order to avoid any extra cost. We must go back to the Google console and, under the Kubernetes clusters list, delete the Kubeflow server.
+
+```
+$ docker cp jl:/home/jovyan/keras_model.h5 .
+$ mv keras_model.h5 model.pkl
+$ mc mb minio-cluster/tensorflow
+$ mc cp model.pkl minio-cluster/tensorflow/artifacts/model/model.pkl
+```
+
+Databrick
+
+Use TensorFlow is through the Databricks platform.
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-Unified-Analytics-Platform.png" width="500">
+
+Log in to the Databricks account and spin up a cluster of desired size:
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-environment.png" width="500">
+
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-create-cluster.png" width="500">
+
+Once the cluster is up and running, we go to the Libraries options of the cluster, via Actions. Within the Libraries tab, if the cluster already has a set of pre-installed libraries, they will be listed, or, in the case of a new cluster, no packages will be installed. We then click the Install New button. This will open a new window with multiple options to import or install a new library in Databricks. We select PyPI, and in the Package option, we mention the version of TensorFlow required to be installed. It will take some time, and we can then see TensorFlow successfully installed in Databricks, under Libraries. We can now open a new or existing notebook using the same cluster. 
+
+
+TODO1: DeepML with IoT
 
 Smart Homes
 Smart homes refer to the phenomenon of home automation, where the home does tasks on its own, without the need for anyone to control it. So far, smart homes have been able to do the following:
