@@ -2,11 +2,11 @@
 
 Hidden Technical Debt in Machine Learning Systems, NIPS 2015
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-ML-system.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-ML-system.png" width="800">
 
 ML lifecycle high-Level overview
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-high-level-ML-lifecycle.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-high-level-ML-lifecycle.png" width="800">
 
 What do we mean by MLOps? 
 
@@ -29,11 +29,11 @@ The lifecycle needs to jump across many walls
 
 Model Building/Deploiyment High Level:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/ml-silos.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/ml-silos.png" width="800">
 
 How can we make MLOps better ?
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-high-level-overview.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-high-level-overview.png" width="800">
 
 
 ## Model Development
@@ -51,11 +51,11 @@ What is MLflow?
 lifecycle, including experimentation, reproducibility,
 deployment, and a central model registry.”
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-MLFlow.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-MLFlow.png" width="800">
 
 Example Model Development: 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/overview.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/overview.png" width="800">
 
 
 ### Build new MLFlow docker image if needed and pushing it into DockerHub container registry.
@@ -247,16 +247,16 @@ Elasticnet model (alpha=5.000000, l1_ratio=5.000000):
   MAE: 0.6624353628023353
   R2: -0.0020143202186577724
 ```
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/jupyterlab-python-mlflow-notebook.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/jupyterlab-python-mlflow-notebook.png" width="800">
 
 
 Each run of the previous code results in a new entry into the SkLearnWineQuality experiment. Browse to https://mlflow.data.davar.com and navigate to the experiment. From there, observe the various runs and their results.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/mlflow-ui-experiments.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/mlflow-ui-experiments.png" width="800">
 
 Click a run entry to view details along with artifacts associated with the run, including, in this case, a model package and source code 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/mlflow-ui-packaged-model.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/mlflow-ui-packaged-model.png" width="800">
 
 
 Check MinIO bucket:
@@ -334,11 +334,11 @@ What is Seldon Core?
 
 “An MLOps framework to package, deploy, monitor and manage thousands of production machine learning models”
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-SeldonCore.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-SeldonCore.png" width="800">
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-SeldonCore-1.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-SeldonCore-1.png" width="800">
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLFlow-SeldonCore-2.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLFlow-SeldonCore-2.png" width="800">
 
 
 Deployment of Machine Learning–based models with Seldon Core. Seldon Core is an open source model deployment controller for Kubernetes. Seldon Core integrates well with established model packing standards, offering prebuilt inference servers, including supporting MLflow, scikit-learn, TensorFlow, and XGBoost, and provides an interface for building custom inference servers. This section uses only a small set of Seldon Core’s features needed to deploy the simple machine learning model built in the previous section.
@@ -810,9 +810,9 @@ Input variables (based on physicochemical tests):
 
 Output variable (based on sensory data): quality (score between 0 and 10)
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-demo-1.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-demo-1.png" width="800">
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-demo-2.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/MLOps-demo-2.png" width="800">
 
 
 This k8s+MLFlow/Seldon Core Demo moved quickly, lightly scratching the surface of Seldon Core’s capabilities. However, it demonstrated nearly seamless interoperability between a range of diverse components, from building scikit-learn models in Jupyter Notebooks and tracking and serving the models in MLflow to their final deployment with Seldon Core, all integrated atop Kubernetes.
@@ -831,7 +831,7 @@ Note: New concepts like GitOps aim to completely manage the active configuration
 
 ML CD High Level Overview: 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/cd4ml-end-to-end.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/cd4ml-end-to-end.png" width="800">
 
 
 One of the core tenets of data science that differentiates it from software engineering is its focus on experimentation. With software, you develop, you test, and you push features that are primarily code-based. In data science, on the other hand, you conduct heaps of experiments while making changes in configuration, data, features, etc. The output isn’t even necessarily “completed code,” but artifacts such as model weights.
@@ -965,7 +965,7 @@ GitLab k8s integration supports GitOps.
 Ref: https://github.com/adavarski/k3s-GitLab-development
 
 ### Argo CD(GitOps)
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/ML_mlflow-1024x652.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore/pictures/ML_mlflow-1024x652.png" width="800">
 
 
 Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
