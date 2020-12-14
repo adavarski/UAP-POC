@@ -84,7 +84,8 @@ INSERT INTO test.message VALUES (1, "Test1");
 SELECT * FROM test.message;
 ```
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-local-workstation-testing.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-local-workstation-testing.png" width="800">
+
 
 Note: The previous test created a type of distributed database capable of cataloging and querying petabytes of data from a distributed, highly scalable MinIO object storage system. The preceding exercise is capable of modeling existing data, provided that all data in the specified bucket and prefix (/test/messages/) has the same structure. This powerful concept allows organizations to begin collecting structured data and apply a schema in the future, once the need to access it arises.
 
@@ -101,7 +102,7 @@ monitoring, and logical proximity to all the services within the data platform.
 
 Deploys the custom Apache Hive container developed earlier. Hive supplies SQL-like capabilities atop Apache Hadoop, extending its use to a broader range of data analytics, analysis, and management applications. Hadoop’s Big Data capabilities are traditionally associated with the Hadoop Distributed File System (HDFS). However, the custom container developed earlier extends Hive with the ability to use S3-compatible object storage as a modern alternative to Hadoop’s HDFS. Apache Hive creates a Data Warehouse within a broader Data Lake, as shown:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-warehousing-structures-and-semi-structures.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-warehousing-structures-and-semi-structures.png" width="800">
 
 The following configuration defines a hive Kubernetes Service backed by a hive Deployment implementing the custom image davarski/hive-s3m:3.1.2-1.0.0. The new Hive container uses MySQL to store schema, defining structured and semi-structured objects stored in MinIO (S3).
 
@@ -258,7 +259,7 @@ Forwarding from [::1]:10002 -> 10002
 Handling connection for 10002
 
 ```
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-UI.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-UI.png" width="800">
 
 ### JupyterLab/Jupyter Notebook (Jupyter environment)
 
@@ -380,9 +381,9 @@ for i in range(1,1001):
 ```
 Example Output:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-MinIO-Juputer-1.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-MinIO-Juputer-1.png" width="800">
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-MinIO-Jupyter-2.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Hive-MinIO-Jupyter-2.png" width="800">
 
 Check MinIO bucket
 
@@ -450,14 +451,14 @@ beeline -u jdbc:hive2:// -f /tmp/create-table.hql
 ```
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/diagram-beeline.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/diagram-beeline.png" width="600">
 
 Note: Including Presto (see bellow) into picture
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/diagram-presto-hive.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/diagram-presto-hive.png" width="600">
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/beeline-hive-metastore.png" width="300">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/beeline-hive-metastore.png" width="300">
 
 
 
@@ -622,12 +623,12 @@ OK
 Constructing a modern Data Warehouse in Kubernetes provides an abstraction from low-level infrastructure, a unified control plane, standardized configuration management, holistic monitoring, role-based access control, network policies, and compatibility with the rapidly growing landscape of cloud-native technologies.
 This Presto demo configures two new data sources: MySQL representing a common RDBMS database, Apache Hive capable of projecting a schema atop the S3-compatible object storage set up in the previous sections (TODO: add data source: Apache Cassandra as a wide-column distributed NoSQL database). Presto, a distributed SQL query engine for Big Data, ties these existing data sources together into a single catalog, providing schema and connectivity. Presto natively supports over 20 typical data applications, including Elasticsearch and Apache Kafka (deployed using this repo). It is not uncommon to write an application that natively connects and consumes data from more than one source. However, technologies such as Presto consolidate and abstract this capability, distribute queries across a cluster to workers, aggregate results, and monitor performance. Centralized access to a vast warehouse of data from Presto reduces technical debt across specialized systems by managing diverse connectivity requirements and schema management.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/7-DWH_Presto_distributed_SQL_joining_multiple_datasources.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/7-DWH_Presto_distributed_SQL_joining_multiple_datasources.png" width="800">
 
 
 Presto is the final component of the modern Data Warehouse in this demo. According to the official website prestodb.io, “Presto is an open source distributed SQL query engine for running interactive analytic queries against data sources of all sizes ranging from gigabytes to petabytes.” Although Hive is also a distributed SQL query engine cable of querying vast quantities of data, Presto connects to a broader range of data sources, including Apache Hive. Aside from Presto’s high-performance querying capabilities, it provides a central catalog of data sources.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/7-DWH_Presto_distributed_SQL_query_multiple_datasources.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/7-DWH_Presto_distributed_SQL_query_multiple_datasources.png" width="800">
 
 Presto reduces the amount of application logic needed to retrieve data from multiple sources, both through a standard SQL abstraction and removing the need for the client-side joining of data (in some cases considered an anti-pattern). Presto provides SQL abstraction across all its supported data sources, performs distributed query execution, and includes monitoring and observability. Presto supports client libraries for Go, C, Java, Node.js, PHP, Ruby, R, and Python. A growing set of web-based GUI clients, visualization, and dashboard applications support Presto, including the new business intelligence application Apache
 Superset, from the creators of Apache Airflow.
@@ -786,18 +787,18 @@ df = pd.DataFrame(
 )
 df
 ```
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-JupyterNotebook.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-JupyterNotebook.png" width="800">
 
 
 
 An Ingress configuration, exposes the Presto UI at https://presto.data.davar.com as depicted in: 
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-UI-queries-jupyter.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-UI-queries-jupyter.png" width="800">
 
 Monitoring and observability are critical, for both Big Data and web-scale data operations. The Presto web user interface supports drill-downs into each query providing query details including resource utilization, timeline, error information, stages, and tasks related to the execution. Additionally, Presto provides a Live Plan, as shown bellow depicting the execution flow between stages in real time through a network diagram.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-query-liveplan.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto/pictures/Presto-query-liveplan.png" width="800">
 
 Presto is a comprehensive solution for building a modern Data Warehouse within Kubernetes; its support for a range of data sources fits the growing needs of IoT and Machine Learning, providing the ability to retrieve, coalesce, correlate, transform, and analyze limitless quantities and structures of data.
 
