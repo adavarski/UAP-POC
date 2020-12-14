@@ -1,7 +1,7 @@
 
 ### AI/ML/DeepML Overview:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-DeepLearning-is-a-subset-of-ML-whithin-AI-sphere.png" width="500">
 
 ### Python’s Machine Learning Libraries (Ref)
 
@@ -32,7 +32,7 @@ TensorFlow consists of two main components, as follows:
 
 [Tensors] can be defined as multi-dimensional arrays. A single number is known as a scalar. More than one number arranged in a one-dimensional list (array) is known as a vector. More than one number arranged in a two-dimensional manner is known as a matrix.Technically speaking, scalars, vectors, and matrices are all tensors.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a_scalar_vector_and_matrix.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a_scalar_vector_and_matrix.png" width="500">
 
 • Scalars are zero-dimensional tensors.
 
@@ -42,14 +42,14 @@ TensorFlow consists of two main components, as follows:
 
 However, it is a universally accepted practice that when we have more than one number arranged in three or more dimensions, we refer to such an arrangement as a tensor. We can picture a tensor in the shape of a Rubik’s cube. From the picture, we can see that tensors have a great capacity for data storage, as they have n dimensions. The n here is used as a proxy for the actual number of dimensions, where n>=3. To better understand the relationship between scalars, vectors, matrices, and tensors, we can depict them as shown:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-notational_representation_of_a_scalar_vector_matrix_and_tensor.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-notational_representation_of_a_scalar_vector_matrix_and_tensor.png" width="500">
 
 
 As you can see, the four data structures are quite similar to each other notation-wise as well, differing with respect to their capacity. Although tensors usually hold numbers, they can also hold text and strings. Tensors are capable of containing large amounts of data in a compact form. This makes it easier to handle the computation of our program, even when we have enormous amounts of data that we need to use to train our machine.
 
 So a tensor is also a mathematical entity with which to represent different properties, similar to a scalar, vector, or matrix. It is true that a tensor is a generalization of a scalar or vector. In short, tensors are multidimensional arrays that have some dynamic properties. A vector is a one-dimensional tensor, whereas two-dimensional tensors are matrices:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-Tensors.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Tensors.png" width="500">
 
 Tensors can be of two types: constant or variable.
 
@@ -77,13 +77,13 @@ Matrix = 4 5 6 : The second rank tensor would have a shape of [3, 3]
 So flow is basically an underlying graph computation framework that uses tensors for its execution. A typical graph consists of two entities: nodes and edges, as
 shown: (Nodes are also called vertices):
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-typical-graph.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-typical-graph.png" width="500">
 
 The edges are essentially the connections between the nodes/vertices through which the data flows, and nodes are where actual computation
 takes place. Now, in general, the graph can be cyclic or acyclic, but in TensorFlow, it is always acyclic. It cannot start and end at the same node.
 Let’s consider a simple computational graph, as shown, and explore some of its attributes.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-computational-graph.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-computational-graph.png" width="500">
 
 The nodes in the graph indicate some sort of computation, such as addition, multiplication, division, etc., except for the leaf nodes, which
 contain the actual tensors with either constant or variable values to be operated upon. These tensors flow through the edges or connections between nodes, and the computation at the next node results in formation of a new tensor. So, in the sample graph, a new tensor m is created through a computation at the node using other tensors x and y. The thing to focus on in this graph is that computations take place only at the next stage after leaf nodes, as leaf nodes can only be simple tensors, which become input for next-node computation flowing through edges. We can also represent the computations at each node through a hierarchical structure. The nodes at the same level can be executed in parallel, as there is no interdependency between them. In this case, m and n can be calculated
@@ -114,7 +114,7 @@ operations
 ```
 Executing this gives us the result shown
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-operations-within-a-computation-graph.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-operations-within-a-computation-graph.png" width="500">
 
 
 This shows us the number of nodes present in our graph. We had entered four different nodes, which are displayed here along with their names (a, b, c, and d) and their types (constant, constant, addition, multiplication, respectively)
@@ -217,11 +217,11 @@ Note: TensorFlow implemented the Keras API as a powerful tool that can be used f
 The neural network, or artificial neural network, was inspired by and modeled after the biological neural network. These networks, like the human brain, learn to perform specific tasks without being explicitly programmed. A neural network is composed of a series of neurons that are connected together to form a type of network, hence the name neural network. A neuron, or an artificial neuron, is the fundamental unit of a neural network. It is a mathematical function that replicates the neurons in the human brain, as you can see 
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-a-biological-neuron-and-an-artificial-neuron.png" width="500">
 
 Comparison of biological and artificial neurons.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-comparison-of-a-biological-and-an-artificial-neuron.png" width="500">
 
 
 #### Working of an Artificial Neuron (Perceptron)
@@ -265,7 +265,7 @@ Deep learning goes a step further in machine learning. It allows the machine to 
 
 The basic function of these three sections is as follows:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Basic-neural-network.png" width="400">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Basic-neural-network.png" width="400">
 
 1. The input layer, as the name implies, is made of the input signals that will be further transmitted into the neural network.
 
@@ -284,7 +284,7 @@ threshold value. Otherwise, it does not fire.
 
 Output layer: This layer is similar to axon terminals in that it might be connected to other neurons/networks or act as a final output layer (for predictions).
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Artificial-neural-network.png" width="400">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Artificial-neural-network.png" width="400">
 
 ```
 In the preceding figure, X 1 , X 2 , X 3 ,.........X n are the inputs fed to the neural network. W 1 , W 2 , W 3 ,............W n are the weights 
@@ -297,7 +297,7 @@ types of activation functions are sigmoid, ReLU, and softmax as explained above.
 
 Simple Neural Network Architecture : a typical neural network architecture is made up of an Input layer, Hidden layer, Output layer
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_regression.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_regression.png" width="600">
 
 ```
 Every input is connected to every neuron of the hidden layer and, in turn, connected to the output layer. If we are solving a 
@@ -307,12 +307,12 @@ we will have the outputs Y class1 and Y class2 , which are the probability value
 classes 1 and 2 at the output layer, as shown bellow.
 ```
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_classifiacation.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Simple-neural-network-architecture_classifiacation.png" width="600">
 
 Deep Neural Networks (DNNs): When a simple neural network has more than one hidden layer, it is known as a deep neural network (DNN). Architecture of a
 typical DNN:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Deep-neural-network-with-three-hidden-layers.png" width="600">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Deep-neural-network-with-three-hidden-layers.png" width="600">
 
 It consists of an input layer with two input variables, three hidden layers with three neurons each, and an output layer (consisting either of a single output for regression or multiple outputs for classification). The more hidden layers, the more neurons. Hence, the neural network is able to learn the nonlinear (non-convex) relation between the inputs and output.
 
@@ -376,12 +376,12 @@ Based on the kind of data being used, there are two main types of machine learni
 
 • Unsupervised learning: This method uses unlabeled data
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Supervised_Unsupervised_Learning_diff.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Supervised_Unsupervised_Learning_diff.png" width="500">
 
 A typical supervised machine learning architecture: 
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-supervised-ML-architecture.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-supervised-ML-architecture.png" width="500">
 
 ```
 Note: Within supervised learning, if we are to predict numeric values, this is called regression, whereas if we are to predict 
@@ -455,7 +455,7 @@ Machine learning, as mentioned earlier, requires part of the work to be done by 
 then run it. There are several components to this model, depending on what exactly we are trying to accomplish, but the general architecture remains the same. Since we will be using neural networks to carry out our machine learning processes, we will study the structure of a deep learning model that uses a neural network. The overall idea for the structure of the model is as shown
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TenmsorFlow-Flowchart-of-a-ML-model.png" width="400">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TenmsorFlow-Flowchart-of-a-ML-model.png" width="400">
 
 As we can see in the flowchart, there are four main steps involved in developing a working machine learning model, as follows:
 
@@ -695,7 +695,7 @@ Egyptian_cat (87.00%)
 
 The ResNet50 model also gives the prediction: 87.00% percent sure of its answer.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TesorFlow-e1.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TesorFlow-e1.png" width="500">
 
 
 Program 2: Handwriting Recognition Using Keras in TensorFlow (Single Layer, Multi-class)
@@ -760,7 +760,7 @@ This gives the output like this:
 
 6
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s//Demo4-DeepML-TensorFlow/pictures/TensorFlow-e2.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e2.png" width="500">
 
 
 Program 3: Clothing Classification Using Keras in TensorFlow (Multi-layer, Multi-class)
@@ -850,7 +850,7 @@ This will give us the following output:
 
 Pullover
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e3.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e3.png" width="500">
 
 
 Program 4: Clothing Classification Using Convolutional Neural Networks (Multi-layer, Multi-class)
@@ -912,7 +912,7 @@ Test the model.
 model.evaluate(ip_test, op_test, verbose = 1)
 
 ```
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e4.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e4.png" width="500">
 
 Program 5: Handwriting Recognition Using Convolutional Neural Networks (Multi-layer, Multi-class)  
 
@@ -989,7 +989,7 @@ np.around(result)
 We will get the output as 1. This shows that the model has correctly
 predicted the class of the image.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e5.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e5.png" width="500">
 
 
 Program 6: Image Classification for CIFAR-10 Using Convolutional Neural Networks (Multi-layer, Multi-class)
@@ -1034,7 +1034,7 @@ np.around(result)
 n=(np.around(result)).argmax()
 print(classes[n])
 ```
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e6-2.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-e6-2.png" width="500">
 
 
 
@@ -1319,7 +1319,7 @@ Example Output:
 
 [0.36941795]
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-pickle-the-model.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-pickle-the-model.png" width="500">
 
 
 - Deploying a Machine Learning Model As a REST Service (in docker container)
@@ -1354,13 +1354,13 @@ $ docker logs 936ef10f8679
 
 Access  http://localhost:5000/
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-1.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-1.png" width="500">
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-2.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-model-UI-2.png" width="500">
 
 Building a Keras TensorFlow-Based Model
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-sample-from-the-Fashion-MNIST-data-set.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-sample-from-the-Fashion-MNIST-data-set.png" width="500">
 
 Execute Program3 in a new Jupyter notebook
 ```
@@ -1433,7 +1433,7 @@ Example Output:
 Dress
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Keras-save-load-models.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/TensorFlow-Keras-save-load-models.png" width="500">
 
 TODO: TF ind deployment: Productionizing the machine learning model (deploy model) via Kubeflow/Seldon core (Note: package model into docker container if needed) 
 
@@ -1452,14 +1452,14 @@ Databrick
 
 Use TensorFlow is through the Databricks platform.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-Unified-Analytics-Platform.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-Unified-Analytics-Platform.png" width="500">
 
 Log in to the Databricks account and spin up a cluster of desired size:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-environment.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-environment.png" width="500">
 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-create-cluster.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo4-DeepML-TensorFlow/pictures/Databrick-create-cluster.png" width="500">
 
 Once the cluster is up and running, we go to the Libraries options of the cluster, via Actions. Within the Libraries tab, if the cluster already has a set of pre-installed libraries, they will be listed, or, in the case of a new cluster, no packages will be installed. We then click the Install New button. This will open a new window with multiple options to import or install a new library in Databricks. We select PyPI, and in the Package option, we mention the version of TensorFlow required to be installed. It will take some time, and we can then see TensorFlow successfully installed in Databricks, under Libraries. We can now open a new or existing notebook using the same cluster. 
 
