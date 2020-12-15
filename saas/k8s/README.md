@@ -2,7 +2,9 @@
 # k8s-based PaaS & SaaS data-driven & data-science platform playground (MVP/POC/environmints):
 
 ### Used stacks and products
-VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Indexing and Analytics/Debugging and Log management stacks (ELK/EFK); Pipeline: Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Routing and Transformation (Serverless:OpenFaaS; ETL:Apache NiFi), Data Lake/Big Data (MinIO s3-compatable Object Storage); DWHs (HIVE SQL-Engine with MinIO:s3, Presto SQL query engine with Hive/Cassandra/MySql/Postgresql/etc. as data sources); Machine Learning/Deep Learning/AutoML (TensorFlow, k8s:Model Development with AutoML: Kubeflow(MLflow, etc.) and k8s:AI Model Deployment (Seldon Core); GitLab/Jenkins/Jenkins X/Argo CD In-Platform CI/CD (GitOps); Identity and Access Management (IAM:Keycloak); JupyterHub/JupyterLab for data science; HashiCorp Vault cluster; k8s Persistent Volumes (Rook Ceph, Gluster); etc.
+
+VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Indexing and Analytics/Debugging and Log management stacks (ELK/EFK); Pipeline: Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Routing and Transformation (Serverless:OpenFaaS; ETL:Apache NiFi), Data Lake/Big Data (MinIO s3-compatable Object Storage); DWHs (HIVE SQL-Engine with MinIO:s3, Presto SQL query engine with Hive/Cassandra/MySql/Postgresql/etc. as data sources); Apache Spark for large-scale data processing; Machine Learning/Deep Learning/AutoML (TensorFlow, k8s:Model Development with AutoML: Kubeflow(MLflow, etc.) and k8s:AI Model Deployment (Seldon Core); Spark ML with S3(MinIO) as Data Source); GitLab/Jenkins/Jenkins X/Argo CD In-Platform CI/CD (GitOps); Identity and Access Management (IAM:Keycloak); JupyterHub/JupyterLab for data science; HashiCorp Vault cluster; k8s Persistent Volumes (Rook Ceph, Gluster); etc.
+
 
 ### PaaS/SaaS MVP/POC/Development environments used:
 
@@ -131,6 +133,7 @@ faas.data      IN       A       192.168.0.101
 minio.data     IN       A       192.168.0.101
 mlflow.data    IN       A       192.168.0.101
 quality.data   IN       A       192.168.0.101
+spark.data     IN       A       192.168.0.101
 
 
 
@@ -857,6 +860,30 @@ replicaset.apps/seldon-controller-manager-99f687d8d   1         1         1     
 
 ```
 
+### Apache Spark with S3(MinIO) as data source
+
+```
+kubectl apply -f ./003-data/5000-spark/10-spark-master-controller.yaml
+kubectl apply -f ./003-data/5000-spark/20-spark-master-service.yaml
+kubectl apply -f ./003-data/5000-spark/50-ingress.yaml
+kubectl apply -f ./003-data/5000-spark/60-spark-worker-controller.yaml
+
+```
+Check Spark cluster:
+```
+$ kubectl get all -n data|grep spark
+pod/spark-master-controller-4nljh       1/1     Running   8          67m
+pod/spark-worker-controller-jrhjg       1/1     Running   0          46m
+pod/spark-worker-controller-2pzk6       1/1     Running   0          46m
+replicationcontroller/spark-master-controller   1         1         1       67m
+replicationcontroller/spark-worker-controller   2         2         2       46m
+service/spark-master-headless    ClusterIP   None            <none>        <none>                       46m
+service/spark-master             ClusterIP   10.43.5.150     <none>        7077/TCP,8080/TCP            46m
+
+$ kubectl get ing -n data|grep spark
+spark-ingress      <none>   spark.data.davar.com     192.168.0.100   80, 443   44m
+```
+
 Note: GitOps
 GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
 
@@ -971,6 +998,7 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 
 ## Demo5: [BigData:MinIO Data Lake with Hive/Presto SQL-Engines](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto)
 
+## Demo6: [Spark with S3(MinIO) as data source for large-scale data processing and ML](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/tree/main/k8s/Demo6-Spark-ML)
 
 ## Clean environment
 
