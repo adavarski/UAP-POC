@@ -1,6 +1,6 @@
 # Apache Spark
 
-This example shows how to deploy a stateless Apache Spark cluster with S3 support on Kubernetes. This is based on the "official" [kubernetes/spark](https://github.com/kubernetes/kubernetes/tree/master/examples/spark) example, which also contains a few more details on the deployment steps.
+This example shows how to deploy a stateless Apache Spark cluster with S3 support on Kubernetes. This is based on the "official" [kubernetes/spark](https://github.com/kubernetes/examples/tree/master/staging/spark) example, which also contains a few more details on the deployment steps.
 
 ## Deploying Spark on Kubernetes
 
