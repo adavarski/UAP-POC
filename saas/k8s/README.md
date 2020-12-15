@@ -884,9 +884,6 @@ $ kubectl get ing -n data|grep spark
 spark-ingress      <none>   spark.data.davar.com     192.168.0.100   80, 443   44m
 ```
 
-Note: GitOps
-GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
-
 
 ### GitLab (in-cluster CI/CD)  
 ```
@@ -908,6 +905,12 @@ kubectl create ns argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 We can configure argo to run deployments for us instead of kubectl apply -f. The goal here to always have our ML/DeepML deployment in sync with the representation of our deployment (YAML).
+
+Note: GitOps
+
+GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
+
+
 
 
 ## Extend k3s cluster: Add k3s worker (bare-metal)
