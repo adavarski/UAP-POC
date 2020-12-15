@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: spark-ingress
+  namespace: data
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: spark.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: spark-master
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - spark.data.davar.com
+      secretName: spark-production-tls
