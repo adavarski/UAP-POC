@@ -261,3 +261,9 @@ scala>
 ## Further notes
 
 This setup is a just an inital introduction on getting S3 working with Apache Spark on Kubernetes. Getting insights out of your data is the next step, but also optimizing performance is an important topic. For example, using Spark's `parallelize` call to parallelize object reads can yield massive performance improvements over using a simple `sc.textFiles(s3a://spark/*)` as used in this example.
+
+## Executing Spark Applications
+We use an interactive shell (spark-shell) currently. You can use an interactive shell (spark-shell or pyspark) or submit an application (spark-submit)
+to execute Spark applications. Some prefer to use interactive web-based notebooks such as Apache Zeppelin and Jupyter to interact with Spark. Commercial vendors such as Databricks and Cloudera provide their own interactive notebook environment as well. I will use the spark-shell and Jupyter notebooks throughout the demo. 
+
+
