@@ -1586,25 +1586,32 @@ There are two main approaches to distributed training of neural networks: model 
 Thanks to third-party contributors, even though Spark’s deep learning support is still under development, there are several external distributed deep learning frameworks that run on top of Spark. We’ll describe the most popular ones.
 
 -Deep Learning Pipelines
+
 Deep Learning Pipelines is a third-party package from Databricks (the company founded by the same people who created Spark) that provides deep learning
 functionality that integrates into the Spark ML Pipelines API. The Deep Learning Pipelines API uses TensorFlow and Keras with TensorFlow as a back end. It includes an ImageSchema that can be used to load images into a Spark DataFrame. It supports transfer learning, distributed hyperparameter tuning, and deploying models as SQL functions. Deep Learning Pipelines is still under active development at the time of this demo.
 
 -BigDL
+
 BigDL is a distributed deep learning library for Apache Spark from Intel. It is different from most deep learning frameworks in that it only supports CPU. It uses multithreading and Intel’s Math Kernel Library for Deep Neural Networks (Intel MKL-DNN), an open source library for accelerating the performance of deep learning frameworks on Intel architecture. The performance is said to be comparable with conventional GPUs.
 
 -CaffeOnSpark
+
 CaffeOnSpark is a deep learning framework developed at Yahoo. It is a distributed extension of Caffe designed to run on top of Spark clusters. CaffeOnSpark is extensively used within Yahoo for content classification and image search.
 
 -TensorFlowOnSpark
+
 TensorFlowOnSpark is another deep learning framework developed at Yahoo. It supports distributed TensorFlow inferencing and training using Spark. It integrates with Spark ML Pipelines and supports model and data parallelism and asynchronous and synchronous training.
 
 -TensorFrames
+
 TensorFrames is an experimental library that allows TensorFlow to easily work with Spark DataFrames. It supports Scala and Python and provides an efficient way to pass data from Spark to TensorFlow and vice versa.
 
 -Elephas
+
 Elephas is a Python library that extends Keras to enable highly scalable distributed deep learning with Spark. Developed by Max Pumperla, Elephas implements distributed deep learning using data parallelism and is known for its ease of use and simplicity. It also supports distributed hyperparameter optimization and distributed training of ensemble models.
 
 -Distributed Keras
+
 Distributed Keras (Dist-Keras) is another distributed deep learning framework that run on top of Keras and Spark. It was developed by Joeri Hermans at CERN. It
 supports several distributed optimization algorithms such as ADAG, Dynamic SGD, Asynchronous Elastic Averaging SGD (AEASGD), Asynchronous Elastic Averaging
 Momentum SGD (AEAMSGD), and Downpour SGD.
