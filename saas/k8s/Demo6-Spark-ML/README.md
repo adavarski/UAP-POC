@@ -1,7 +1,7 @@
 
 AI, ML and Deep ML:
 
-<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-overview.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-overview.png" width="800">
 
 # Apache Spark
 
@@ -281,7 +281,7 @@ Spark is a unified big data processing framework for processing and analyzing la
 Spark was developed to address the limitations of MapReduce, Hadoop’s original data processing framework. Matei Zaharia saw MapReduce’s limitations at UC Berkeley and Facebook (where he did his internship) and sought to create a faster and more generalized, multipurpose data processing framework that can handle iterative and interactive applications. v It provides a unified platform that supports multiple types of workloads such as streaming, interactive, graph processing, machine learning, and batch. Spark jobs can run multitude of times faster than equivalent MapReduce jobs due to its fast in-memory capabilities and advanced DAG (directed acyclic graph) execution engine. Spark was written in Scala and consequently it is the de facto programming interface for Spark. We will use Scala throughout this demo. We will use PySpark, the Python API for Spark, for distributed deep learning. 
 
 
-<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_ecosystem.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_ecosystem.png" width="800">
 
 
 -Spark Core
@@ -309,7 +309,7 @@ At a high level, Spark distributes the execution of Spark applications’ tasks 
 
 Each Spark application gets its own set of executors. Because tasks from different applications run in different JVMs, a Spark application cannot interfere with another Spark application. This also means that it’s difficult for Spark applications to share data without using an external data source such as HDFS or S3. Using an off-heap memory storage such as Tachyon (a.k.a. Alluxio) can make data sharing faster and easier. 
 
-<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_architecture.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_architecture.png" width="800">
 
 
 ## Executing Spark Applications
