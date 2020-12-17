@@ -394,10 +394,10 @@ Classification is perhaps the most common supervised machine learning task. You 
 ### Binary Classification
 A task is binary or binomial classification if there are only two categories. For example, when using binary classification algorithm for spam detection, the output variable can have two categories: spam or not spam. For detecting cancer, the categories can be malignant or benign. For targeted marketing, predicting the likelihood of someone buying an item such as milk, the categories can simply be yes or no.
 
-#### Multiclass Classification
+### Multiclass Classification
 Multiclass or multinomial classification tasks have three or more categories. For example, to predict weather conditions you might have five categories: rainy, cloudy, sunny, snowy, and windy. To extend our targeted marketing example, multiclass classification can be used to predict if a customer is more likely to buy whole milk, reduced-fat milk, low-fat milk, or skim milk.
 
-#### Multilabel Classification
+### Multilabel Classification
 In multilabel classification, multiple categories can be assigned to each observation. In contrast, only one category can be assigned to an observation in multiclass classification. Using our targeted marketing example, multilabel classification is used not only to predict if a customer is more likely to buy milk, but other items as well such as cookies, butter, hotdogs, or bread.
 
 
@@ -406,24 +406,31 @@ In multilabel classification, multiple categories can be assigned to each observ
 Spark MLlib includes several algorithms for classification. I will discuss the most popular algorithms and provide easy-to-follow code examples. Later in the demo, I will note more advanced, next-generation algorithms such as XGBoost and LightGBM.
 
 - Logistic Regression
+
 Logistic regression is a linear classifier that predicts probabilities. It uses a logistic (sigmoid) function to transform its output into a probability value that can be mapped to two (binary) classes. Multiclass classification is supported through multinomial logistic (softmax) regression. We will use logistic regression in one of our examples later in the demo.
 
 - Support Vector Machine
+
 Support vector machine is a popular algorithm that works by finding the optimal hyperplane that maximizes the margin between two classes, dividing the data points into separate classes by as wide a gap as possible. The data points closest to the classification boundary are known as support vectors.
 
 - Naïve Bayes
+
 Naïve Bayes is a simple multiclass linear classification algorithm based on Bayes' theorem. Naïve Bayes got its name because it naively assumes that the features in a dataset are independent, ignoring any possible correlations between features. We use naïve Bayes in our sentiment analysis.
 
 - Multilayer Perceptron
+
 Multilayer perceptron is a feedforward artificial network that consists of several fully connected layers of nodes. Nodes in the input layer correspond to the input dataset. Nodes in the intermediate layers utilize a logistic (sigmoid) function, while nodes in the final output layer use a softmax function to support multiclass classification. The number of nodes in the output layer must match the number of classes.
 
 - Decision Trees
+
 A decision tree predicts the value of an output variable by learning decision rules inferred from the input variables. Visually, a decision tree looks like a tree inverted with the root node at the top. Every internal node represents a test on an attribute. Leaf nodes represent a class label, while an individual branch represents the result of a test.
 
 - Random Forest
+
 Random Forest is an ensemble algorithm that uses a collection of decision trees for classification and regression. It uses a method called bagging (or bootstrap aggregation) to reduce variance while maintaining low bias. Bagging trains individual trees from subsets of the training data. In addition to bagging, Random Forest uses another method called feature bagging. In contrast to bagging (using subsets of observations), feature bagging uses a subset of features (columns). Feature bagging aims to reduce the correlation between the decision trees. Without feature bagging, the individual trees will be extremely similar especially in situations where there are only a few dominant features. For classification, a majority vote of the output, or the mode, of the individual trees becomes the final prediction of the model. For regression, the average of the output of the individual trees becomes the final output. Spark trains several trees in parallel since each tree is trained independently in Random Forest. 
 
 - Gradient-Boosted Trees
+
 Gradient-Boosted Tree (GBT) is another tree-based ensemble algorithm similar to Random Forest. GBTs use a technique known as boosting to create a strong learner
 from weak learners (shallow trees). GBTs train an ensemble of decision trees sequentially with each succeeding tree decreasing the error of the previous tree.
 This is done by using the residuals of the previous model to fit the next model. viii This residual-correction process is performed a set number of iterations with the number of iterations determined by cross-validation, until the residuals have been fully minimized.
