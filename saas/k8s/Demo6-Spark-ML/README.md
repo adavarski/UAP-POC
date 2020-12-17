@@ -1,3 +1,8 @@
+
+AI, ML and Deep ML:
+
+<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-overview.png" width="800">
+
 # Apache Spark
 
 This example shows how to deploy a stateless Apache Spark cluster with S3 support on Kubernetes. This is based on the "official" [kubernetes/spark](https://github.com/kubernetes/examples/tree/master/staging/spark) example, which also contains a few more details on the deployment steps.
@@ -275,6 +280,10 @@ Spark is a unified big data processing framework for processing and analyzing la
 ## Overview
 Spark was developed to address the limitations of MapReduce, Hadoop’s original data processing framework. Matei Zaharia saw MapReduce’s limitations at UC Berkeley and Facebook (where he did his internship) and sought to create a faster and more generalized, multipurpose data processing framework that can handle iterative and interactive applications. v It provides a unified platform that supports multiple types of workloads such as streaming, interactive, graph processing, machine learning, and batch. Spark jobs can run multitude of times faster than equivalent MapReduce jobs due to its fast in-memory capabilities and advanced DAG (directed acyclic graph) execution engine. Spark was written in Scala and consequently it is the de facto programming interface for Spark. We will use Scala throughout this demo. We will use PySpark, the Python API for Spark, for distributed deep learning. 
 
+
+<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_ecosystem.png" width="800">
+
+
 -Spark Core
 Spark Core is the most fundamental building block of Spark as shown in above figure. It is the backbone of Spark’s supreme functionality features. Spark Core enables the in-memory computations that drive the parallel and distributed processing of data. All the features of Spark are built on top of Spark Core. Spark Core is responsible for managing tasks, I/O operations, fault tolerance, and memory management, etc.
 
@@ -299,6 +308,9 @@ Cluster managers manage and allocate cluster resources. Spark supports the stand
 At a high level, Spark distributes the execution of Spark applications’ tasks across the cluster nodes (see below figure). Every Spark application has a SparkContext object within its driver program. The SparkContext represents a connection to your cluster manager, which provides computing resources to your Spark applications. After connecting to the cluster, Spark acquires executors on your worker nodes. Spark then sends your application code to the executors. An application will usually run one or more jobs in response to a Spark action. Each job is then divided by Spark into smaller directed acyclic graph (DAG) of stages or tasks. Each task is then distributed and sent to executors across the worker nodes for execution.
 
 Each Spark application gets its own set of executors. Because tasks from different applications run in different JVMs, a Spark application cannot interfere with another Spark application. This also means that it’s difficult for Spark applications to share data without using an external data source such as HDFS or S3. Using an off-heap memory storage such as Tachyon (a.k.a. Alluxio) can make data sharing faster and easier. 
+
+<img src=https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_architecture.png" width="800">
+
 
 ## Executing Spark Applications
 You use an interactive shell (spark-shell or pyspark) or submit an application (spark-submit) to execute Spark applications. Some prefer to use interactive web-based notebooks such as Apache Zeppelin and Jupyter to interact with Spark. Commercial vendors such as Databricks and Cloudera provide their own interactive notebook environment as well. I will use the spark-shell throughout the demo. There are two deploy modes for launching Spark applications in an environment with a cluster manager such as YARN.
@@ -430,6 +442,7 @@ Example1:
 We will work on a multiclass classification problem for our first example using the popular Iris dataset. The dataset contains three classes of 50 instances
 each, where each class refers to a variety of iris plant (Iris Setosa, Iris Versicolor, and Iris Virginica). As you can see from bellow figure, Iris Setosa is linearly separable from Iris Versicolor and Iris Virginica, but Iris Versicolor and Iris Virginica are not linearly separable from each other. Logistic regression should still do a decent job at classifying the dataset.
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-dataset.png" width="800">
 
 
 Our goal is to predict the type of Iris plant given a set of features. The dataset contains four numeric features: sepal_length, sepal_width, petal_length, and petal_width (all in centimeters).
