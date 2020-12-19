@@ -333,7 +333,7 @@ An attractive feature of Spark is its support for myriad deployment modes, enabl
 
 Summarizes the available deployment modes.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/pictures/k8s-spark-cheatsheet-spark-deployment-models.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/k8s-spark-cheatsheet-spark-deployment-models.png" width="800">
 
 
 ## Introduction to the spark-shell
