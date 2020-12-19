@@ -312,7 +312,7 @@ Each Spark application gets its own set of executors. Because tasks from differe
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-Apache_Spark_architecture.png" width="800">
 
 
-## Executing Spark Applications
+## Executing Spark Applications (basic)
 You use an interactive shell (spark-shell or pyspark) or submit an application (spark-submit) to execute Spark applications. Some prefer to use interactive web-based notebooks such as Apache Zeppelin and Jupyter to interact with Spark. Commercial vendors such as Databricks and Cloudera provide their own interactive notebook environment as well. I will use the spark-shell throughout the demo. There are two deploy modes for launching Spark applications in an environment with a cluster manager such as YARN.
 
 -Cluster Mode
@@ -327,6 +327,14 @@ In client mode, the driver program runs in the client. The application master is
 spark-shell --master yarn --deploy-mode client
 spark-submit --class mypath.myClass --master yarn --deploy-mode client
 ```
+## Deployment modes
+
+An attractive feature of Spark is its support for myriad deployment modes, enabling Spark to run in different configurations and environments. Because the cluster manager is agnostic to where it runs (as long as it can manage Spark’s executors and fulfill resource requests), Spark can be deployed in some of the most popular environments, such as Apache Hadoop YARN and Kubernetes, and can operate in different modes. 
+
+Summarizes the available deployment modes.
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/pictures/k8s-spark-cheatsheet-spark-deployment-models.png" width="800">
+
 
 ## Introduction to the spark-shell
 You typically use an interactive shell for ad hoc data analysis or exploration. It’s also a good tool to learn the Spark API. Spark’s interactive shell is available in Spark or Python. A SparkSession named “spark” is automatically created when you start spark-shell.
