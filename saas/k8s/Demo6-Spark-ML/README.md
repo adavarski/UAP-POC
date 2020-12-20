@@ -1676,6 +1676,35 @@ Every Spark application consists of three building blocks:
 - The `Cluster Manager` helps the driver schedule work across nodes in the cluster using executors. Spark supports several different types of executors. The most common is Hadoop, but Mesos and Kubernetes are both available as options.
 - The `Workers` run executors. Executors are distributed across the cluster and do the heavy lifting of a Spark program -data aggregation, machine learning training, and other miscellaneous number crunching. Except when running in "local" mode, executors run on some kind of a cluster to leverage a distributed environment with plenty of resources. They typically are created when a Spark application begins and often run for the entire lifetime of the Spark application. This pattern is called static allocation, and it is also possible to have dynamic allocation of executors which means that they will be initialized when data actually needs to be processed.
 
+### Apache Spark’s Distributed Execution (more detailed)
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-components-and-architecture.png" width="800">
+
+- Spark driver
+
+As the part of the Spark application responsible for instantiating a SparkSession , the Spark driver has multiple roles: it communicates with the cluster manager; it requests resources (CPU, memory, etc.) from the cluster manager for Spark’s executors (JVMs); and it transforms all the Spark operations into DAG computations, schedules them, and distributes their execution as tasks across the Spark executors. Once the resources are allocated, it communicates directly with the executors.
+
+- SparkSession
+
+In Spark 2.0, the SparkSession became a unified conduit to all Spark operations and data. Not only did it subsume previous entry points to Spark like the SparkContext , SQLContext , HiveContext , SparkConf , and StreamingContext , but it also made working with Spark simpler and easier.
+
+Note: Although in Spark 2.x the SparkSession subsumes all other con‐ texts, you can still access the individual contexts and their respective methods. In this way, the community maintained backward compatibility. That is, your old 1.x code with SparkContext or SQLContext will still work.
+
+Through this one conduit, you can create JVM runtime parameters, define Data‐ Frames and Datasets, read from data sources, access catalog metadata, and issue
+Spark SQL queries. SparkSession provides a single unified entry point to all of Spark’s functionality. In a standalone Spark application, you can create a SparkSession using one of the high-level APIs in the programming language of your choice. In the Spark shell the SparkSession is created for you, and you can
+access it via a global variable called spark or sc .
+
+Whereas in Spark 1.x you would have had to create individual contexts (for streaming, SQL, etc.), introducing extra boilerplate code, in a Spark 2.x application you cancreate a SparkSession per JVM and use it to perform a number of Spark operations.
+
+- Cluster manager
+The cluster manager is responsible for managing and allocating resources for the cluster of nodes on which your Spark application runs. Currently, Spark supports
+four cluster managers: the built-in standalone cluster manager, Apache Hadoop YARN, Apache Mesos, and Kubernetes.
+
+- Spark executor
+A Spark executor runs on each worker node in the cluster. The executors communicate with the driver program and are responsible for executing tasks on the workers. In most deployments modes, only a single executor runs per node.
+
+
+
 ### Deployment modes
 
 An attractive feature of Spark is its support for myriad deployment modes, enabling Spark to run in different configurations and environments. Because the cluster manager is agnostic to where it runs (as long as it can manage Spark’s executors and fulfill resource requests), Spark can be deployed in some of the most popular environments, such as Apache Hadoop YARN and Kubernetes, and can operate in different modes. 
