@@ -327,14 +327,6 @@ In client mode, the driver program runs in the client. The application master is
 spark-shell --master yarn --deploy-mode client
 spark-submit --class mypath.myClass --master yarn --deploy-mode client
 ```
-## Deployment modes
-
-An attractive feature of Spark is its support for myriad deployment modes, enabling Spark to run in different configurations and environments. Because the cluster manager is agnostic to where it runs (as long as it can manage Spark’s executors and fulfill resource requests), Spark can be deployed in some of the most popular environments, such as Apache Hadoop YARN and Kubernetes, and can operate in different modes. 
-
-Summarizes the available deployment modes.
-
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/k8s-spark-cheatsheet-spark-deployment-models.png" width="800">
-
 
 ## Introduction to the spark-shell
 You typically use an interactive shell for ad hoc data analysis or exploration. It’s also a good tool to learn the Spark API. Spark’s interactive shell is available in Spark or Python. A SparkSession named “spark” is automatically created when you start spark-shell.
@@ -352,6 +344,10 @@ Dataset is the main abstraction. DataFrames is the main programming interface fo
 -CSV, XML, JSON, Relational and MPP Databases, Parquet, Hbase, Amazon S3, Solr, Microsoft Excel, Secure FTP
 
 Note: Analytical Massively Parallel Processing (MPP) Databases are databases that are optimized for analytical workloads: aggregating and processing large datasets (examples: Snowflake, Redshift, Impala, Presto, Azure DW, etc.)
+
+## Spark Ecosystem of Connections
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/k8s-spark-ecosystem-of-connections.png" width="800">
 
 
 ## Introduction to Spark MLlib
