@@ -2578,7 +2578,7 @@ That is a powerful set of tools begging to be used and ready to go!
 
 TODO: We'll start to put these tools into action to understand how best to work with large structured data sets, train machine learning models, work with graph databases, and analyze streaming datasets.
 
-Add MinIO(S3) jars
+Add MinIO(S3) jars:
 ```
 cd ./jupyter/docker
 
@@ -2626,15 +2626,13 @@ sudo k3s crictl pull davarski/spark301-k8s-minio-driver:1.0.0
 sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter:1.0.0
 
 ```
-Delete OLD deploy
+Delete old deploy:
 ```
 kubectl delete -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml -f jupyter-notebook.pod.yaml
 
 ```
 
-
-
-Fix yamls
+Fix yamls:
 ```
 $ cd ../k8s
 $ grep 1.0.0 *
@@ -2644,10 +2642,14 @@ jupyter-notebook.pod.yaml.DEMO:    image: davarski/spark301-k8s-minio-jupyter:1.
 jupyter-notebook.pod.yaml.MINIO-BUCKET:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
 ```
 
+Apply new yamls:
+
 ```
 kubectl apply -f jupyter-notebook.pod.yaml -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml
 ```
-Check libs
+
+Check libs:
+
 ```
 $ kubectl exec -it spark-jupyter -- bash -c "ls /opt/spark/jars/*aws*"
 /opt/spark/jars/aws-java-sdk-core-1.11.923.jar	/opt/spark/jars/aws-java-sdk-kms-1.11.923.jar  /opt/spark/jars/aws-java-sdk-s3-1.11.923.jar  /opt/spark/jars/hadoop-aws-3.0.1.jar
