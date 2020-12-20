@@ -1645,5 +1645,912 @@ Example: Handwritten Digit Recognition with MNIST Using Dist-Keras with Keras an
 
 Example: Dogs and Cats Image Classification
 
+# Appendix1 : Spark on k8s (Production)
+
+When it was released, Apache Spark 2.3 introduced native support for running on top of Kubernetes. Spark [2.4](https://spark.apache.org/docs/2.4.0/index.html) extended this and brought better integration with the Spark shell. In this Appendix1, we'll look at how to get up and running with Spark on top of a Kubernetes cluster.
+
+
+## Prerequisites
+
+To utilize Spark with Kubernetes, you will need:
+
+- A Kubernetes cluster that has role-based access controls (RBAC) and DNS services enabled
+Sufficient cluster resources to be able to run a Spark session (at a practical level, this means at least three nodes with two CPUs and eight gigabytes of free memory)
+- A properly configured kubectl that can be used to interface with the Kubernetes API
+- Authority as a cluster administrator
+- Access to a public Docker repository or your cluster configured so that it is able to pull images from a private repository
+- Basic understanding of Apache Spark and its architecture
+
+In this Appendix1, we are going to focus on directly connecting Spark to Kubernetes without making use of the [Spark Kubernetes operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator). The Kubernetes operator simplifies several of the manual steps and allows the use of custom resource definitions to manage Spark deployments.
+
+## Overview
+
+In this Appendix1, we will:
+- Create a Docker container containing a Spark application that can be deployed on top of Kubernetes
+- Integrate Spark with `kubectl` so that is able to start and monitor the status of running jobs
+- Demonstrate how to launch Spark applications using `spark-submit`
+- Start the Spark Shell and demonstrate how interactive sessions interact with the Kubernetes cluster
+
+## Spark Essentials
+
+Spark is a general cluster technology designed for distributed computation. While primarily used for analytic and data processing purposes, its model is flexible enough to handle distributed operations in a fault tolerant manner. It is a framework that can be used to build powerful data applications.
+
+Every Spark application consists of three building blocks:
+- The `Driver` boots and controls all processes. The driver serves as the master node in a Spark application or interactive session. It manages the job of splitting data operations into tasks and then scheduling them to run on executors (which themselves run on nodes of the cluster).
+- The `Cluster Manager` helps the driver schedule work across nodes in the cluster using executors. Spark supports several different types of executors. The most common is Hadoop, but Mesos and Kubernetes are both available as options.
+- The `Workers` run executors. Executors are distributed across the cluster and do the heavy lifting of a Spark program -data aggregation, machine learning training, and other miscellaneous number crunching. Except when running in "local" mode, executors run on some kind of a cluster to leverage a distributed environment with plenty of resources. They typically are created when a Spark application begins and often run for the entire lifetime of the Spark application. This pattern is called static allocation, and it is also possible to have dynamic allocation of executors which means that they will be initialized when data actually needs to be processed.
+
+### Deployment modes
+
+An attractive feature of Spark is its support for myriad deployment modes, enabling Spark to run in different configurations and environments. Because the cluster manager is agnostic to where it runs (as long as it can manage Spark’s executors and fulfill resource requests), Spark can be deployed in some of the most popular environments, such as Apache Hadoop YARN and Kubernetes, and can operate in different modes. 
+
+Summarizes the available deployment modes.
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/k8s-spark-cheatsheet-spark-deployment-models.png" width="800">
+
+In a traditional Spark application, a driver can either run inside or outside of a cluster. Depending on where it executes, it will be described as running in "client mode" or "cluster mode."
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/spark-architecture.png" width="800">
+
+Spark is composed of three components: A driver that tracks the general logic of a Spark program, a cluster manager which helps to find workers, and workers which execute data operations and report results.
+
+
+### Networking Considerations: Executor-Driver Communication in Kubernetes
+
+When Spark deploys an application inside of a Kubernetes cluster, Kubernetes doesn't handle the job of scheduling executor workload. Rather, its job is to spawn a small army of executors (as instructed by the cluster manager) so that workers are available to handle tasks. The driver then coordinates what tasks should be executed and which executor should take it on. Once work is assigned, executors execute the task and report the results of the operation back to the driver.
+
+This last piece is important. Since a cluster can conceivably have hundreds or even thousands of executors running, the driver doesn't actively track them and request a status. Instead, the executors themselves establish a direct network connection and report back the results of their work. In complex environments, firewalls and other network management layers can block these connections from the executor back to the master. If this happens, the job fails.
+
+This means that we need to take a degree of care when deploying applications. Kubernetes pods are often not able to actively connect to the launch environment (where the driver is running). If the job was started from within Kubernetes or is running in "cluster" mode, it's usually not a problem. All networking connections are from within the cluster, and the pods can directly see one another.
+
+In client mode (which is how most Spark shells run), this is a problem. The executor instances usually cannot see the driver which started them, and thus they are not able to communicate back their results and status. This means interactive operations will fail.
+
+Based on these requirements, the easiest way to ensure that your applications will work as expected is to package your driver or program as a pod and run that from within the cluster. In this post, we'll show how you can do that. First, we'll look at how to package Spark driver components in a pod and use that to submit work into the cluster using the "cluster mode." Then we'll show how a similar approach can be used to submit client mode applications, and the additional configuration required to make them work.
+
+The ability to launch client mode applications is important because that is how most interactive Spark applications run, such as the PySpark shell.
+
+## Proof of Concept
+
+Any relatively complex technical project usually starts with a proof of concept to show that the goals are feasible. Spark on top of Kubernetes has a lot of moving parts, so it's best to start small and get more complicated after we have ensured that lower-level pieces work. To that end, in this post we will use a minimalist set of containers with the basic Spark runtime and toolset to ensure that we can get all of the parts and pieces configured in our cluster. Specifically, we will:
+
+- Build the containers for the driver and executors using a multi-stage Dockerfile. We use a multi-stage Docker container to show how the entire build process can be automated. The Dockerfile can be modified later to inject additional components specific to the types of analysis, or other tools you might need.
+- Create a service account and configure the authentication parameters required by Spark to connect to the Kubernetes control plane and launch workers.
+- Start the containers and submit a sample job (calculating Pi) to test the setup.
+
+### Building Containers
+
+Pods are container runtimes which are instantiated from container images, and will provide the environment in which all of the Spark workloads run. While there are several container runtimes, the most popular is Docker. In this section, we'll create a set of container images that provide the fundamental tools and libraries needed by our environment.
+
+In Docker, container images are built from a set of instructions collectively called a Dockerfile. Each line of a Dockerfile has an instruction and a value. Instructions are things like "run a command", "add an environment variable", "expose a port", and so-forth.
+
+- Base Image
+
+The code listing shows a [multi-stage Dockerfile](https://docs.docker.com/develop/develop-images/multistage-build/) which will build our base Spark environment. This will be used for running executors and as the foundation for the driver. In the first stage of the build we download the Apache Spark runtime to a temporary directory, extract it, and then copy the runtime components for Spark to a new container image. Using a multi-stage process allows us to automate the entire container build using the packages from the [Apache Spark downloads page](https://spark.apache.org/downloads.html).
+
+In the second step, we configure the Spark container, set environment variables, patch a set of dependencies to avoid errors, and specify a non-root user which will be used to run Spark when the container starts.
+
+Using the Docker image, we can build and tag the image. When it finishes, we need to push it to an external repository for it to be available for our Kubernetes cluster. The command in the listing shows how this might be done.
+
+We use a DockerHub  public Docker registry. The image needs to be hosted somewhere accessible in order for Kubernetes to be able to use it. While it is possible to pull from a private registry, this involves additional steps and is not covered in this Appendix1.
+
+
+- Driver Image
+
+For the driver, we need a small set of additional resources that are not required by the executor/base image, including a copy of Kube Control that will be used by Spark to manage workers. The container is the same as the executor image in most other ways and because of that we use the executor image as the base.
+
+
+As with the executor image, we need to build and tag the image, and then push to the registry.
+
+```
+cd ./jupyter/docker
+docker login
+# Build and tag the base/executor image
+docker build -f ./Dockerfile.k8s-minio.executor -t davarski/spark301-k8s-minio-base .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-base
+
+# Build and tag the driver image
+docker build -f ./Dockerfile.k8s-minio.driver -t davarski/spark301-k8s-minio-driver .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-driver
+
+# Appendix2 (Build/tag/push the jupyter image)
+docker build -f ./Dockerfile.k8s-minio.jupyter -t davarski/spark301-k8s-minio-jupyter .
+docker push davarski/spark301-k8s-minio-jupyter
+```
+Pull images into k8s(k3s):
+```
+export KUBECONFIG=~/.kube/k3s-config-jupyter 
+sudo k3s crictl pull davarski/spark301-k8s-minio-base
+sudo k3s crictl pull davarski/spark301-k8s-minio-driver
+
+# Appendix2
+sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter
+```
+
+
+### Service Accounts and Authentication
+
+For the driver pod to be able to connect to and manage the cluster, it needs two important pieces of data for authentication and authorization:
+
+- The CA certificate, which is used to connect to the kubelet control daemon
+- The auth (or bearer) token, which identifies a user and the scope of its permissions
+
+There are a variety of strategies which might be used to make this information available to the pod, such as creating a secret with the values and mounting the secret as a read-only volume. A Kubernetes secret lets you store and manage sensitive information such as passwords. An easier approach, however, is to use a service account that has been authorized to work as a cluster admin. One of the cool things that Kubernetes does when running a pod under a service account is to create a volumeSource (basically a read-only mount) with details about the user context in which a pod is running.
+
+Inside of the mount will be two files that provide the authentication details needed by kubectl:
+
+    /var/run/secrets/kubernetes.io/serviceaccount/ca.crt: CA certificate
+    /var/run/secrets/kubernetes.io/serviceaccount/token: Kubernetes authentication token
+
+- Driver Service Account
+
+The set of commands below will create a special service account (spark-driver) that can be used by the driver pods. It is configured to provide full administrative access to the namespace.
+```
+# Create spark-driver service account
+kubectl create serviceaccount spark-driver
+
+# Create a cluster and namespace "role-binding" to grant the account administrative privileges
+kubectl create rolebinding spark-driver-rb --clusterrole=cluster-admin --serviceaccount=default:spark-driver
+```
+
+- Executor Service Account
+
+While it is possible to have the executor reuse the spark-driver account, it's better to use a separate user account for workers. This allows for finer-grained tuning of the permissions. The worker account uses the "edit" permission, which allows for read/write access to most resources in a namespace but prevents it from modifying important details of the namespace itself.
+```
+# Create Spark executor account
+kubectl create serviceaccount spark-minion
+
+# Create rolebinding to offer "edit" privileges
+kubectl create rolebinding spark-minion-rb --clusterrole=edit --serviceaccount=default:spark-minion
+```
+
+### Running a Test Job
+
+With the images created and service accounts configured, we can run a test of the cluster using an instance of the spark301-k8s-minio-driver image. The command below will create a pod instance from which we can launch Spark jobs.
+
+Creating a pod to deploy cluster and client mode Spark applications is sometimes referred to as deploying a "jump", "edge" , or "bastian" pod. It's variant of deploying a Bastion Host, where high-value or sensitive resources run in one environment and the bastion serves as a proxy.
+
+```
+# Create a jump pod using the Spark driver container and service account
+kubectl run spark-test-pod --generator=run-pod/v1 -it --rm=true \
+  --image=davarski/spark301-k8s-minio-driver \
+  --serviceaccount=spark-driver \
+  --command -- /bin/bash
+```
+
+The kubectl command creates a deployment and driver pod, and will drop into a BASH shell when the pod becomes available. The remainder of the commands in this section will use this shell.
+
+Apache's Spark distribution contains an example program that can be used to calculate Pi. Since it works without any input, it is useful for running tests. We can check that everything is configured correctly by submitting this application to the cluster. Spark commands are submitted using spark-submit. In the container images created above, spark-submit can be found in the /opt/spark/bin folder.
+
+spark-submit commands can become quite complicated. For that reason, let's configure a set of environment variables with important runtime parameters. While we define these manually here, in applications they can be injected from a ConfigMap or as part of the pod/deployment manifest.
+
+```
+# Define environment variables with accounts and auth parameters
+export SPARK_NAMESPACE=default
+export SA=spark-minion
+export K8S_CACERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+export K8S_TOKEN=/var/run/secrets/kubernetes.io/serviceaccount/token
+
+# Docker runtime image
+export DOCKER_IMAGE=davarski/spark301-k8s-minio-base
+export SPARK_DRIVER_NAME=spark-test1-pi
+```
+The command below submits the job to the cluster. It will deploy in "cluster" mode and references the `spark-examples` JAR from the container image. We tell Spark which program within the JAR to execute by defining a --class option. In this case, we wish to run `org.apache.spark.examples.SparkPi`
+
+```
+/opt/spark/bin/spark-submit --name sparkpi-test1 \
+   --master k8s://https://kubernetes.default:443 \
+  --deploy-mode cluster  \
+  --class org.apache.spark.examples.SparkPi  \
+  --conf spark.kubernetes.driver.pod.name=$SPARK_DRIVER_NAME  \
+  --conf spark.kubernetes.authenticate.subdmission.caCertFile=$K8S_CACERT  \
+  --conf spark.kubernetes.authenticate.submission.oauthTokenFile=$K8S_TOKEN  \
+  --conf spark.kubernetes.authenticate.driver.serviceAccountName=$SA  \
+  --conf spark.kubernetes.namespace=$SPARK_NAMESPACE  \
+  --conf spark.executor.instances=2  \
+  --conf spark.kubernetes.container.image=$DOCKER_IMAGE  \
+  --conf spark.kubernetes.container.image.pullPolicy=Always \
+  local:///opt/spark/examples/jars/spark-examples_2.12-3.0.1.jar 1000
+```
+
+
+
+The Kubernetes control API is available within the cluster within the `default` namespace and should be used as the Spark master. If Kubernetes DNS is available, it can be accessed using a namespace URL (`https://kubernetes.default:443` in the example above). Note the `k8s://https://` form of the URL. as this is not a typo. The `k8s://` prefix is how Spark knows the provider type.
+
+The `local://` path of the `jar` above references the file in the executor Docker image, not on jump pod that we used to submit the job. Both the driver and executors rely on the path in order to find the program logic and start the task.
+
+If you watch the pod list while the job is running using `kubectl get pods`, you will see a "driver" pod be initialized with the name provided in the `SPARK_DRIVER_NAME` variable. This will in turn launch executor pods where the work will actually be performed. When the program has finished running, the driver pod will remain with a "Completed" status. You can retrieve the results from the pod logs using:
+
+```
+# Retrieve the results of the program from the cluster
+kubectl logs $SPARK_DRIVER_NAME
+
+Toward the end of the application log you should see a result line similar to the one below:
+
+20/12/19 10:56:11 INFO DAGScheduler: Job 0 finished: reduce at SparkPi.scala:38, took 16.059215 s
+Pi is roughly 3.1416641114166413
+20/12/19 10:56:11 INFO SparkUI: Stopped Spark web UI at http://spark-test-pod.default:4040
+20/12/19 10:56:11 INFO KubernetesClusterSchedulerBackend: Shutting down all executors
+20/12/19 10:56:11 INFO KubernetesClusterSchedulerBackend$KubernetesDriverEndpoint: Asking each executor to shut down
+20/12/19 10:56:11 WARN ExecutorPodsWatchSnapshotSource: Kubernetes client has been closed (this is expected if the application is shutting down.)
+20/12/19 10:56:11 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+20/12/19 10:56:12 INFO MemoryStore: MemoryStore cleared
+20/12/19 10:56:12 INFO BlockManager: BlockManager stopped
+20/12/19 10:56:12 INFO BlockManagerMaster: BlockManagerMaster stopped
+20/12/19 10:56:12 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+20/12/19 10:56:12 INFO SparkContext: Successfully stopped SparkContext
+20/12/19 10:56:12 INFO ShutdownHookManager: Shutdown hook called
+20/12/19 10:56:12 INFO ShutdownHookManager: Deleting directory /tmp/spark-4a81c68d-6ffd-4b9c-831b-4587fccc4d12
+20/12/19 10:56:12 INFO ShutdownHookManager: Deleting directory /tmp/spark-fb05ba62-8eed-41ea-bd6d-f6aea49021b5
+
+```
+
+### Client Mode Applications
+
+When we switch from cluster to client mode, instead of running in a separate pod, the driver will run within the jump pod instance. This requires an additional degree of preparation, specifically:
+
+- Because executors need to be able to connect to the driver application, we need to ensure that it is possible to route traffic to the pod and that we have published a port which the executors can use to communicate. To make the pod instance (easily) routable, we will create a headless service.
+- Since the driver will be running from the jump pod, we need to modify the `SPARK_DRIVER_NAME` environment variable to reference that rather than an external (to be launched) pod.
+- We need to provide additional configuration options to reference the driver host and port. These should then be passed to `spark-submit` via the `spark.driver.host` and `spark.driver.port` options, respectively.
+
+#### Running Client Mode Applications Using `spark-submit`
+
+To test client mode on the cluster, let's make the changes outlined above and then submit SparkPi a second time.
+
+To start, because the driver will be running from the jump pod, let's modify `SPARK_DRIVER_NAME` environment variable and specify which port the executors should use for communicating their status.
+```
+# Modify the name of the spark driver 
+export SPARK_DRIVER_NAME=spark-test-pod
+export SPARK_DRIVER_PORT=20020
+```
+Next, to route traffic to the pod, we need to either have a domain or IP address. In Kubernetes, the most convenient way to get a stable network identifier is to create a service object. The command below will create a "headless" service that will allow other pods to look up the jump pod using its name and namespace.
+```
+# Expose the jump pod using a headless service
+kubectl expose pod $SPARK_DRIVER_NAME --port=$SPARK_DRIVER_PORT \
+  --type=ClusterIP --cluster-ip=None
+```
+Taking into account the changes above, the new `spark-submit` command will be similar to the one below:
+```
+/opt/spark/bin/spark-submit --name sparkpi-test1 \
+   --master k8s://https://kubernetes.default:443 \
+  --deploy-mode client  \
+  --class org.apache.spark.examples.SparkPi  \
+  --conf spark.kubernetes.driver.pod.name=$SPARK_DRIVER_NAME  \
+  --conf spark.kubernetes.authenticate.subdmission.caCertFile=$K8S_CACERT  \
+  --conf spark.kubernetes.authenticate.submission.oauthTokenFile=$K8S_TOKEN  \
+  --conf spark.kubernetes.authenticate.driver.serviceAccountName=$SA  \
+  --conf spark.kubernetes.namespace=$SPARK_NAMESPACE  \
+  --conf spark.executor.instances=2  \
+  --conf spark.kubernetes.container.image=$DOCKER_IMAGE  \
+  --conf spark.kubernetes.container.image.pullPolicy=Always \
+  --conf spark.driver.host=$HOSTNAME.$SPARK_NAMESPACE \
+  --conf spark.driver.port=$SPARK_DRIVER_PORT \
+  local:///opt/spark/examples/jars/spark-examples_2.12-3.0.1.jar 1000
+```
+Upon submitting the job, the driver will start and launch executors that report their progress. For this reason, we will see the results reported directly to `stdout` of the jump pod, rather than requiring we fetch the logs of a secondary pod instance.
+
+As in the previous example, you should be able to find a line reporting the calculated value of Pi.
+
+#### Starting the `pyspark` Shell
+
+At this point, we've assembled all the pieces to show how an interactive Spark program (like the `pyspark` shell) might be launched. Similar to the client mode application, the shell will directly connect with executor pods which allows for calculations and other logic to be distributed, aggregated, and reported back without needing a secondary pod to manage the application execution.
+
+The command below shows the options and arguments required to start the shell. It is similar to the spark-submit commands we've seen previously (with many of the same options), but there are some distinctions. The most consequential differences are:
+
+- The shell is started using the `pyspark` script rather than `spark-submit` (`pyspark` is located in the same `/opt/spark/bin` directory as `spark-submit`)
+- There is no main class or `jar` file referenced
+
+```
+# Define environment variables with accounts and auth parameters
+export SPARK_NAMESPACE=default
+export SA=spark-minion
+export K8S_CACERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+export K8S_TOKEN=/var/run/secrets/kubernetes.io/serviceaccount/token
+
+# Docker runtime image
+export DOCKER_IMAGE=davarski/spark301-k8s-minio-base
+
+# Modify the name of the spark driver 
+export SPARK_DRIVER_NAME=spark-test-pod
+export SPARK_DRIVER_PORT=20020
+
+/opt/spark/bin/pyspark --name pyspark-test1 \
+   --master k8s://https://kubernetes.default:443 \
+  --deploy-mode client  \
+  --conf spark.kubernetes.driver.pod.name=$SPARK_DRIVER_NAME  \
+  --conf spark.kubernetes.authenticate.subdmission.caCertFile=$K8S_CACERT  \
+  --conf spark.kubernetes.authenticate.submission.oauthTokenFile=$K8S_TOKEN  \
+  --conf spark.kubernetes.authenticate.driver.serviceAccountName=$SA  \
+  --conf spark.kubernetes.namespace=$SPARK_NAMESPACE  \
+  --conf spark.executor.instances=2  \
+  --conf spark.kubernetes.container.image=$DOCKER_IMAGE  \
+  --conf spark.kubernetes.container.image.pullPolicy=Always \
+  --conf spark.driver.host=$HOSTNAME.$SPARK_NAMESPACE \
+  --conf spark.driver.port=$SPARK_DRIVER_PORT
+```
+
+After launch, it will take a few seconds or minutes for Spark to pull the executor container images and configure pods. When ready, the shell prompt will load. At that point, we can run a distributed Spark calculation to test the configuration:
+```
+# Create a distributed data set to test the session.
+t = sc.parallelize(range(10))
+
+# Calculate the approximate sum of values in the dataset
+r = t.sumApprox(3)
+print('Approximate sum: %s' % r)
+```
+If everything works as expected, you should see something similar to the output below:
+```
+Approximate sum: 45
+```
+
+The PySpark shell runs as a client application in Kubernetes
+
+You can exit the shell by typing exit() or by pressing Ctrl+D. The spark-test-pod instance will delete itself automatically because the --rm=true option was used when it was created. You will need to manually remove the service created using kubectl expose. If you followed the earlier instructions, kubectl delete svc spark-test-pod should remove the object.
+
+### Next Steps
+
+Running Spark on the same Kubernetes infrastructure that you use for application deployment allows you to consolidate Big Data workloads inside the same infrastructure you use for everything else. In this Apendix1, we've seen how you can use jump pods and custom images to run Spark applications in both cluster and client mode.
+
+While useful by itself, this foundation opens the door to deploying Spark alongside more complex analytic environments such as Jupyter or JupyterHub. In Apendix2 of this Demo, we will show how to extend the driver container with additional Python components and access our cluster resources from a Jupyter Kernel.
+
+# Appendix2: Spark on k8s: Jupyter
+
+After we've got Spark running on Kubernetes, we can integrate the runtime with applications like Jupyter? 
+
+In many organizations, Apache Spark is the computational engine that powers big data. Spark, a general-purpose unified analytics engine built to transform, aggregate, and analyze large amounts of information, has become the de-facto brain behind large scale data processing, machine learning, and graph analysis.
+
+When it was released, Apache Spark 2.3 introduced native support for running on top of Kubernetes. Spark 2.4 further extended the support and brought integration with the Spark shell. In a previous Apendix1, we showed the preparations and setup required to get Spark up and running on top of a Kubernetes cluster.
+
+In this Apendix2, we'll take the next logical step and show how to run more complex analytic environments such as Jupyter so that it is also able to take advantage of the cluster for data exploration, visualization, or interactive prototyping.
+
+This Apendix2 is how to use containers and Kubernetes for Data Science. Please check out Apendix1 which shows how to run Spark applications inside of Kubernetes.
+
+## Jupyter
+
+[Jupyter](https://jupyter.org/) allows you to work interactively work with a live running server and iteratively execute logic which remains persistent as long as the kernel is running. It is used to combine live-running code alongside images, data visualization, and other interactive elements such as maps. It has become a de-facto standard for exploratory data analysis and technical communication.
+
+
+
+### Overview
+
+In this Appendix2, we will:
+
+- Extend the "driver" container in the previous Appendix1 to include Jupyter and integrate the traditional Python shell with PySpark so that it can run large analytic workloads on the cluster.
+- Configure S3Contents, a drop-in replacement for the standard filesystem-backed storage system in Jupyter. Using S3Contents is desirable because containers are fragile. They will often crash or disappear, and when that happens the content of their filesystems is lost. When running in Kubernetes, it is therefore important to provide an external storage that will remain available if the container disappears.
+- Create an "ingress" that allows for the Jupyter instance to be accessed from outside of the cluster.
+
+
+### Packaging Jupyter
+
+As a Python application, Jupyter can be installed with either pip or conda. We will be using `pip`.
+
+The container images we created previously (`spark301-k8s-minio-base` and `spark301-k8s-minio-driver`) both have `pip` installed. For that reason, we can extend them directly to include Jupyter and other Python libraries.
+
+The Dockerfiles used below shows we install Jupyter, S3Contents, and a small set of other common data science libraries including:
+
+- [NumPy](https://numpy.org/): A library which implements efficient N-dimensional arrays, tools for manipulating data inside of NumPy arrays, interfaces for integrating C/C++ and Fortran code with Python, and a library of linear algebra, Fourier transform, and random number capabilities.
+- [Matplotlib](https://matplotlib.org/): A popular data visualization library designed to create charts and graphs.
+- [Seaborn](https://seaborn.pydata.org/): A set of additional tools based on matplotlib which extends the basic interfaces for creating statistical charts intended for data exploration.
+- [scikit-learn](https://scikit-learn.org/stable/): A machine learning library for Python that provides simple tools for data mining and analysis; preprocessing and model selection, as well as implementations of classification, regression, clustering, and dimensionality reduction models.
+
+
+In addition to the Data Science libraries, the Dockerfile also configures a user for Jupyter and a working directory. This is done because it is (generally) a bad idea to run a Dockerized application as root. This may seem an arbitrary concern as the container will be running as a privileged user inside of the Kubernetes cluster and will have the ability to spawn other containers within its namespace. One of the things that Jupyter provides is a shell interface. By running as a non-privileged user, there is some degree of isolation in case the notebook server becomes compromised.
+
+The dependency installation is split over multiple lines in order to decrease the size of the layers. Large Docker image layers may experience timeouts or other transport issues. This makes container design something of an art. It's a good idea to keep container images as small as possible with as few layers as possible, but you still need to provide the tools to ensure that the container is useful.
+
+
+
+### Build/tag/testing the image.
+
+
+When the container finishes building, we will want to test it locally to ensure that the application starts.
+
+
+```
+cd ./jupyter/docker
+
+docker login
+
+# Build and tag the jupyter
+docker build -f ./Dockerfile.k8s-minio.jupyter -t davarski/spark301-k8s-minio-jupyter .
+
+# Push the Jupyter container image to a remote registry
+docker push davarski/spark301-k8s-minio-jupyter
+```
+Pull images into k8s(k3s):
+```
+export KUBECONFIG=~/.kube/k3s-config-jupyter 
+
+sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter
+```
+
+Testing the Image Locally
+
+```
+# Test the container image locally to ensure that it starts as expected.
+# Jupyter Lab/Notebook is started using the command jupyter lab.
+# We provide the --ip 0.0.0.0 so that it will bind to all interfaces.
+docker run -it --rm -p 8888:8888 \
+    davarski/spark301-k8s-minio-jupyter \
+    jupyter lab --ip 0.0.0.0
+```
+Example output:
+
+```
+$ docker run -it --rm -p 8888:8888 davarski/spark301-k8s-minio-jupyter jupyter lab --ip 0.0.0.0
+++ id -u
++ myuid=1000
+++ id -g
++ mygid=777
++ set +e
+++ getent passwd 1000
++ uidentry=jovyan:x:1000:777::/home/jovyan:/bin/bash
++ set -e
++ '[' -z jovyan:x:1000:777::/home/jovyan:/bin/bash ']'
++ SPARK_CLASSPATH=':/opt/spark/jars/*'
++ env
++ grep SPARK_JAVA_OPT_
++ sort -t_ -k4 -n
++ sed 's/[^=]*=\(.*\)/\1/g'
++ readarray -t SPARK_EXECUTOR_JAVA_OPTS
++ '[' -n '' ']'
++ '[' '' == 2 ']'
++ '[' '' == 3 ']'
++ '[' -n '' ']'
++ '[' -z ']'
++ case "$1" in
++ echo 'Non-spark-on-k8s command provided, proceeding in pass-through mode...'
+Non-spark-on-k8s command provided, proceeding in pass-through mode...
++ CMD=("$@")
++ exec /usr/bin/tini -s -- jupyter lab --ip 0.0.0.0
+[I 11:21:27.529 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 11:21:27.844 LabApp] JupyterLab extension loaded from /usr/local/lib/python3.8/dist-packages/jupyterlab
+[I 11:21:27.845 LabApp] JupyterLab application directory is /usr/local/share/jupyter/lab
+[I 11:21:27.847 LabApp] Serving notebooks from local directory: /home/jovyan/work
+[I 11:21:27.847 LabApp] Jupyter Notebook 6.1.5 is running at:
+[I 11:21:27.847 LabApp] http://b6456cfe1ee2:8888/?token=c8abb0f836f8e379800088dd42840a82f07a0dd085eb0ff0
+[I 11:21:27.847 LabApp]  or http://127.0.0.1:8888/?token=c8abb0f836f8e379800088dd42840a82f07a0dd085eb0ff0
+[I 11:21:27.847 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 11:21:27.851 LabApp] No web browser found: could not locate runnable browser.
+[C 11:21:27.851 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-13-open.html
+    Or copy and paste one of these URLs:
+        http://b6456cfe1ee2:8888/?token=c8abb0f836f8e379800088dd42840a82f07a0dd085eb0ff0
+     or http://127.0.0.1:8888/?token=c8abb0f836f8e379800088dd42840a82f07a0dd085eb0ff0
+
+```
+Once the program starts, you will see an entry in the logs which says, "To access the notebook ... copy and paste one of these URLs ...". Included at the end of the URL is a "token" value that is required to authenticate to the server. Copy this to your system clipboard.
+
+Included in the Jupyter startup logs will be an access URL that includes a "token". This value is required for authentication to the server.
+
+Upon visiting the URL you will be prompted for the token value (unless you copied the entire access URL and pasted that into the navigation bar of the browser). Paste the token into the authentication box and click "Log In." You will be taken to the Jupyter Dashboard/Launcher.
+
+
+Testing the Container in Kubernetes
+
+Once you've verified that the container image works as expected in our local environment, we need to validate that it also runs in Kubernetes. This involves three steps:
+
+- Pushing the container image to a public repository so that it can be deployed onto the cluster
+- Launching an instance inside of Kubernetes using kubectl run
+- Connecting to the container instance by mapping a port from the pod to the local environment using kubectl port-forward
+
+To perform these steps, you will need two terminals. In the first, you will run the following two commands:
+
+```
+# Push the Jupyter container image to a remote registry
+docker push davarski/spark301-k8s-minio-jupyter
+
+# Start an instance of the container in Kubernetes
+kubectl run jupyter-test-pod --generator=run-pod/v1 -it --rm=true \
+  --image=davarski/spark301-k8s-minio-jupyter \
+  --serviceaccount=spark-driver \
+  --command -- jupyter lab --ip 0.0.0.0
+```
+Example output:
+
+```
+$ kubectl run jupyter-test-pod --generator=run-pod/v1 -it --rm=true --image=davarski/spark301-k8s-minio-jupyter --serviceaccount=spark-driver  --command -- jupyter lab --ip 0.0.0.0
+Flag --generator has been deprecated, has no effect and will be removed in the future.
+If you don't see a command prompt, try pressing enter.
+[I 11:26:46.920 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 11:26:47.235 LabApp] JupyterLab extension loaded from /usr/local/lib/python3.8/dist-packages/jupyterlab
+[I 11:26:47.235 LabApp] JupyterLab application directory is /usr/local/share/jupyter/lab
+[I 11:26:47.237 LabApp] Serving notebooks from local directory: /home/jovyan/work
+[I 11:26:47.237 LabApp] Jupyter Notebook 6.1.5 is running at:
+[I 11:26:47.237 LabApp] http://jupyter-test-pod:8888/?token=38b6ea6bc249317c97e85319218d912daa4a7730404dafca
+[I 11:26:47.237 LabApp]  or http://127.0.0.1:8888/?token=38b6ea6bc249317c97e85319218d912daa4a7730404dafca
+[I 11:26:47.237 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 11:26:47.241 LabApp] No web browser found: could not locate runnable browser.
+[C 11:26:47.241 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-1-open.html
+    Or copy and paste one of these URLs:
+        http://jupyter-test-pod:8888/?token=38b6ea6bc249317c97e85319218d912daa4a7730404dafca
+     or http://127.0.0.1:8888/?token=38b6ea6bc249317c97e85319218d912daa4a7730404dafca
+
+```
+
+
+When the server is active, note the access URL and token value. Then, in the second terminal, run kubectl port-forward to map a local port to the container.
+
+```
+# Forward a port in the local environment to the pod to test the runtime
+kubectl port-forward pod/jupyter-test-pod 8888:8888
+```
+With the port-forward running, open a browser and navigate to the locally mapped port (8088 in the example command above). Provide the token value and click "Log In." Like the local test, you should be routed to the Jupyter dashboard. Seeing the dashboard gives some confidence that the container image works as expected, but that doesn't test the Spark integration.
+
+To test Spark, we need to do two things:
+
+- Create a service so that executor pods are able to connect to the driver. Without a service, the executors will be unable to report their task progress to the driver and tasks will fail.
+- Open a Jupyter Notebook, and initialize a `SparkContext`.
+
+First, let's create the service.
+```
+kubectl expose pod jupyter-test-pod --type=ClusterIP --cluster-ip=None
+```
+With the service in place, let's initialize the SparkContext. From the launcher, click on the "Python 3" link under "Notebook." This will start a new Python 3 kernel and open the Notebook interface.
+
+To test the Spark connection, we need to intialize a `SparkContext`.
+
+Copy the code from the listing below into the notebook and execute the cell. The code defines the parameters needed by Spark to connect to the cluster and launch worker instances. It defines the URL to the Spark master, the container image that should be used for launching workers, the location of the authentication certificate and token, the service account which should be used by the driver instance, and the driver host and port. Specific values may need to be modified for your environment. For details on the parameters, refer to Appendix1 of this Demo.
+
+```
+import pyspark
+
+conf = pyspark.SparkConf()
+
+# Kubernetes is a Spark master in our setup. 
+# It creates pods with Spark workers, orchestrates those 
+# workers and returns final results to the Spark driver 
+# (“k8s://https://” is NOT a typo, this is how Spark knows the “provider” type). 
+conf.setMaster("k8s://https://kubernetes.default:443") 
+
+# Worker pods are created from the base Spark docker image.
+# If you use another image, specify its name instead.
+conf.set(
+    "spark.kubernetes.container.image", 
+    "davarski/spark301-k8s-minio-base") 
+
+# Authentication certificate and token (required to create worker pods):
+conf.set(
+    "spark.kubernetes.authenticate.caCertFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+conf.set(
+    "spark.kubernetes.authenticate.oauthTokenFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/token")
+
+# Service account which should be used for the driver
+conf.set(
+    "spark.kubernetes.authenticate.driver.serviceAccountName", 
+    "spark-driver") 
+
+# 2 pods/workers will be created. Can be expanded for larger workloads.
+conf.set("spark.executor.instances", "2") 
+
+# The DNS alias for the Spark driver. Required by executors to report status.
+conf.set(
+    "spark.driver.host", "jupyter-test-pod") 
+
+# Port which the Spark shell should bind to and to which executors will report progress
+conf.set("spark.driver.port", "29413") 
+
+# Initialize spark context, create executors
+sc = pyspark.SparkContext(conf=conf)
+```
+When the cell finishes executing, add the following code to a second cell and execute that. If successful, it will verify that Jupyter, Spark, Kubernetes, and the container images are all configured correctly.
+```
+# Create a distributed data set to test to the session
+t = sc.parallelize(range(10))
+
+# Calculate the approximate sum of values in the dataset
+r = t.sumApprox(3)
+print('Approximate sum: %s' % r)
+```
+Output:
+```
+Approximate sum: 45.0
+
+```
+
+Check k8s pods:
+```
+kubectl get po 
+jupyter-test-pod                        1/1     Running     0          37m
+busybox                                 1/1     Running     312        28d
+dnsutils                                1/1     Running     308        28d
+pyspark-shell-395a80767ae1e917-exec-1   1/1     Running     0          41s
+pyspark-shell-395a80767ae1e917-exec-2   1/1     Running     0          41s
+```
+
+
+### Cloud Native Applications (simple)
+
+Simple setup :
+
+```
+$ kubectl create -f ./k8s/jupyter-notebook.pod.yaml
+$ kubectl create -f ./k8s/jupyter-notebook.svc.yaml
+$ kubectl create -f ./k8s/jupyter-notebook.ingress.yaml
+$ kubectl logs spark-jupyter
+[I 06:31:54.383 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
+[I 06:32:07.846 LabApp] JupyterLab extension loaded from /usr/local/lib/python3.8/dist-packages/jupyterlab
+[I 06:32:07.846 LabApp] JupyterLab application directory is /usr/local/share/jupyter/lab
+[I 06:32:07.860 LabApp] Serving notebooks from local directory: /home/jovyan/work
+[I 06:32:07.860 LabApp] Jupyter Notebook 6.1.5 is running at:
+[I 06:32:07.860 LabApp] http://spark-jupyter:8888/?token=74f5a0c7e5b281e9a2d3762f59b228970db65ae3e22bbd86
+[I 06:32:07.861 LabApp]  or http://127.0.0.1:8888/?token=74f5a0c7e5b281e9a2d3762f59b228970db65ae3e22bbd86
+[I 06:32:07.861 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 06:32:07.873 LabApp] No web browser found: could not locate runnable browser.
+[C 06:32:07.873 LabApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-1-open.html
+    Or copy and paste one of these URLs:
+        http://spark-jupyter:8888/?token=74f5a0c7e5b281e9a2d3762f59b228970db65ae3e22bbd86
+     or http://127.0.0.1:8888/?token=74f5a0c7e5b281e9a2d3762f59b228970db65ae3e22bbd86
+
+
+```
+Login to Juputer (UI)  https://jupyter.data.davar.com. using above token: 74f5a0c7e5b281e9a2d3762f59b228970db65ae3e22bbd86
+
+With the service in place, let's initialize the `SparkContext`. From the launcher, click on the "Python 3" link under "Notebook." This will start a new Python 3 kernel and open the Notebook interface.
+
+To test the Spark connection, we need to intialize a SparkContext.
+
+Copy the code from the listing below into the notebook and execute the cell. The code defines the parameters needed by Spark to connect to the cluster and launch worker instances. It defines the URL to the Spark master, the container image that should be used for launching workers, the location of the authentication certificate and token, the service account which should be used by the driver instance, and the driver host and port. Specific values may need to be modified for your environment. For details on the parameters, refer to Appendix1 of this Demo.
+
+```
+import pyspark
+
+conf = pyspark.SparkConf()
+
+# Kubernetes is a Spark master in our setup. 
+# It creates pods with Spark workers, orchestrates those 
+# workers and returns final results to the Spark driver 
+# (“k8s://https://” is NOT a typo, this is how Spark knows the “provider” type). 
+conf.setMaster("k8s://https://kubernetes.default:443") 
+
+# Worker pods are created from the base Spark docker image.
+# If you use another image, specify its name instead.
+conf.set(
+    "spark.kubernetes.container.image", 
+    "davarski/spark301-k8s-minio-base") 
+
+# Authentication certificate and token (required to create worker pods):
+conf.set(
+    "spark.kubernetes.authenticate.caCertFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+conf.set(
+    "spark.kubernetes.authenticate.oauthTokenFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/token")
+
+# Service account which should be used for the driver
+conf.set(
+    "spark.kubernetes.authenticate.driver.serviceAccountName", 
+    "spark-driver") 
+
+# 2 pods/workers will be created. Can be expanded for larger workloads.
+conf.set("spark.executor.instances", "2") 
+
+# The DNS alias for the Spark driver. Required by executors to report status.
+conf.set(
+    "spark.driver.host", "spark-jupyter") 
+
+# Port which the Spark shell should bind to and to which executors will report progress
+conf.set("spark.driver.port", "29413") 
+
+# Initialize spark context, create executors
+sc = pyspark.SparkContext(conf=conf)
+```
+When the cell finishes executing, add the following code to a second cell and execute that. If successful, it will verify that Jupyter, Spark, Kubernetes, and the container images are all configured correctly.
+```
+# Create a distributed data set to test to the session
+t = sc.parallelize(range(10))
+
+# Calculate the approximate sum of values in the dataset
+r = t.sumApprox(3)
+print('Approximate sum: %s' % r)
+```
+Output:
+```
+Approximate sum: 45.0
+
+```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/k3s-spark-jupyter.png" width="800">
+
+Check k8s pods:
+```
+kubectl get po 
+spark-jupyter                           1/1     Running     0          10m
+busybox                                 1/1     Running     312        28d
+dnsutils                                1/1     Running     308        28d
+pyspark-shell-88a623767bd18995-exec-2   1/1     Running     0          19s
+pyspark-shell-88a623767bd18995-exec-1   1/1     Running     0          20s
+```
+Note: exit() into cell will termintate pyspark-shell-88a623767bd18995-exec-2 & pyspark-shell-88a623767bd18995-exec-1 pods
+
+### Cloud Native Applications (with MinIO:S3)
+
+While the tests at the end of the previous section give us confidence that the Jupyter container image works as expected, we still don't have a robust "cloud native" application that we would want to deploy on a permanent basis.
+
+- The first major problem is that the container storage will be transient. If the container instance restarts or gets migrated to a new host, any saved notebooks will be lost.
+- The second major problem also arises in the context of a container restart. At the time it starts, the container looks for a token or password and generates a new random one if it is absent. This means that if the container gets migrated, the previous token will no longer work and the user will need to access the pod logs to learn what the new value is. That would require giving all users access to the cluster
+- The third problem is that there is no convenient way to access the instance from outside of the cluster. Using kubectl to forward the application ports works great for testing, but there should be a more proper way to access the resource for users who lack administrative Kubernetes access.
+
+The first two problems can be mediated by configuring resources for the container and injecting them into the pod as part of its deployment. The third problem can be solved by creating an ingress,.
+
+S3Contents: Cloud Storage for Jupyter
+
+Of the three problems, the most complex to solve is the first: Dealing with the transient problem. There are a number of approaches we might take:
+
+- Creating a pod volume that mounts when the container starts that is backed by some type of PersistentVolume
+- Deploying the application as part of resource that can be tied to physical storage on one of the hosts
+- Using an external storage provider such as object storage
+
+Of these three options, using an object storage is the most robust. Object storage servers such as Amazon S3 and MinIO have become the de-facto hard drives for storing data in cloud native applications, machine learning, and many other areas of development. They are an ideal place to store binary and blog information when using containers because they are redundant, have high IO throughput, and can be accessed by many containers simultaneously (which facilitates high availability).
+
+As mentioned earlier in the Apendix1, there is a file plugin called S3Contents that can be used to save Jupyter files to object storage providers which implement the Amazon S3 API. We installed the plugin as part of building the container image.
+
+To have Jupyter use an object store, we need to inject a set of configuration parameters into the container at the time it starts. This is usually done through a file called jupyter_notebook_config.py saved in the user's Jupyter folder (./juputer/k8s/jupyter). The code listing below shows an example what the resulting configuration of S3Contents might look like for MinIO.
+
+```
+    from s3contents import S3ContentsManager
+    from IPython.lib import passwd
+    c = get_config()
+    
+    # Tell Jupyter to use S3ContentsManager for all storage.
+    # Startup auth Token
+    c.NotebookApp.password = passwd("jupyter")
+    # S3 Object Storage Configuration
+    c.NotebookApp.contents_manager_class = S3ContentsManager
+    c.S3ContentsManager.access_key_id = "minio"
+    c.S3ContentsManager.secret_access_key = "minio123"
+    c.S3ContentsManager.endpoint_url = "http://minio-service.data.:9000"
+    c.S3ContentsManager.bucket = "spark-jupyter"
+    c.S3ContentsManager.prefix = "notebooks"
+```
+
+Injecting Configuration Values Using ConfigMaps
+
+Kubernetes ConfigMaps can be used to store configuration information about a program in a central location. When a pod starts, this data can then be injected as environment variables or mounted as a file. This provides a convenient way of ensuring that configuration values - such as those we'll need to get the external storage in Jupyter working or the authentication token/password - are the same for every pod instance that starts.
+
+ConfigMaps are independent objects in Kubernetes. They are created outside of pods, deployments, or stateful sets, and their data is associated by reference. After a ConfigMap is defined, it is straightforward to include the needed metadata in the pod manifest.
+
+We will use a single ConfigMap to solve the first two problems we described above. The code listing below shows a ConfigMap which both configures an S3 contents manager for Jupyter and provides a known password to the application server at startup.
+
+The setup of an object storage such as Amazon S3, MinIO, OpenStack Swift is beyond the scope of this article. For information about which parameters are needed by specific services for S3Contents, refer to the [README](https://github.com/danielfrg/s3contents/blob/master/README.md) file available in the project's [GitHub repository](https://github.com/danielfrg/s3contents).
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jupyter-notebook-config
+data:
+  storage_path.py: |
+    from s3contents import S3ContentsManager
+    from IPython.lib import passwd
+    c = get_config()
+    # Startup auth Token
+    c.NotebookApp.password = passwd("jupyter")
+    # S3 Object Storage Configuration
+    c.NotebookApp.contents_manager_class = S3ContentsManager
+    c.S3ContentsManager.access_key_id = "minio"
+    c.S3ContentsManager.secret_access_key = "minio123"
+    c.S3ContentsManager.endpoint_url = "http://minio-service.data.:9000"
+    c.S3ContentsManager.bucket = "spark-jupyter"
+    c.S3ContentsManager.prefix = "notebooks"
+```
+
+
+The YAML below shows how to reference the ConfigMap as a volume for a pod. The manifest in the listing roughly recreates the `kubectl run` command used earlier with the additional configuration required to access the ConfigMap. From this point forward, the configuration of the Jupyter application has become complex enough that we will use manifests to show its structure.
+
+The ConfigMap data will be mounted at` ~/.jupyter/jupyter_notebook_config.py`, the path required by Jupyter in order to leverage the contents manager. The `fsGroup` option is used under the `securityContext` so that it can be read by a member of the analytics group `(gid=777)`.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spark-jupyter
+  labels:
+    app: spark-jupyter
+
+spec:
+  serviceAccountName: spark-driver
+  
+  securityContext:
+    fsGroup: 777
+  
+  containers:
+  - name: jupyter-noteboob-pod
+    image: davarski/spark301-k8s-minio-jupyter
+    imagePullPolicy: Always
+    command: ["jupyter", "lab", "--ip", "0.0.0.0"]
+    volumeMounts:
+    - name: storage-config-volume
+      mountPath: /home/jovyan/.jupyter/jupyter_notebook_config.py
+      subPath: storage_path.py
+  
+  volumes:
+  - name: storage-config-volume
+    configMap:
+      name: jupyter-notebook-config
+  
+  restartPolicy: Always
+
+```
+To work correctly with Spark, the pod needs to be paired with a service in order for executors to spawn and communicate with the driver successfully. The code listing below shows what this service manifest would look like.
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-jupyter
+
+spec:
+  clusterIP: None
+  selector:
+    app: spark-jupyter
+  ports:
+  - protocol: TCP
+    port: 8888
+    targetPort: 8888
+```
+
+
+
+With the ConfigMap in place, you can launch a new pod/service and repeat the connection test from above. Upon stopping and re-starting the pod instance, you should notice that any notebooks or other files you add to the instance survive rather than disappear. Likewise, on authenticating to the pod, you will be prompted for a password rather than needing to supply a random token.
+
+Enabling External Access
+
+The final piece needed for our Spark-enabled Jupyter instance is external access. Again, while there are several options on how this might be configured such as a load-balanced service, perhaps the most robust is via a Kubernetes Ingress. Ingress allows for HTTP and HTTPS routes from outside the cluster to be forwarded to services inside the cluster.
+
+It provides a host of benefits including:
+
+- Externally reachable URLs
+- Load-balanced traffic
+- SSL/TLS termination
+- Named based virtual hosting
+
+While the specific configuration of these options is outside the scope of this article, providing Ingress using the NGINX/Traefik/etc. controller offers a far more robust way to access the Jupyter instance than `kubectl port-forward`.
+
+The code listing below shows an example of a TLS-terminated Ingress controller that will forward to the pod/service created earlier. The TLS certificate is provisioned using cert-manager. For details on cert-manager, see the project's homepage.
+
+```
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jupyter-ingress-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: jupyter.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: spark-jupyter
+              servicePort: 8888
+            path: /
+  tls:
+    - hosts:
+        - jupyter.data.davar.com
+      secretName: jupyter-production-tls
+
+```
+
+Once it has been created and the certificates issued, the Jupyter instance should now be available outside the cluster at `https://jupyter.data.davar.com`.
+
+To Infinity and Beyond
+
+At this point, we have configured a Jupyter instance with a full complement of Data Science libraries able to launch Spark applications on top of Kubernetes. It is configured to read and write its data to an object storage, and integrate with a host of powerful visualization frameworks. We've tried to make it as "Cloud Native" as possible, and could be run on our server instance in a highly available configuration if desired.
+
+That is a powerful set of tools begging to be used and ready to go!
+
+# Apendix3: Spark ML with PySpark and Jupyter
+
+TODO: We'll start to put these tools into action to understand how best to work with large structured data sets, train machine learning models, work with graph databases, and analyze streaming datasets.
 
 
