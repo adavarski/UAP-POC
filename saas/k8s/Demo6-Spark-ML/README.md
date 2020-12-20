@@ -2713,3 +2713,1037 @@ sc = pyspark.SparkContext(conf=conf)
 ```
 df = sc.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
 ```
+
+## Linear Regression
+
+The dataset that we are going to use for this example is a dummy
+dataset and contains a total of 1,232 rows and 6 columns. We have to
+use 5 input variables to predict the target variable using the Linear
+Regression model. 
+
+Upload `./jupyter/dataset/Linear_regression_dataset.csv` into Jupyter env:
+
+1: Create the SparkSession Object
+We start the Jupyter Notebook and import SparkSession and create a new
+SparkSession object to use Spark:
+```
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('lin_reg').getOrCreate()
+```
+
+2: Read the Dataset
+We then load and read the dataset within Spark using Dataframe. We have
+to make sure we have opened the PySpark from the same directory folder
+where the dataset is available or else we have to mention the directory path
+of the data folder:
+```
+df=spark.read.csv('Linear_regression_dataset.csv', inferSchema=True,header=True)
+```
+3: Exploratory Data Analysis
+In this section, we drill deeper into the dataset by viewing the dataset,
+validating the shape of the dataset, various statistical measures, and
+correlations among input and output variables. We start with checking the
+shape of the dataset.
+
+```
+print((df.count(), len(df.columns)))
+```
+The above output confirms the size of our dataset, and we can validate the
+datatypes of the input values to check if we need to do change/cast any columns
+datatypes. In this example, all columns contain Integer or double values.
+
+```
+df.printSchema()
+```
+There is a total of six columns out of which five are input columns
+( var_1 to var_5) and target column (output). We can now use describe
+function to go over statistical measures of the dataset.
+
+```
+df.describe().show(3,False)
+```
+This allows us to get a sense of distribution, measure of center, and
+spread for our dataset columns. We then take a sneak peek into the dataset
+using the head function and pass the number of rows that we want to view.
+
+```
+df.head(3)
+```
+We can check the correlation between input variables and output
+variables using the corr function:
+```
+from pyspark.sql.functions import corr
+df.select(corr('var_1','output')).show()
+```
+4: Feature Engineering
+This is the part where we create a single vector combining all input features
+by using Spark’s VectorAssembler. It creates only a single feature that
+captures the input values for that row. So, instead of five input columns, it
+essentially merges all input columns into a single feature vector column.
+
+```
+from pyspark.ml.linalg import Vector
+from pyspark.ml.feature import VectorAssembler
+```
+One can select the number of columns that would be used as input
+features and can pass only those columns through the VectorAssembler. In
+our case, we will pass all the five input columns to create a single feature
+vector column.
+```
+df.columns
+vec_assmebler=VectorAssembler(inputCols=['var_1','var_2', 'var_3', 'var_4', 'var_5'],outputCol='features')
+features_df=vec_assmebler.transform(df)
+features_df.printSchema()
+```
+As, we can see, we have an additional column (‘features’) that contains
+the single dense vector for all of the inputs.
+```
+features_df.select('features').show(5,False)
+```
+We take the subset of the dataframe and select only the features
+column and the output column to build the Linear Regression model.
+```
+
+model_df=features_df.select('features','output')
+model_df.show(5,False)
+print((model_df.count(), len(model_df.columns)))
+
+```
+
+5: Splitting the Dataset
+We have to split the dataset into a training and test dataset in order to train
+and evaluate the performance of the Linear Regression model built. We
+split it into a 70/30 ratio and train our model on 70% of the dataset. We can
+print the shape of train and test data to validate the size.
+
+```
+train_df,test_df=model_df.randomSplit([0.7,0.3])
+print((train_df.count(), len(train_df.columns)))
+print((test_df.count(), len(test_df.columns)))
+```
+6: Build and Train Linear Regression Model
+In this part, we build and train the Linear Regression model using features
+of the input and output columns. We can fetch the coefficients (B1, B2,
+B3, B4, B5) and intercept (B0) values of the model as well. We can also
+evaluate the performance of model on training data as well using r2. This
+model gives a very good accuracy (86%) on training datasets.
+
+```
+from pyspark.ml.regression import LinearRegression
+lin_Reg=LinearRegression(labelCol='output')
+lr_model=lin_Reg.fit(train_df)
+print(lr_model.coefficients)
+print(lr_model.intercept)
+training_predictions=lr_model.evaluate(train_df)
+print(training_predictions.r2)
+```
+7: Evaluate Linear Regression Model on Test Data
+The final part of this entire exercise is to check the performance of the model
+on unseen or test data. We use the evaluate function to make predictions for
+the test data and can use r2 to check the accuracy of the model on test data.
+The performance seems to be almost similar to that of training.
+```
+test_predictions=lr_model.evaluate(test_df)
+print(test_predictions.r2)
+print(test_predictions.meanSquaredError)
+```
+Example Output:
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/pictures/Spark-ML-jupyter-linear-regression.png" width="800">
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/jupyter/ipynb/Linear_Regression.ipynb
+
+## Logistic Regression
+
+The dataset that we are going to use for this example is a dummy dataset
+and contains a total of 20,000 rows and 6 columns. We have to use 5 input
+variables to predict the target class using the logistic regression model.
+This dataset contains information regarding online users of a retail sports
+merchandise website. The data captures the country of user, platform
+used, age, repeat visitor or first-time visitor, and the number of web
+pages viewed on the website. It also has the information if the customer
+ultimately bought the product or not (conversion status).
+
+Upload `./jupyter/dataset/Log_Reg_dataset.csv` into Jupyter env:
+
+1: Create the Spark Session Object
+We start the Jupyter Notebook and import SparkSession and create a new
+SparkSession object to use Spark.
+
+```
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('log_reg').getOrCreate()
+```
+2: Read the Dataset
+We then load and read the dataset within Spark using Dataframe. We have
+to make sure we have opened the PySpark from the same directory folder
+where the dataset is available or else we have to mention the directory path
+of the data folder.
+```
+df=spark.read.csv('Log_Reg_dataset.csv',inferSchema=True,header=True)
+```
+3: Exploratory Data Analysis
+In this section, we drill deeper into the dataset by viewing the dataset
+and validating the shape of the it and various statistical measures of the
+variables. We start with checking the shape of the dataset:
+```
+print((df.count(), len(df.columns)))
+```
+
+So, the above output confirms the size of our dataset and we can then
+validate the datatypes of the input values to check if we need to change/
+cast any columns datatypes.
+```
+df.printSchema()
+```
+As we can see, there are two such columns (Country, Search_Engine),
+which are categorical in nature and hence need to be converted into
+numerical form. Let’s have a look at the dataset using the show function in
+Spark.
+```
+df.show(5)
+```
+We can now use the describe function to go over statistical measures of
+the dataset.
+```
+df.describe().show()
+```
+
+We can observe that the average age of visitors is close to 28 years, and
+they view around 9 web pages during the website visit.
+Let us explore individual columns to understand the data in deeper
+details. The groupBy function used along with counts returns the
+frequency of each of the categories in the data.
+```
+df.groupBy('Country').count().show()
+```
+
+So, the maximum number of visitors are from Indonesia, followed by
+India:
+```
+df.groupBy('Platform').count().show()
+```
+The Yahoo search engine users are the highest in numbers.
+```
+ df.groupBy('Status').count().show()
+```
+
+We have an equal number of users who are converted and non-­
+converted.
+Let’s use the groupBy function along with the mean to know more
+about the dataset.
+```
+df.groupBy('Country').mean().show()
+```
+We have the highest conversion rate from Malaysia, followed by India.
+The average number of web page visits is highest in Malaysia and lowest in
+Brazil.
+```
+df.groupBy('Platform').mean().show()
+```
+We have the highest conversion rate from user visitors use the Google
+search engine.
+```
+df.groupBy('Status').mean().show()
+```
+We can clearly see there is a strong connection between the conversion
+status and the number of pages viewed along with repeat visits.
+
+4: Feature Engineering
+This is the part where we convert the categorical variable into numerical
+form and create a single vector combining all the input features by using
+Spark’s VectorAssembler.
+```
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.feature import VectorAssembler
+```
+Since we are dealing with two categorical columns, we will have to
+convert the country and search engine columns into numerical form. The
+machine learning model cannot understand categorical values.
+The first step is to label the column using StringIndexer into
+numerical form. It allocates unique values to each of the categories of the
+column. So, in the below example, all of the three values of search engine
+(Yahoo, Google, Bing) are assigned values (0.0,1.0,2.0). This is visible in the
+column named search_engine_num.
+```
+search_engine_indexer = StringIndexer(inputCol="Platform", outputCol="Platform_Num").fit(df)
+df = search_engine_indexer.transform(df)
+df.show(3,False)
+df.groupBy('Platform').count().orderBy('count', ascending=False).show(5,False)
+df.groupBy('Platform_Num').count().orderBy('count', ascending=False).show(5,False)
+```
+The next step is to represent each of these values into the form of a
+one hot encoded vector. However, this vector is a little different in terms of
+representation as it captures the values and position of the values in the vector.
+```
+from pyspark.ml.feature import OneHotEncoder
+search_engine_encoder=OneHotEncoder(inputCol="Platform_Num", outputCol="Platform_Vector")
+df = search_engine_encoder.transform(df)
+df.show(3,False)
+df.groupBy('Platform_Vector').count().orderBy('count', ascending=False).show(5,False)
+
+```
+
+The final feature that we would be using for building Logistic
+Regression is Search_Engine_Vector. Let’s understand what these column
+values represent.
+```
+(2,[0],[1.0]) represents a vector of length 2 , with 1 value :
+Size of Vector – 2
+Value contained in vector – 1.0
+Position of 1.0 value in vector – 0 th place
+```
+This kind of representation allows the saving of computational space
+and hence a faster time to compute. The length of the vector is equal to
+one less than the total number of elements since each value can be easily
+represented with just the help of two columns. For example, if we need to
+represent Search Engine using one hot encoding, conventionally, we can
+do it as represented below.
+```
+Platform Google Yahoo Bing
+----------------------------------
+Google 1 0 0
+Yahoo 0 1 0
+Bing 0 0 1
+-----------------------------------
+```
+Another way of representing the above information in an optimized
+way is just using two columns instead of three as shown below.
+```
+Platform Google Yahoo
+-----------------------------------
+Google 1 0
+Yahoo 0 1
+Bing 0 0
+-----------------------------------
+```
+Let’s repeat the same procedure for the other categorical column
+(Country).
+```
+country_indexer = StringIndexer(inputCol="Country", outputCol="Country_Num").fit(df)
+df = country_indexer.transform(df)
+df.groupBy('Country').count().orderBy('count',ascending=False).show(5,False)
+df.groupBy('Country_Num').count().orderBy('count', ascending=False).show(5,False)
+country_encoder = OneHotEncoder(inputCol="Country_Num", outputCol="Country_Vector")
+df = country_encoder.transform(df)
+df.select(['Country','Country_Num','Country_Vector']).show(3,False)
+df.groupBy('Country_Vector').count().orderBy('count', ascending=False).show(5,False)
+```
+Now that we have converted both the categorical columns into
+numerical forms, we need to assemble all of the input columns into a
+single vector that would act as the input feature for the model.
+So, we select the input columns that we need to use to create the single
+feature vector and name the output vector as features.
+```
+df_assembler = VectorAssembler(inputCols=['Platform_Vector','Country_Vector','Age', 'Repeat_Visitor','Web_pages_viewed'], outputCol="features")
+df = df_assembler.transform(df)
+df.printSchema()
+```
+
+As we can see, now we have one extra column named features, which
+is nothing but a combination of all the input features represented as a
+single dense vector.
+
+```
+df.select(['features','Status']).show(10,False)
+```
+Let us select only features column as input and the Status column as
+output for training the logistic regression model.
+```
+model_df=df.select(['features','Status'])
+```
+5: Splitting the Dataset
+We have to split the dataset into a training and test dataset in order to train
+and evaluate the performance of the logistic regression model. We split it
+in a 75/25 ratio and train our model on 75% of the dataset. Another use of
+splitting the data is that we can use 75% of the data to apply cross-­validation
+in order to come up with the best Hyperparameters. Cross-­validation can be
+of a different type where one part of the training data is kept for training and
+the remaining part is used for validation purposes. K-fold cross-validation is
+primarily used to train the model with the best Hyperparameters.
+
+We can print the shape of train and test data to validate the size.
+```
+training_df,test_df=model_df.randomSplit([0.75,0.25])
+print(training_df.count())
+training_df.groupBy('Status').count().show()
+```
+This ensures we have a balance set of the target class (Status) into the
+training and test set.
+```
+print(test_df.count())
+test_df.groupBy('Status').count().show()
+```
+6: Build and Train Logistic Regression Model
+In this part, we build and train the logistic regression model using features
+as the input column and status as the output column.
+```
+from pyspark.ml.classification import LogisticRegression
+log_reg=LogisticRegression(labelCol='Status').fit(training_df)
+```
+Training Results
+We can access the predictions made by the model using the evaluate
+function in Spark that executes all the steps in an optimized way. That
+gives another Dataframe that contains four columns in total, including
+prediction and probability. The prediction column signifies the class
+label that the model has predicted for the given row and probability
+column contains two probabilities (probability for negative class at 0th
+index and probability for positive class at 1st index).
+```
+train_results=log_reg.evaluate(training_df).predictions
+train_results.filter(train_results['Status']==1).filter(train_results['prediction']==1).select(['Status','prediction','probability']).show(10,False)
+```
+
+So, in the above results, probability at the 0th index is for Status = 0
+and probability as 1st index is for Status =1.
+
+7: Evaluate Linear Regression Model on Test Data
+The final part of the entire exercise is to check the performance of the
+model on unseen or test data. We again make use of the evaluate function
+to make predictions on the test.
+We assign the predictions DataFrame to results and results DataFrame
+now contains five columns.
+```
+results=log_reg.evaluate(test_df).predictions
+results.printSchema()
+
+```
+We can filter the columns that we want to see using the select keyword.
+```
+results.select(['Status','prediction']).show(10,False)
+```
+Since this is a classification problem, we will use a confusion matrix to
+gauge the performance of the model.
+
+Confusion Matrix
+We will manually create the variables for true positives, true negatives,
+false positives, and false negatives to understand them better rather than
+using the direct inbuilt function.
+```
+tp = results[(results.Status == 1)].count()
+tn = results[(results.Status == 0)].count()
+fp = results[(results.Status == 1)].count()
+fn = results[(results.Status == 0)].count()
+```
+Accuracy
+As discussed already in the chapter, accuracy is the most basic metric
+for evaluating any classifier; however, this is not the right indicator of
+the performance of the model due to dependency on the target class
+balance.
+```
+accuracy=float((true_postives+true_negatives) /(results.count()))
+print(accuracy)
+```
+The accuracy of the model that we have built is around 94%.
+
+Recall
+Recall rate shows how much of the positive class cases we are able to
+predict correctly out of the total positive class observations.
+```
+recall = float(true_postives)/(true_postives + false_negatives)
+print(recall)
+````
+The recall rate of the model is around 0.94.
+
+Precision
+
+Precision rate talks about the number of true positives predicted
+correctly out of all the predicted positives observations:
+```
+precision = float(true_postives) / (true_postives + false_positives)
+print(precision)
+```
+So, the recall rate and precision rate are also in the same range, which
+is due to the fact that our target class was well balanced.
+
+## Random Forests
+
+The dataset that we are going to use for this example is an open source
+data set with a few thousand rows and six columns. We have to use five
+input variables to predict the target variable using the random forest
+model.
+
+Upload `./jupyter/dataset/affairs.csv` into Jupyter env:
+
+
+1: Create the Spark Session Object
+We start the Jupyter Notebook and import SparkSession and create a new
+SparkSession object to use Spark.
+
+```
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('random_forest').getOrCreate()
+```
+2: Read the Dataset
+We then load and read the dataset within Spark using Dataframe. We have
+to make sure we have opened the PySpark from the same directory folder
+where the dataset is available or else we have to mention the directory path
+of the data folder.
+```
+df=spark.read.csv('affairs.csv',inferSchema=True,header=True)
+```
+
+3: Exploratory Data Analysis
+In this section, we drill deeper into the dataset by viewing the dataset and
+validating the shape of the dataset and various statistical measures of the
+variables. We start with checking the shape of the dataset.
+```
+print((df.count(), len(df.columns)))
+```
+So, the above output confirms the size of our dataset and we can then
+validate the data types of the input values to check if we need to change/
+cast any columns data types.
+```
+df.printSchema()
+```
+As we can see there are no categorical columns which need to be
+converted into numerical form. Let’s have a look at the dataset using show
+function in Spark:
+
+```
+df.show(5)
+```
+We can now use the describe function to go over statistical measures of
+the dataset.
+```
+df.describe().select('summary','rate_marriage','age','yrs_married','children','religious').show()
+```
+We can observe that the average age of people is close to 29 years, and
+they have been married for 9 years.
+Let us explore individual columns to understand the data in deeper
+detail. The groupBy function used along with counts returns us the
+frequency of each of the categories in the data.
+
+```
+df.groupBy('affairs').count().show()
+```
+
+So, we have more than 33% of the people who are involved in some
+sort of extramarital affair out of a total number of people.
+```
+df.groupBy('rate_marriage').count().show()
+```
+The majority of the people rate their marriage very high (4 or 5), and
+the rest rate it on the lower side. Let’s drill down a little bit further to
+understand if the marriage rating is related to the affair variable or not.
+```
+df.groupBy('rate_marriage','affairs').count().orderBy('rate_marriage','affairs','count',ascending=True).show()
+```
+Clearly, the figures indicate a high percentage of people having affairs
+when rating their marriages low. This might prove to be a useful feature for
+the prediction. We will explore other variables as well in a similar manner.
+```
+df.groupBy('religious','affairs').count().orderBy('religious','affairs','count',ascending=True).show()
+```
+We have a similar story from ratings on religious perspective as well
+as the number of people who have rated lower on religious features and a
+higher percentage of affair involvement.
+```
+df.groupBy('children','affairs').count().orderBy('children','affairs','count',ascending=True).show()
+```
+
+The above table does not clearly indicate any of the trends regarding
+the relation between the number of children and chances of being
+involved in an affair. Let us use the groupBy function along with the mean
+to know more about the dataset.
+```
+df.groupBy('affairs').mean().show()
+```
+So, the people who have affairs rate their marriages low and a little on
+the higher side from an age standpoint. They have also been married for a
+higher number of years and are less religious.
+
+4: Feature Engineering
+This is the part where we create a single vector combining all input
+features by using Spark’s VectorAssembler.
+```
+from pyspark.ml.feature import VectorAssembler
+```
+We need to assemble all of the input columns into a single vector
+that would act as the input feature for the model. So,we select the input
+columns that we need to use to create the single feature vector and name
+the output vector as features.
+```
+df_assembler = VectorAssembler(inputCols=['rate_marriage', 'age', 'yrs_married', 'children','religious'], outputCol="features")
+df = df_assembler.transform(df)
+df.printSchema()
+```
+As we can see, now we have one extra column named features, which
+is nothing but a combination of all the input features represented as a
+single dense vector.
+```
+df.select(['features','affairs']).show(10,False)
+```
+Let us select only the features column as input and the affairs column
+as output for training the random forest model.
+```
+model_df=df.select(['features','affairs'])
+```
+5: Splitting the Dataset
+We have to split the dataset into training and test datasets in order to train
+and evaluate the performance of the random forest model. We split it into
+a 75/25 ratio and train our model on 75% of the dataset. We can print the
+shape of the train and test data to validate the size.
+```
+train_df,test_df=model_df.randomSplit([0.75,0.25])
+print(train_df.count())
+train_df.groupBy('affairs').count().show()
+```
+This ensures we have balanced set values for the target class (‘affairs’)
+into the training and test sets.
+```
+test_df.groupBy('affairs').count().show()
+```
+
+6: Build and Train Random Forest Model
+In this part, we build and train the random forest model using features
+such as input and Status as the output colum.
+```
+from pyspark.ml.classification import RandomForestClassifier
+rf_classifier=RandomForestClassifier(labelCol='affairs',numTrees=50).fit(train_df)
+```
+There are many hyperparameters that can be set to tweak the
+performance of the model, but we are chosing the deafault ones here
+except for one that is the number of decision trees that we want to build.
+
+7: Evaluation on Test Data
+Once we have trained our model on the training dataset, we can evaluate
+its performance on the test set.
+```
+rf_predictions=rf_classifier.transform(test_df)
+rf_predictions.show()
+```
+The first column in the predictions table is that of input features of the
+test data. The second column is the actual label or output of the test data.
+The third column (rawPrediction) represents the measure of confidence
+for both possible outputs. The fourth column is that of conditional
+probability of each class label, and the final column is the prediction by the
+random forest classifier.We can apply a groupBy function on the prediction
+column to find out the number of predictions made for the positive and
+negative classes.
+
+```
+rf_predictions.groupBy('prediction').count().show()
+```
+
+To evaluate these preditions, we will import the
+classificationEvaluators.
+```
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+```
+Accuracy
+```
+rf_accuracy=MulticlassClassificationEvaluator(labelCol='affairs',metricName='accuracy').evaluate(rf_predictions)
+print('The accuracy of RF on test data is {0:.0%}'.format(rf_accuracy))
+```
+The accuracy of RF on test data is 73%
+
+Precision
+```
+rf_precision=MulticlassClassificationEvaluator(labelCol='affairs',metricName='weightedPrecision').evaluate(rf_predictions)
+print('The precision rate on test data is {0:.0%}'.format(rf_precision))
+```
+The precision rate on test data is 71%
+
+AUC
+```
+rf_auc=BinaryClassificationEvaluator(labelCol='affairs').evaluate(rf_predictions)
+print( rf_auc)
+
+```
+[Out]: 0.738
+
+As mentioned in the earlier part, RF gives the importance of each
+feature in terms of predictive power, and it is very useful to figure out the
+critical variables that contribute the most to predictions.
+```
+rf_classifier.featureImportances
+```
+
+We used five features and the importance can be found out using the
+feature importance function. To know which input feature is mapped to
+which index values, we can use metadata information.
+```
+df.schema["features"].metadata["ml_attr"]["attrs"]
+```
+```
+[Out]:
+  {'idx': 0, 'name': 'rate_marriage'},
+  {'idx': 1, 'name': 'age'},
+  {'idx': 2, 'name': 'yrs_married'},
+  {'idx': 3, 'name': 'children'},
+  {'idx': 4, 'name': 'religious'}}
+```  
+So, rate_marriage is the most important feature from a prediction
+standpoint followed by yrs_married. The least significant variable seems to
+be Age.
+
+Step 8: Saving the Model
+Sometimes, after training the model, we just need to call the model for
+preditions, and hence it makes a lot of sense to persist the model object
+and reuse it for predictions. There are two parts to this.
+1. Save the ML model
+2. Load the ML model
+```
+from pyspark.ml.classification import RandomForestClassificationModel
+rf_classifier.save("/home/jovyan/work/RF_model")
+```
+This way we saved the model as object locally.The next
+step is to load the model again for predictions
+```
+rf=RandomForestClassificationModel.load("/home/jovyan/work/RF_model")
+new_preditions=rf.transform(new_df)
+```
+A new predictions table would contain the column with the model
+predictions
+
+Example Output:
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/jupyter/ipynb/Random_Forests.ipynb
+
+## Recommender Systems
+
+The dataset that we are going to use for this chapter is a subset from
+a famous open sourced movie lens dataset and contains a total of 0.1
+million records with three columns (User_Id,title,rating). We will train our
+recommender model using 75% of the data and test it on the rest of the
+25% user ratings.
+
+Upload `./jupyter/dataset/movie_ratings_df.csv` into Jupyter env:
+
+1: Create the SparkSession Object
+We start the Jupyter Notebook and import SparkSession and create a new
+SparkSession object to use Spark:
+```
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('recommender').getOrCreate()
+```
+
+2: Read the Dataset
+We then load and read the dataset within Spark using a dataframe. We
+have to make sure we have opened the PySpark from the same directory
+folder where the dataset is available or else we have to mention the
+directory path of the data folder.
+```
+df=spark.read.csv('movie_ratings_df.csv',inferSchema=True,header=True)
+```
+
+3: Exploratory Data Analysis
+In this section, we explore the dataset by viewing the dataset, validating
+the shape of the dataset, and getting a count of the number of movies rated
+and the number of movies that each user rated.
+```
+print((df.count(), len(df.columns)))
+```
+So, the above output confirms the size of our dataset and we can then
+validate the datatypes of the input values to check if we need to change/
+cast any columns’ datatypes.
+```
+df.printSchema()
+```
+
+There is a total of three columns out of which two are numerical and
+the title is categorical. The critical thing with using PySpark for building
+RS is that we need to have user_id and item_id in numerical form. Hence,
+we will convert the movie title to numerical values later. We now view a
+few rows of the dataframe using the rand function to shuffle the records in
+random order.
+
+```
+#df.orderBy(rand()).show(10,False)
+df.groupBy('userId').count().orderBy('count',ascending=False).show(10,False)
+df.groupBy('userId').count().orderBy('count',ascending=True).show(10,False)
+```
+
+The user with the highest number of records has rated 737 movies, and
+each user has rated at least 20 movies.
+```
+df.groupBy('title').count().orderBy('count',ascending=False).show(10,False)
+```
+The movie with highest number of ratings is Star Wars (1977) and has
+been rated 583 times, and each movie has been rated by at least by 1 user.
+
+4: Feature Engineering
+We now convert the movie title column from categorical to numerical
+values using StringIndexer. We import the stringIndexer and Indextostring
+from the PySpark library.
+```
+from pyspark.sql.functions import *
+from pyspark.ml.feature import StringIndexer,IndexToString
+```
+Next, we create the stringindexer object by mentioning the input
+column and output column. Then we fit the object on the dataframe and
+apply it on the movie title column to create new dataframe with numerical
+values.
+```
+stringIndexer = StringIndexer(inputCol="title",outputCol="title_new")
+model = stringIndexer.fit(df)
+indexed = model.transform(df)
+```
+Let’s validate the numerical values of the title column by viewing few
+rows of the new dataframe (indexed).
+```
+indexed.show(10)
+```
+As we can see, we now we have an additional column (title_new) with
+numerical values representing the movie titles. We have to repeat the same
+procedure in case the user_id is also a categorical type. Just to validate the
+movie counts, we rerun the groupBy on a new dataframe.
+```
+indexed.groupBy('title_new').count().orderBy('count',ascending=False).show(10,False)
+```
+
+5: Splitting the Dataset
+Now that we have prepared the data for building the recommender model,
+we can split the dataset into training and test sets. We split it into a 75 to 25
+ratio to train the model and test its accuracy.
+```
+train,test=indexed.randomSplit([0.75,0.25])
+train.count()
+test.count()
+```
+6: Build and Train Recommender Model
+We import the ALS function from the PySpark ml library and build the
+model on the training dataset. There are multiple hyperparameters
+that can be tuned to improve the performance of the model. Two of the
+important ones are nonnegative =‘True’ doesn’t create negative ratings in
+recommendations and coldStartStrategy=‘drop’ to prevent any NaN ratings
+predictions.
+```
+from pyspark.ml.recommendation import ALS
+rec=ALS(maxIter=10,regParam=0.01,userCol='userId',itemCol='title_new',ratingCol='rating',nonnegative=True,coldStartStrategy="drop")
+rec_model=rec.fit(train)
+```
+7: Predictions and Evaluation on Test Data
+The final part of the entire exercise is to check the performance of the
+model on unseen or test data. We use the transform function to make
+predictions on the test data and RegressionEvaluate to check the RMSE
+value of the model on test data.
+```
+predicted_ratings=rec_model.transform(test)
+predicted_ratings.printSchema()
+predicted_ratings.orderBy(rand()).show(10)
+from pyspark.ml.evaluation import RegressionEvaluator
+evaluator=RegressionEvaluator(metricName='rmse',predictionCol='prediction',labelCol='rating')
+rmse=evaluator.evaluate(predicted_ratings)
+print(rmse)
+```
+The RMSE is not very high; we are making an error of one point in the
+actual rating and predicted rating. This can be improved further by tuning
+the model parameters and using the hybrid approach.
+
+8: Recommend Top Movies That Active User Might Like
+After checking the performance of the model and tuning the hyperparameters,
+we can move ahead to recommend top movies to users that they have not
+seen and might like. The first step is to create a list of unique movies in the
+dataframe.
+```
+unique_movies=indexed.select('title_new').distinct()
+unique_movies.count()
+
+```
+So, we have in total 1,664 distinct movies in the dataframe.
+```
+a = unique_movies.alias('a')
+```
+We can select any user within the dataset for which we need to
+recommend other movies. In our case, we go ahead with userId = 85.
+```
+user_id=85
+```
+
+We will filter the movies that this active user has already rated or seen.
+```
+watched_movies=indexed.filter(indexed['userId'] == user_id).select('title_new').distinct()
+watched_movies.count()
+b=watched_movies.alias('b')
+```
+So, there are total of 287 unique movies out of 1,664 movies that this
+active user has already rated. So, we would want to recommend movies
+from the remaining 1,377 items. We now combine both the tables to find
+the movies that we can recommend by filtering null values from the joined
+table.
+```
+total_movies = a.join(b, a.title_new == b.title_new,how='left')
+total_movies.show(10,False)
+remaining_movies=total_movies.where(col("b.title_new").isNull()).select(a.title_new).distinct()
+remaining_movies.count()
+remaining_movies=remaining_movies.withColumn("userId",lit(int(user_id)))
+remaining_movies.show(10,False)
+
+```
+Finally, we can now make the predictions on this remaining movie’s
+dataset for the active user using the recommender model that we built
+earlier. We filter only a few top recommendations that have the highest
+predicted ratings.
+```
+recommendations=rec_model.transform(remaining_movies).orderBy('prediction',ascending=False)
+recommendations.show(5,False)
+```
+
+So, movie titles 1433 and 1322 have the highest predicted rating for this
+active user (85). We can make it more intuitive by adding the movie title
+back to the recommendations. We use Indextostring function to create an
+additional column that returns the movie title.
+```
+movie_title = IndexToString(inputCol="title_new",outputCol="title",labels=model.labels)
+final_recommendations=movie_title.transform(recommendations)
+final_recommendations.show(10,False)
+```
+
+So, the recommendations for the userId (85) are Boys, Les (1997)
+and Faust (1994). This can be nicely wrapped in a single function that
+executes the above steps in sequence and generates recommendations for
+active users. The complete code is available on the GitHub repo with this
+function built in.
+
+Example Output: 
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/jupyter/ipynb/Recommender_Systems.ipynb
+
+## Clustering
+
+The dataset that we are going to use for this chapter is the famous open
+sourced IRIS dataset and contains a total of 150 records with 5 columns
+(sepal length, sepal width, petal length, petal width, species). There are
+50 records for each type of species. We will try to group these into clusters
+without using the species label information.
+
+Upload `./jupyter/dataset/iris_dataset.csv` into Jupyter env:
+
+1: Create the SparkSession Object
+We start Jupyter Notebook and import SparkSession and create a new
+SparkSession object to use Spark:
+```
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('K_means').getOrCreate()
+```
+2: Read the Dataset
+We then load and read the dataset within Spark using a dataframe. We
+have to make sure we have opened PySpark from the same directory folder
+where the dataset is available or else we have to mention the directory path
+of the data folder.
+```
+df=spark.read.csv('iris_dataset.csv',inferSchema=True,header=True)
+```
+3: Exploratory Data Analysis
+In this section, we explore the dataset by viewing it and validating its
+shape.
+```
+print((df.count(), len(df.columns)))
+```
+So, the above output confirms the size of our dataset and we can then
+validate the datatypes of the input values to check if we need to change/
+cast any columns' datatypes.
+```
+df.printSchema()
+```
+There is a total of five columns out of which four are numerical and the
+label column is categorical.
+```
+from pyspark.sql.functions import rand
+df.orderBy(rand()).show(10,False)
+df.groupBy('species').count().orderBy('count').show(10,False)
+```
+So, it confirms that there are an equal number of records for each
+species available in the dataset
+
+4: Feature Engineering
+This is the part where we create a single vector combining all input
+features by using Spark’s VectorAssembler. It creates only a single
+feature that captures the input values for that particular row. So,
+instead of four input columns (we are not considering a label column
+since it's an unsupervised machine learning technique), it essentially
+translates it into a single column with four input values in the form
+of a list.
+```
+from pyspark.ml.linalg import Vector
+from pyspark.ml.feature import VectorAssembler
+input_cols=['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+vec_assembler = VectorAssembler(inputCols = input_cols,outputCol='features')
+final_data = vec_assembler.transform(df)
+```
+5: Build K-Means Clustering Model
+The final data contains the input vector that can be used to run K-means
+clustering. Since we need to declare the value of ‘K’ in advance before
+using K-means, we can use elbow method to figure out the right value
+of ‘K’. In order to use the elbow method, we run K-means clustering for
+different values of ‘K’. First, we import K-means from the PySpark library
+and create an empty list that would capture the variability or SSE (within
+cluster distance) for each value of K.
+```
+from pyspark.ml.clustering import KMeans
+errors=[]
+for k in range(2,10):
+    kmeans = KMeans(featuresCol='features',k=k)
+    model = kmeans.fit(final_data)
+    intra_distance = model.computeCost(final_data)
+    errors.append(intra_distance)
+```  
+
+computeCost is deprecated and removed in 3.0.0. It causes the failure in https://github.com/rstudio/sparklyr/blob/master/tests/testthat/test-ml-clustering-kmeans-ext.R#L87
+
+Note The ‘K’ should have a minimum value of 2 to be able to build
+clusters.
+
+Now, we can plot the intracluster distance with the number of clusters
+using numpy and matplotlib.
+
+```
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+cluster_number = range(2,10)
+plt.xlabel('Number of Clusters (K)')
+plt.ylabel('SSE')
+plt.scatter(cluster_number,errors)
+plt.show()
+```
+In this case, k=3 seems to be the best number of clusters as we can see
+a sort of elbow formation between three and four values. We build final
+clusters using k=3.
+```
+kmeans = KMeans(featuresCol='features',k=3)
+model = kmeans.fit(final_data)
+model.transform(final_data).groupBy('prediction').count().show()
+```
+K-Means clustering gives us three different clusters based on the IRIS
+data set. We certainly are making a few of the allocations wrong as only
+one category has 50 records in the group, and the rest of the categories
+are mixed up. We can use the transform function to assign the cluster
+number to the original dataset and use a groupBy function to validate the
+groupings.
+```
+predictions=model.transform(final_data)
+predictions.groupBy('species','prediction').count().show()
+```
+As it can be observed, the setosa species is perfectly grouped
+along with versicolor, almost being captured in the same cluster,
+but verginica seems to fall within two different groups. K-means can
+produce different results every time as it chooses the starting point
+(centroid) randomly every time. Hence, the results that you might get
+in you K-means clustering might be totally different from these results
+unless we use a seed to reproduce the results. The seed ensures the
+split and the initial centroid values remain consistent throughout the
+analysis.
+
+6: Visualization of Clusters
+In the final step, we can visualize the new clusters with the help of Python’s
+matplotlib library. In order to do that, we convert our Spark dataframe into
+a Pandas dataframe first.
+```
+pandas_df = predictions.toPandas()
+pandas_df.head()
+```
+We import the required libraries to plot the third visualization and
+observe the clusters.
+```
+from mpl_toolkits.mplot3d import Axes3D
+cluster_vis = plt.figure(figsize=(12,10)).gca(projection='3d')
+cluster_vis.scatter(pandas_df.sepal_length, pandas_df.sepal_width, pandas_df.petal_length, c=pandas_df.prediction,depthshade=False)
+plt.show()
+```
+Example Output: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/jupyter/ipynb/Clustering.ipynb
+
+## Natural Language Processing
+
