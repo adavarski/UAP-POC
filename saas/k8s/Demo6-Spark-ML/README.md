@@ -2578,4 +2578,136 @@ That is a powerful set of tools begging to be used and ready to go!
 
 TODO: We'll start to put these tools into action to understand how best to work with large structured data sets, train machine learning models, work with graph databases, and analyze streaming datasets.
 
+Add MinIO(S3) jars
+```
+cd ./jupyter/docker
 
+# Add lines 
+
+$ grep curl Dockerfile.k8s-minio.executor 
+RUN curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.0.1/hadoop-aws-3.0.1.jar -o /opt/spark/jars/hadoop-aws-3.0.1.jar
+RUN curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.11.923/aws-java-sdk-core-1.11.923.jar -o /opt/spark/jars/aws-java-sdk-core-1.11.923.jar
+RUN curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.11.923/aws-java-sdk-1.11.923.jar -o /opt/spark/jars/java-sdk-1.11.923.jar
+RUN curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-kms/1.11.923/aws-java-sdk-kms-1.11.923.jar -o /opt/spark/jars/aws-java-sdk-kms-1.11.923.jar
+RUN curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.11.923/aws-java-sdk-s3-1.11.923.jar -o /opt/spark/jars/aws-java-sdk-s3-1.11.923.jar
+
+$ grep 1.0.0 *
+Dockerfile.cluster-dask:FROM davarski/spark301-k8s-minio-polyglot:1.0.0
+Dockerfile.cv:FROM davarski/spark301-minio-dask:1.0.0
+Dockerfile.hub-jupyter:FROM davarski/spark301-k8s-minio-jupyter:1.0.0
+Dockerfile.hub-polyglot:FROM davarski/spark301-k8s-minio-dl:latest:1.0.0
+Dockerfile.itk:FROM davarski/spark301-minio-dask:1.0.0
+Dockerfile.k8s-minio.deep-learning:FROM davarski/spark301-k8s-minio-kafka:1.0.0
+Dockerfile.k8s-minio.driver:FROM davarski/spark301-k8s-minio-base:1.0.0
+Dockerfile.k8s-minio.jupyter:FROM davarski/spark301-k8s-minio-driver:1.0.0
+Dockerfile.k8s-minio.ml-executor:FROM davarski/spark301-k8s-minio-base:1.0.0
+
+# Rebuild images with MinIO(S3)
+docker login
+# Build and tag the base/executor image
+docker build -f ./Dockerfile.k8s-minio.executor -t davarski/spark301-k8s-minio-base:1.0.0 .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-base:1.0.0
+
+# Build and tag the driver image
+docker build -f ./Dockerfile.k8s-minio.driver -t davarski/spark301-k8s-minio-driver:1.0.0 .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-driver:1.0.0
+
+# Build/tag/push the jupyter image
+docker build -f ./Dockerfile.k8s-minio.jupyter -t davarski/spark301-k8s-minio-jupyter:1.0.0 .
+docker push davarski/spark301-k8s-minio-jupyter:1.0.0
+```
+Pull images into k8s(k3s):
+```
+export KUBECONFIG=~/.kube/k3s-config-jupyter 
+sudo k3s crictl pull davarski/spark301-k8s-minio-base:1.0.0
+sudo k3s crictl pull davarski/spark301-k8s-minio-driver:1.0.0
+sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter:1.0.0
+
+```
+Delete OLD deploy
+```
+kubectl delete -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml -f jupyter-notebook.pod.yaml
+
+```
+
+
+
+Fix yamls
+```
+$ cd ../k8s
+$ grep 1.0.0 *
+grep: jupyter: Is a directory
+jupyter-notebook.pod.yaml:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
+jupyter-notebook.pod.yaml.DEMO:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
+jupyter-notebook.pod.yaml.MINIO-BUCKET:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
+```
+
+```
+kubectl apply -f jupyter-notebook.pod.yaml -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml
+```
+Check libs
+```
+$ kubectl exec -it spark-jupyter -- bash -c "ls /opt/spark/jars/*aws*"
+/opt/spark/jars/aws-java-sdk-core-1.11.923.jar	/opt/spark/jars/aws-java-sdk-kms-1.11.923.jar  /opt/spark/jars/aws-java-sdk-s3-1.11.923.jar  /opt/spark/jars/hadoop-aws-3.0.1.jar
+```
+
+Login Jupyter and cell:
+
+```
+import pyspark
+
+conf = pyspark.SparkConf()
+
+# Kubernetes is a Spark master in our setup. 
+# It creates pods with Spark workers, orchestrates those 
+# workers and returns final results to the Spark driver 
+# (“k8s://https://” is NOT a typo, this is how Spark knows the “provider” type). 
+conf.setMaster("k8s://https://kubernetes.default:443") 
+
+# Worker pods are created from the base Spark docker image.
+# If you use another image, specify its name instead.
+conf.set(
+    "spark.kubernetes.container.image", 
+    "davarski/spark301-k8s-minio-base") 
+
+# Authentication certificate and token (required to create worker pods):
+conf.set(
+    "spark.kubernetes.authenticate.caCertFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+conf.set(
+    "spark.kubernetes.authenticate.oauthTokenFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/token")
+
+# Service account which should be used for the driver
+conf.set(
+    "spark.kubernetes.authenticate.driver.serviceAccountName", 
+    "spark-driver") 
+
+# 2 pods/workers will be created. Can be expanded for larger workloads.
+conf.set("spark.executor.instances", "2") 
+
+# The DNS alias for the Spark driver. Required by executors to report status.
+conf.set(
+    "spark.driver.host", "spark-jupyter") 
+
+# Port which the Spark shell should bind to and to which executors will report progress
+conf.set("spark.driver.port", "29413") 
+
+conf.set("spark.hadoop.fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
+conf.set("spark.hadoop.fs.s3a.access.key", "minio")
+conf.set("spark.hadoop.fs.s3a.secret.key", "minio123")
+conf.set("spark.hadoop.fs.s3a.path.style.access", "true")
+conf.set("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
+conf.set("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+conf.set("spark.jars.packages", "aws-java-sdk-core-1.11.923.jar, hadoop-aws-3.0.1.jar, aws-java-sdk-s3-1.11.923.jar, aws-java-sdk-s3-1.11.923.jar,aws-java-sdk-kms-1.11.923.jar")
+
+
+
+# Initialize spark context, create executors
+sc = pyspark.SparkContext(conf=conf)
+```
+```
+df = sc.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+```
