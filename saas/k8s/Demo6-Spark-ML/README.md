@@ -2849,7 +2849,7 @@ print(test_predictions.meanSquaredError)
 ```
 Example Output:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/pictures/Spark-ML-jupyter-linear-regression.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-jupyter-linear-regression.png" width="800">
 
 https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/jupyter/ipynb/Linear_Regression.ipynb
 
