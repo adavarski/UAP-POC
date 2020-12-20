@@ -1,4 +1,4 @@
-FROM code.oak-tree.tech:5005/courseware/oak-tree/dataops-examples/spark301-k8s-minio-base
+FROM davarski/spark301-k8s-minio-base
 
 # Install kubectl
 USER root
