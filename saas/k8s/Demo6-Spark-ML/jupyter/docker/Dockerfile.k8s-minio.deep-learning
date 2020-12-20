@@ -1,0 +1,22 @@
+FROM davarski/spark301-k8s-minio-kafka:latest
+USER root
+
+# PyTorch
+RUN pip3 --no-cache-dir install torch===1.7.0+cu110 torchvision===0.8.1+cu110 torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+# Install cuDNN
+RUN mkdir /tmp/cudnn && cd /tmp/cudnn \
+  && wget https://www.oak-tree.tech/documents/161/cudnn-11.0-linux.8.0.3.33.tgz \
+  && tar -xf cudnn-11.0-linux.8.0.3.33.tgz \
+  && cp cuda/include/cudnn*.h /usr/local/cuda/include \
+  && cp cuda/lib64/libcudnn* /usr/local/cuda/lib64 \
+  && chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn* \
+  && cd /tmp/ && rm -rf /tmp/cudnn
+
+# TensorFlow
+RUN pip3 install tensorflow-gpu==2.4.0rc1
+
+# Add NLP Libraries
+RUN pip3 --no-cache-dir install fuzzywuzzy pydotplus shap xgboost
+
+USER jovyan

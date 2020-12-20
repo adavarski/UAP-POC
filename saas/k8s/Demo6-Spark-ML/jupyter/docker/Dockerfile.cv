@@ -1,0 +1,52 @@
+FROM davarski/spark301-minio-dask:latest
+
+USER root 
+
+# Install OpenCASCADE libraries and models
+RUN apt-get install -y cmake build-essential libfreetype6-dev \
+   vtk7 libvtk7-dev libvtk7-java libvtk7-jni \
+   libtk8.6 tk8.6-dev tcl tcl8.6-dev libglu1-mesa-dev \
+   libxmu-dev libxi-dev libgl1-mesa-dev doxygen \
+   libgtk-3-dev \
+  && mkdir -p /tmp/src/ && cd /tmp/src/ \
+  && wget https://github.com/tpaviot/oce/releases/download/official-upstream-packages/opencascade-7.4.0.tgz \
+  && wget https://github.com/tpaviot/oce/archive/official-upstream-packages.tar.gz \
+  && tar -xf opencascade-7.4.0.tgz \
+  && cd opencascade-7.4.0 && mkdir build && cd build \
+  && cmake .. \
+  && make -j 4 \
+  && make install/strip 
+
+# Install Python bindings. PythonOCC requires a newer version of
+# cmake than available on Ubuntu LTS, so a standalone binary is 
+# # downloaded as part of the install
+RUN apt-get install -y swig \
+  && mkdir -p /tmp/src/ && cd /tmp/src/ \
+  && wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2-Linux-x86_64.tar.gz \
+  && tar -xf cmake-3.17.2-Linux-x86_64.tar.gz \
+  && wget https://github.com/tpaviot/pythonocc-core/archive/7.4.0.tar.gz \
+  && tar -xf 7.4.0.tar.gz && cd pythonocc-core-7.4.0 \
+  && mkdir cmake-build && cd cmake-build \
+  && /tmp/src/cmake-3.17.2-Linux-x86_64/bin/cmake .. \
+  && make -j 4 && make install 
+
+# Update library path to include /usr/local/lib
+ENV LD_LIBRARY_PATH "/usr/local/lib:${LD_LIBRARY_PATH}"
+
+# Install OpenCV
+RUN apt-get install -y libopencv-dev python3-opencv
+
+# Install GIMP
+RUN apt-get install -y gimp
+
+# Install PyTorch 3D
+RUN pip3 install pytorch3d
+
+# Install Guru Client and Sonador
+RUN pip3 install \
+  git+https://code.oak-tree.tech/guru-labs/packages/guru-client.git \
+  git+https://code.oak-tree.tech/oak-tree/medical-imaging/packages/sonador
+
+# Set User back to jovyan/1000
+USER 1000
+ENV LD_LIBRARY_PATH "/usr/local/lib:${LD_LIBRARY_PATH}"

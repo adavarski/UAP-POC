@@ -1,0 +1,7 @@
+FROM davarski/spark301-k8s-minio-polyglot:latest
+USER root
+
+# Install Dask
+RUN pip3 install dask[complete]
+
+USER jovyan
