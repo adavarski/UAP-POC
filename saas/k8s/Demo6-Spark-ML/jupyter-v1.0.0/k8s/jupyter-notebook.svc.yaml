@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-jupyter
+
+spec:
+  clusterIP: None
+  selector:
+    app: spark-jupyter
+  ports:
+  - protocol: TCP
+    port: 8888
+    targetPort: 8888

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jupyter-ingress-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: jupyter.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: spark-jupyter
+              servicePort: 8888
+            path: /
+  tls:
+    - hosts:
+        - jupyter.data.davar.com
+      secretName: jupyter-production-tls
