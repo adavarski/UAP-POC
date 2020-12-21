@@ -2580,7 +2580,7 @@ TODO: We'll start to put these tools into action to understand how best to work 
 
 Add MinIO(S3) jars:
 ```
-cd ./jupyter/docker
+cd ./jupyter-1.0.0/docker
 
 # Add lines 
 
@@ -2634,9 +2634,8 @@ kubectl delete -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml -f 
 
 Fix yamls:
 ```
-$ cd ../k8s
-$ grep 1.0.0 *
-grep: jupyter: Is a directory
+$ cd ./jupyter-1.0.0/k8s
+$ grep 1.0.0 *.yaml
 jupyter-notebook.pod.yaml:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
 jupyter-notebook.pod.yaml.DEMO:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
 jupyter-notebook.pod.yaml.MINIO-BUCKET:    image: davarski/spark301-k8s-minio-jupyter:1.0.0
