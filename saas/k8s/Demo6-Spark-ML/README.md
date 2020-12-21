@@ -3126,8 +3126,7 @@ fp = results[(results.Status == 1)].count()
 fn = results[(results.Status == 0)].count()
 ```
 Accuracy
-As discussed already in the chapter, accuracy is the most basic metric
-for evaluating any classifier; however, this is not the right indicator of
+Accuracy is the most basic metric for evaluating any classifier; however, this is not the right indicator of
 the performance of the model due to dependency on the target class
 balance.
 ```
@@ -3404,7 +3403,7 @@ https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML
 
 ## Recommender Systems
 
-The dataset that we are going to use for this chapter is a subset from
+The dataset that we are going to use for this demo is a subset from
 a famous open sourced movie lens dataset and contains a total of 0.1
 million records with three columns (User_Id,title,rating). We will train our
 recommender model using 75% of the data and test it on the rest of the
@@ -3603,7 +3602,7 @@ https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML
 
 ## Clustering
 
-The dataset that we are going to use for this chapter is the famous open
+The dataset that we are going to use for this demo is the famous open
 sourced IRIS dataset and contains a total of 150 records with 5 columns
 (sepal length, sepal width, petal length, petal width, species). There are
 50 records for each type of species. We will try to group these into clusters
