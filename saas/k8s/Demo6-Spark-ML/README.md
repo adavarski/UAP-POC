@@ -3859,3 +3859,4 @@ Example Output: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8
 
 ## Natural Language Processing
 
+# Appendix 4: Managing, Deploying, and Scaling Machine Learning Pipelines with Apache Spark (MLOps)
