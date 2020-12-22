@@ -2717,8 +2717,67 @@ only showing top 2 rows
 
 ```
 
+Test Spark k8s integration:
+```
+import pyspark
 
-Test MinIO(S3) integration inside Jupyter (Login and cell):
+conf = pyspark.SparkConf()
+
+# Kubernetes is a Spark master in our setup. 
+# It creates pods with Spark workers, orchestrates those 
+# workers and returns final results to the Spark driver 
+# (“k8s://https://” is NOT a typo, this is how Spark knows the “provider” type). 
+conf.setMaster("k8s://https://kubernetes.default:443") 
+
+# Worker pods are created from the base Spark docker image.
+# If you use another image, specify its name instead.
+conf.set(
+    "spark.kubernetes.container.image", 
+    "davarski/spark301-k8s-minio-base:1.0.0") 
+
+# Authentication certificate and token (required to create worker pods):
+conf.set(
+    "spark.kubernetes.authenticate.caCertFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+conf.set(
+    "spark.kubernetes.authenticate.oauthTokenFile", 
+    "/var/run/secrets/kubernetes.io/serviceaccount/token")
+
+# Service account which should be used for the driver
+conf.set(
+    "spark.kubernetes.authenticate.driver.serviceAccountName", 
+    "spark-driver") 
+
+# 2 pods/workers will be created. Can be expanded for larger workloads.
+conf.set("spark.executor.instances", "2") 
+
+# The DNS alias for the Spark driver. Required by executors to report status.
+conf.set(
+    "spark.driver.host", "spark-jupyter") 
+
+# Port which the Spark shell should bind to and to which executors will report progress
+conf.set("spark.driver.port", "29413") 
+
+# Initialize spark context, create executors
+sc = pyspark.SparkContext(conf=conf)
+
+sc._conf.getAll()
+
+!kubectl get pod
+
+# Create a distributed data set to test to the session
+t = sc.parallelize(range(10))
+
+# Calculate the approximate sum of values in the dataset
+r = t.sumApprox(3)
+print('Approximate sum: %s' % r)
+```
+
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-Jupyter-k8s.png" width="800">
+
+
+Test MinIO(S3) integration inside Jupyter Notebook (Login and cell):
 
 ```
 from pyspark.sql import SparkSession
@@ -2764,6 +2823,9 @@ only showing top 2 rows
 
 
 ```
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-Jupyter-k8s-minio.png" width="800">
+
+
 
 ## Linear Regression
 
