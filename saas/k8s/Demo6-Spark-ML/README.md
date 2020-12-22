@@ -2718,63 +2718,51 @@ only showing top 2 rows
 ```
 
 
-Login Jupyter and cell:
+Test MinIO(S3) integration inside Jupyter (Login and cell):
 
 ```
-import pyspark
-
-conf = pyspark.SparkConf()
-
-# Kubernetes is a Spark master in our setup. 
-# It creates pods with Spark workers, orchestrates those 
-# workers and returns final results to the Spark driver 
-# (“k8s://https://” is NOT a typo, this is how Spark knows the “provider” type). 
-conf.setMaster("k8s://https://kubernetes.default:443") 
-
-# Worker pods are created from the base Spark docker image.
-# If you use another image, specify its name instead.
-conf.set(
-    "spark.kubernetes.container.image", 
-    "davarski/spark301-k8s-minio-base") 
-
-# Authentication certificate and token (required to create worker pods):
-conf.set(
-    "spark.kubernetes.authenticate.caCertFile", 
-    "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
-conf.set(
-    "spark.kubernetes.authenticate.oauthTokenFile", 
-    "/var/run/secrets/kubernetes.io/serviceaccount/token")
-
-# Service account which should be used for the driver
-conf.set(
-    "spark.kubernetes.authenticate.driver.serviceAccountName", 
-    "spark-driver") 
-
-# 2 pods/workers will be created. Can be expanded for larger workloads.
-conf.set("spark.executor.instances", "2") 
-
-# The DNS alias for the Spark driver. Required by executors to report status.
-conf.set(
-    "spark.driver.host", "spark-jupyter") 
-
-# Port which the Spark shell should bind to and to which executors will report progress
-conf.set("spark.driver.port", "29413") 
-
-conf.set("spark.hadoop.fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
-conf.set("spark.hadoop.fs.s3a.access.key", "minio")
-conf.set("spark.hadoop.fs.s3a.secret.key", "minio123")
-conf.set("spark.hadoop.fs.s3a.path.style.access", "true")
-conf.set("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
-conf.set("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
-conf.set("spark.jars.packages", "aws-java-sdk-core-1.11.923.jar, hadoop-aws-3.0.1.jar, aws-java-sdk-s3-1.11.923.jar, aws-java-sdk-s3-1.11.923.jar,aws-java-sdk-kms-1.11.923.jar")
-
-
-
-# Initialize spark context, create executors
-sc = pyspark.SparkContext(conf=conf)
+from pyspark.sql import SparkSession
+spark=SparkSession.builder.appName('minio_test').getOrCreate()
+spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "minio")
+spark._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "minio123")
+spark._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
+spark._jsc.hadoopConfiguration().set("fs.s3a.path.style.access", "true")
+spark._jsc.hadoopConfiguration().set("fs.s3a.connection.ssl.enabled", "false")
+spark._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+speciesDF = spark.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+speciesDF.show(2)
 ```
+Example Output:
 ```
-df = sc.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+from pyspark.sql import SparkSession
+
+spark=SparkSession.builder.appName('minio_test').getOrCreate()
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "minio")
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "minio123")
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.path.style.access", "true")
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.connection.ssl.enabled", "false")
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+
+speciesDF = spark.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+
+speciesDF.show(2)
+
++------------+-----------+------------+-----------+-------+
+|sepal_length|sepal_width|petal_length|petal_width|species|
++------------+-----------+------------+-----------+-------+
+|         5.1|        3.5|         1.4|        0.2| setosa|
+|         4.9|        3.0|         1.4|        0.2| setosa|
++------------+-----------+------------+-----------+-------+
+only showing top 2 rows
+
+
 ```
 
 ## Linear Regression
