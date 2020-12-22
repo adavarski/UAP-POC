@@ -2654,6 +2654,70 @@ $ kubectl exec -it spark-jupyter -- bash -c "ls /opt/spark/jars/*aws*"
 /opt/spark/jars/aws-java-sdk-core-1.11.923.jar	/opt/spark/jars/aws-java-sdk-kms-1.11.923.jar  /opt/spark/jars/aws-java-sdk-s3-1.11.923.jar  /opt/spark/jars/hadoop-aws-3.0.1.jar
 ```
 
+Check Spark MinIO integration:
+```
+sc.hadoopConfiguration.set("fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
+sc.hadoopConfiguration.set("fs.s3a.access.key", "minio")
+sc.hadoopConfiguration.set("fs.s3a.secret.key", "minio123")
+sc.hadoopConfiguration.set("fs.s3a.path.style.access", "true")
+val speciesDF = spark.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+speciesDF.show(2)
+
+```
+Example Output:
+
+```
+$ export KUBECONFIG=~/.kube/k3s-config-jupyter
+$ kubectl exec -ti spark-jupyter -- bash
+
+jovyan@spark-jupyter:~/work$ spark-shell
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/opt/spark/jars/spark-unsafe_2.12-3.0.1.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+20/12/22 01:36:20 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+Spark context Web UI available at http://spark-jupyter:4040
+Spark context available as 'sc' (master = local[*], app id = local-1608600986357).
+Spark session available as 'spark'.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 3.0.1
+      /_/
+         
+Using Scala version 2.12.10 (OpenJDK 64-Bit Server VM, Java 11.0.9.1)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> sc.hadoopConfiguration.set("fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000")
+
+scala> sc.hadoopConfiguration.set("fs.s3a.access.key", "minio")
+
+scala> sc.hadoopConfiguration.set("fs.s3a.secret.key", "minio123")
+
+scala> sc.hadoopConfiguration.set("fs.s3a.path.style.access", "true")
+
+scala> val speciesDF = spark.read.format("csv").option("sep", ",").option("inferSchema", "true").option("header", "true").load("s3a://iris/iris.csv")
+20/12/22 01:36:59 WARN ApacheUtils: NoSuchMethodException was thrown when disabling normalizeUri. This indicates you are using an old version (< 4.5.8) of Apache http client. It is recommended to use http client version >= 4.5.9 to avoid the breaking change introduced in apache client 4.5.7 and the latency in exception handling. See https://github.com/aws/aws-sdk-java/issues/1919 for more information
+speciesDF: org.apache.spark.sql.DataFrame = [sepal_length: double, sepal_width: double ... 3 more fields]
+
+scala> speciesDF.show(2)
++------------+-----------+------------+-----------+-------+
+|sepal_length|sepal_width|petal_length|petal_width|species|
++------------+-----------+------------+-----------+-------+
+|         5.1|        3.5|         1.4|        0.2| setosa|
+|         4.9|        3.0|         1.4|        0.2| setosa|
++------------+-----------+------------+-----------+-------+
+only showing top 2 rows
+
+```
+
+
 Login Jupyter and cell:
 
 ```
