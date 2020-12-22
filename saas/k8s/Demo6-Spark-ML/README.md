@@ -3491,7 +3491,7 @@ So, rate_marriage is the most important feature from a prediction
 standpoint followed by yrs_married. The least significant variable seems to
 be Age.
 
-Step 8: Saving the Model
+8: Saving the Model
 Sometimes, after training the model, we just need to call the model for
 preditions, and hence it makes a lot of sense to persist the model object
 and reuse it for predictions. There are two parts to this.
