@@ -3877,7 +3877,7 @@ mc ls minio-cluster/mlflow
 Upload ./mlflow/data/sf-airbnb-clean.parquet into  jupyter ./data folder (the same path as jupyter notebook)
 
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-dataset.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-dataset.png" width="800">
 
 Cells:
 ```
@@ -4029,9 +4029,9 @@ https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML
 
 Check MLFlow UI :
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiments.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiments.png" width="800">
 
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-FINISHED.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-FINISHED.png" width="800">
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-UNFINISHED.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-UNFINISHED.png" width="800">
