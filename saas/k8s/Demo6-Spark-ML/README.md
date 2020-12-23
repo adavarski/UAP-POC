@@ -3864,3 +3864,174 @@ Example Output: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8
 End to End MLOps examples: Build machine learning pipelines with MLlib. Manage and deploy the models we train. Utilize MLflow to track, reproduce, and
 deploy our MLlib models using various model deployment scenarios, and architect scalable machine learning solutions.
 
+Deploy MLFlow on k8s and create MiniIO bucket
+```
+export KUBECONFIG=~/.kube/k3s-config-jupyter
+sudo k3s crictl pull davarski/mlflow:1.8.0-v4
+kubectl create -f ../003-data/800-mlflow/60-ingress.yml -f ../003-data/800-mlflow/50-service.yml -f ../003-data/800-mlflow/40-statefulset.yml
+mc rb minio-cluster/mlflow --force
+mc mb minio-cluster/mlflow 
+mc ls minio-cluster/mlflow
+```
+
+Upload ./mlflow/data/sf-airbnb-clean.parquet into  jupyter ./data folder (the same path as jupyter notebook)
+
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-dataset.png" width="800">
+
+Cells:
+```
+!pip install mlflow==1.8.0
+# Restart the kernel
+```
+```
+import os
+# api and object access
+os.environ['MLFLOW_TRACKING_URI'] = "http://mlflow.data:5000"
+os.environ['MLFLOW_S3_ENDPOINT_URL'] = "http://minio-service.data:9000"
+# minio credentials
+os.environ['AWS_ACCESS_KEY_ID'] = "minio"
+os.environ['AWS_SECRET_ACCESS_KEY'] = "minio123"
+
+```
+
+```
+from pyspark.sql import SparkSession
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import VectorAssembler, StringIndexer
+from pyspark.ml.regression import RandomForestRegressor
+from pyspark.ml.evaluation import RegressionEvaluator
+import mlflow
+import mlflow.spark
+import pandas as pd
+
+spark = SparkSession.builder.appName("airbnb").getOrCreate()
+```
+
+```
+def mlflow_rf(file_path, num_trees, max_depth):
+  with mlflow.start_run(run_name="random-forest") as run:
+    # Create train/test split
+    spark = SparkSession.builder.appName("App").getOrCreate()
+    airbnbDF = spark.read.parquet("./data/")
+    (trainDF, testDF) = airbnbDF.randomSplit([.8, .2], seed=42)
+
+    # Prepare the StringIndexer and VectorAssembler
+    categoricalCols = [field for (field, dataType) in trainDF.dtypes if dataType == "string"]
+    indexOutputCols = [x + "Index" for x in categoricalCols]
+
+    stringIndexer = StringIndexer(inputCols=categoricalCols, outputCols=indexOutputCols, handleInvalid="skip")
+
+    numericCols = [field for (field, dataType) in trainDF.dtypes if ((dataType == "double") & (field != "price"))]
+    assemblerInputs = indexOutputCols + numericCols
+    vecAssembler = VectorAssembler(inputCols=assemblerInputs, outputCol="features")
+    
+    # Log params: Num Trees and Max Depth
+    mlflow.log_param("num_trees", num_trees)
+    mlflow.log_param("max_depth", max_depth)
+
+    rf = RandomForestRegressor(labelCol="price",
+                               maxBins=40,
+                               maxDepth=max_depth,
+                               numTrees=num_trees,
+                               seed=42)
+
+    pipeline = Pipeline(stages=[stringIndexer, vecAssembler, rf])
+
+    # Log model
+    pipelineModel = pipeline.fit(trainDF)
+    mlflow.spark.log_model(pipelineModel, "model")
+
+    # Log metrics: RMSE and R2
+    predDF = pipelineModel.transform(testDF)
+    regressionEvaluator = RegressionEvaluator(predictionCol="prediction",
+                                            labelCol="price")
+    rmse = regressionEvaluator.setMetricName("rmse").evaluate(predDF)
+    r2 = regressionEvaluator.setMetricName("r2").evaluate(predDF)
+    mlflow.log_metrics({"rmse": rmse, "r2": r2})
+
+    # Log artifact: Feature Importance Scores
+    rfModel = pipelineModel.stages[-1]
+    pandasDF = (pd.DataFrame(list(zip(vecAssembler.getInputCols(),
+                                    rfModel.featureImportances)),
+                          columns=["feature", "importance"])
+              .sort_values(by="importance", ascending=False))
+    # First write to local filesystem, then tell MLflow where to find that file
+    pandasDF.to_csv("/tmp/feature-importance.csv", index=False)
+    os.makedirs("data", exist_ok=True)
+    mlflow.log_artifact("data", artifact_path="airbnb.ipynb")
+```
+
+Run experiment 1 (about 10 minutes to FINISH)
+
+```
+if __name__ == "__main__":
+  mlflow_rf("./data",3,3)
+```
+
+Check MinIO bucket:
+
+```
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/
+[2020-12-23 11:46:00 EET]     0B model/
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/
+[2020-12-23 11:44:58 EET]   293B MLmodel
+[2020-12-23 11:44:58 EET]   107B conda.yaml
+[2020-12-23 11:46:06 EET]     0B sparkml/
+$ mc cat minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/conda.yaml
+channels:
+- defaults
+dependencies:
+- python=3.8.5
+- pyspark=3.0.1
+- pip
+- pip:
+  - mlflow
+name: mlflow-env
+$ mc cat minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/MLmodel
+artifact_path: model
+flavors:
+  python_function:
+    data: sparkml
+    env: conda.yaml
+    loader_module: mlflow.spark
+    python_version: 3.8.5
+  spark:
+    model_data: sparkml
+    pyspark_version: 3.0.1
+run_id: f547a49a51df403ba21766c53c6eca6b
+utc_time_created: '2020-12-23 09:44:56.119994'
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/sparkml/
+[2020-12-23 11:47:17 EET]     0B stages/
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/sparkml/stages
+[2020-12-23 11:47:25 EET]     0B stages/
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/sparkml/stages/
+[2020-12-23 11:47:31 EET]     0B 2_RandomForestRegressor_93839c6d60c6/
+$ mc ls minio-cluster/mlflow/artifacts/0/f547a49a51df403ba21766c53c6eca6b/artifacts/model/sparkml/stages/2_RandomForestRegressor_93839c6d60c6/
+[2020-12-23 11:47:47 EET]     0B data/
+[2020-12-23 11:47:47 EET]     0B metadata/
+[2020-12-23 11:47:47 EET]     0B treesMetadata/
+
+```
+Run experiment 2:
+
+```
+if __name__ == "__main__":
+  mlflow_rf("./data",4,5) 
+```
+
+Example Ouptut:
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/jupyter-v1.0.0/ipynb/spark-airbnb-random-forest-mlflow.ipynb
+
+
+
+
+Check MLFlow UI :
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiments.png" width="800">
+
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-FINISHED.png" width="800">
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiment-UNFINISHED.png" width="800">
