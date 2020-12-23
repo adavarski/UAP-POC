@@ -4047,7 +4047,7 @@ utc_time_created: '2020-12-23 09:54:09.674812'
 ```
 
 
-Check MLFlow UI :
+Check MLFlow UI http://mlflow.data.davar.com
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-experiments.png" width="800">
 
