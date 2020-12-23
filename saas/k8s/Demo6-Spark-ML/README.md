@@ -4024,7 +4024,27 @@ Example Ouptut:
 
 https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/jupyter-v1.0.0/ipynb/spark-airbnb-random-forest-mlflow.ipynb
 
+Check MinIO bucket:
+```
+$ mc ls minio-cluster/mlflow/artifacts/0/
+[2020-12-23 12:05:29 EET]     0B 5b6431f76cfd4b8e990258d72aa6becf/
+[2020-12-23 12:05:29 EET]     0B ed637f990f9b4e38bc7dc15d4f6839bb/
+[2020-12-23 12:05:29 EET]     0B f547a49a51df403ba21766c53c6eca6b/
 
+$ mc cat minio-cluster/mlflow/artifacts/0/ed637f990f9b4e38bc7dc15d4f6839bb/artifacts/model/MLmodel
+artifact_path: model
+flavors:
+  python_function:
+    data: sparkml
+    env: conda.yaml
+    loader_module: mlflow.spark
+    python_version: 3.8.5
+  spark:
+    model_data: sparkml
+    pyspark_version: 3.0.1
+run_id: ed637f990f9b4e38bc7dc15d4f6839bb
+utc_time_created: '2020-12-23 09:54:09.674812'
+```
 
 
 Check MLFlow UI :
