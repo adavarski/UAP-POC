@@ -3881,11 +3881,11 @@ of the algorithm or library used to build the model.
 A repository to keep track of model lineage, model versions, stage transitions,
 and annotations.
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-components.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-components.png" width="800">
 
 The MLflow tracking server can host many experiments. You can log to the tracking server using a notebook, local app, or cloud job, as shown
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-tracking-server.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-tracking-server.png" width="800">
 
 Let’s examine a few things that can be logged to the tracking server:
 
