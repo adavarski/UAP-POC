@@ -3864,6 +3864,49 @@ Example Output: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8
 End to End MLOps examples: Build machine learning pipelines with MLlib. Manage and deploy the models we train. Utilize MLflow to track, reproduce, and
 deploy our MLlib models using various model deployment scenarios, and architect scalable machine learning solutions.
 
+
+MLflow is an open source platform that helps developers reproduce and share experiments, manage models, and much more. It provides interfaces in Python, R, and Java/Scala, as well as a REST API. MLflow has four main components:
+
+- Tracking
+Provides APIs to record parameters, metrics, code versions, models, and artifacts
+such as plots, and text.
+- Projects
+A standardized format to package your data science projects and their dependen‐
+cies to run on other platforms. It helps you manage the model training process.
+- Models
+A standardized format to package models to deploy to diverse execution environ‐
+ments. It provides a consistent API for loading and applying models, regardless
+of the algorithm or library used to build the model.
+- Registry
+A repository to keep track of model lineage, model versions, stage transitions,
+and annotations.
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-components.png" width="800">
+
+The MLflow tracking server can host many experiments. You can log to the tracking server using a notebook, local app, or cloud job, as shown
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-MLFlow-tracking-server.png" width="800">
+
+Let’s examine a few things that can be logged to the tracking server:
+
+- Parameters
+Key/value inputs to your code—e.g., hyperparameters like num_trees ormax_depth in your random forest
+- Metrics
+Numeric values (can update over time)—e.g., RMSE or accuracy values
+- Artifacts
+Files, data, and models—e.g., matplotlib images, or Parquet files Metadata Information about the run, such as the source code that executed the run or the
+version of the code (e.g., the Git commit hash string for the code version)
+- Models
+The model(s) you trained
+
+
+Build new MLFlow docker image if needed and pushing it into DockerHub container registry.
+```
+$ cd mlflow
+$ docker build -t davarski/mlflow:1.8.0-v4 .
+$ docker push davarski/mlflow:1.8.0-v4
+```
+
 Deploy MLFlow on k8s and create MiniIO bucket
 ```
 export KUBECONFIG=~/.kube/k3s-config-jupyter
