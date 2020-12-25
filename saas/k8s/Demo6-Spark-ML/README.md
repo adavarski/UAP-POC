@@ -3922,6 +3922,10 @@ Upload ./mlflow/data/sf-airbnb-clean.parquet into  jupyter ./data folder (the sa
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-MLOps-airbnb-dataset.png" width="800">
 
+
+Note: Spark has two machine learning packages: spark.mllib and spark.ml. spark.mllib is the original machine learning API, based on the RDD API (which has been in maintenance mode since Spark 2.0), while spark.ml is the newer API, based on DataFrames. We will use the spark.ml package to design machine learning pipeline in Spark. However, we use “MLlib” as an umbrellaterm to refer to both machine learning library packages in Apache Spark.
+
+
 Cells:
 ```
 !pip install mlflow==1.8.0
