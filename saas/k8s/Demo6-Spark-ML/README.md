@@ -3917,6 +3917,9 @@ mc mb minio-cluster/mlflow
 mc ls minio-cluster/mlflow
 ```
 
+Dataset: http://insideairbnb.com/get-the-data.html
+
+
 Upload ./mlflow/data/sf-airbnb-clean.parquet into  jupyter ./data folder (the same path as jupyter notebook)
 
 
