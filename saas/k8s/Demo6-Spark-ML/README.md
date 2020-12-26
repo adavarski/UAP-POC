@@ -3928,6 +3928,19 @@ Upload ./mlflow/data/sf-airbnb-clean.parquet into  jupyter ./data folder (the sa
 
 Note: Spark has two machine learning packages: spark.mllib and spark.ml. spark.mllib is the original machine learning API, based on the RDD API (which has been in maintenance mode since Spark 2.0), while spark.ml is the newer API, based on DataFrames. We will use the spark.ml package to design machine learning pipeline in Spark. However, we use “MLlib” as an umbrellaterm to refer to both machine learning library packages in Apache Spark.
 
+Pipeline API provides a high-level API built on top of DataFrames to organize your machine learning workflow. The Pipeline API is composed of a series of transformers and estimators. MLlib terminology:
+
+- Transformer:
+Accepts a DataFrame as input, and returns a new DataFrame with one or more columns appended to it. Transformers do not learn any parameters from your data and simply apply rule-based transformations to either prepare data for model training or generate predictions using a trained MLlib model. They have a .transform() method.
+- Estimator:
+Learns (or “fits”) parameters from your DataFrame via a .fit() method and returns a Model , which is a transformer.
+- Pipeline:
+Organizes a series of transformers and estimators into a single model. While pipelines themselves are estimators, the output of pipeline.fit() returns a Pipe
+lineModel , a transformer.
+
+We will use housing data set from Inside Airbnb(SF). It contains information about Airbnb rentals in San Francisco, such as the number of bedrooms, location, review scores, etc., and our goal is to build a model to predict the nightly rental prices for listings in that city. This is a regression problem, because price is a continuous variable. Random forests truly demonstrate the power of distributed machine learning with Spark, as each tree can be built independently of the other trees (e.g., you do not need to build tree 3 before you build tree 10). Furthermore, within each level of the tree, you can parallelize the work to find the optimal splits. Both the number of trees and the max depth are examples of hyperparameters you can tune for random forests. 
+
+
 
 Cells:
 ```
