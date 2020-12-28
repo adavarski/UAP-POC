@@ -1,4 +1,4 @@
-## PaaS/SaaS data-driven & data analyst/data engineer/data scientist platform playground (MVP/POC/environmints) R&D (MVP/POC/environmints):
+## PaaS/SaaS data-driven & data analyst/data engineer/data scientist platform playground R&D (MVP/POC/environmints):
 
 Summary: Vagrant/Docker/k8s/AWS IaC-based PaaS/SaaS infrastucture/environments (POC): Terraform for AWS infrastructure provisioning, Vagrant/Docker/k8s for Dev environments and Ansible for Configuration Management (CM). 
 
