@@ -1,5 +1,5 @@
 
-# k8s-based PaaS & SaaS data-driven & data-science platform playground (MVP/POC/environmints):
+# k8s-based PaaS & SaaS data-driven & data analyst/data engineer/data scientist platform playground (MVP/POC/environmints):
 
 ### Used stacks and products
 
