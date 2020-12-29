@@ -4410,7 +4410,7 @@ if __name__ == "__main__":
 
 Full Notebook:
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/jupyter-v1.0.0/ipynb/spark-airbnb-cleansing-random-forest-mlflow.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/jupyter-v1.0.0/ipynb/spark-airbnb-cleansing-random-forest-mlflow.ipynb
 
 Check MLFlow UI:
 
