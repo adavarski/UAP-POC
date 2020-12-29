@@ -4130,6 +4130,297 @@ You can use the Model Registry with the other deployment options too.
 
 Seldon Core deploy (Ref: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore)
 
+Examle (FULL: Including Data Cleansing)
+
+Untar https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/jupyter-v1.0.0/dataset/sf-airbnb.csv.tar.gz and upload to jupyter 
+
+```
+!pip install mlflow==1.8.0
+```
+
+```
+import os
+# api and object access
+os.environ['MLFLOW_TRACKING_URI'] = "http://mlflow.data:5000"
+os.environ['MLFLOW_S3_ENDPOINT_URL'] = "http://minio-service.data:9000"
+# minio credentials
+os.environ['AWS_ACCESS_KEY_ID'] = "minio"
+os.environ['AWS_SECRET_ACCESS_KEY'] = "minio123"
+from pyspark.sql import SparkSession
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import VectorAssembler, StringIndexer
+from pyspark.ml.regression import RandomForestRegressor
+from pyspark.ml.evaluation import RegressionEvaluator
+import mlflow
+import mlflow.spark
+import pandas as pd
+
+spark = SparkSession.builder.appName("airbnb").getOrCreate()
+```
+
+Data Cleansing with Airbnb
+
+We're going to start by doing some exploratory data analysis & cleansing. We will be using the SF Airbnb rental dataset from Inside Airbnb.
+```
+filePath = "sf-airbnb.csv"
+rawDF = spark.read.csv(filePath, header="true", inferSchema="true", multiLine="true", escape='"')
+
+display(rawDF)
+
+rawDF.columns
+```
+For the sake of simplicity, only keep certain columns from this dataset. We will talk about feature selection later.
+
+```
+columnsToKeep = [
+  "host_is_superhost",
+  "cancellation_policy",
+  "instant_bookable",
+  "host_total_listings_count",
+  "neighbourhood_cleansed",
+  "latitude",
+  "longitude",
+  "property_type",
+  "room_type",
+  "accommodates",
+  "bathrooms",
+  "bedrooms",
+  "beds",
+  "bed_type",
+  "minimum_nights",
+  "number_of_reviews",
+  "review_scores_rating",
+  "review_scores_accuracy",
+  "review_scores_cleanliness",
+  "review_scores_checkin",
+  "review_scores_communication",
+  "review_scores_location",
+  "review_scores_value",
+  "price"]
+
+baseDF = rawDF.select(columnsToKeep)
+baseDF.cache().count()
+display(baseDF)
+```
+
+Fixing Data Types
+
+Take a look at the schema above. You'll notice that the price field got picked up as string. For our task, we need it to be a numeric (double type) field.
+
+Let's fix that.
+
+```
+from pyspark.sql.functions import col, translate
+
+fixedPriceDF = baseDF.withColumn("price", translate(col("price"), "$,", "").cast("double"))
+
+display(fixedPriceDF)
+```
+
+Summary statistics
+
+Two options:
+
+    describe
+    summary (describe + IQR)
+
+```
+display(fixedPriceDF.describe())
+summary
+```
+Nulls
+
+There are a lot of different ways to handle null values. Sometimes, null can actually be a key indicator of the thing you are trying to predict (e.g. if you don't fill in certain portions of a form, probability of it getting approved decreases).
+
+Some ways to handle nulls:
+
+    Drop any records that contain nulls
+    Numeric:
+        Replace them with mean/median/zero/etc.
+    Categorical:
+        Replace them with the mode
+        Create a special category for null
+    Use techniques like ALS which are designed to impute missing values
+
+If you do ANY imputation techniques for categorical/numerical features, you MUST include an additional field specifying that field was imputed (think about why this is necessary)
+
+There are a few nulls in the categorical feature host_is_superhost. Let's get rid of those rows where any of these columns is null.
+
+SparkML's Imputer (will cover below) does not support imputation for categorical features, so this is the simplest approach for the time being.
+```
+noNullsDF = fixedPriceDF.na.drop(subset=["host_is_superhost"])
+```
+
+Impute: Cast to Double
+
+SparkML's Imputer requires all fields be of type double Python/Scala. Let's cast all integer fields to double.
+
+```
+from pyspark.sql.functions import col
+from pyspark.sql.types import IntegerType
+
+integerColumns = [x.name for x in baseDF.schema.fields if x.dataType == IntegerType()]
+doublesDF = noNullsDF
+
+for c in integerColumns:
+  doublesDF = doublesDF.withColumn(c, col(c).cast("double"))
+
+columns = "\n - ".join(integerColumns)
+print(f"Columns converted from Integer to Double:\n - {columns}")
+```
+
+Add in dummy variable if we will impute any value.
+```
+from pyspark.sql.functions import when
+
+imputeCols = [
+  "bedrooms",
+  "bathrooms",
+  "beds", 
+  "review_scores_rating",
+  "review_scores_accuracy",
+  "review_scores_cleanliness",
+  "review_scores_checkin",
+  "review_scores_communication",
+  "review_scores_location",
+  "review_scores_value"
+]
+
+for c in imputeCols:
+  doublesDF = doublesDF.withColumn(c + "_na", when(col(c).isNull(), 1.0).otherwise(0.0))
+
+display(doublesDF.describe())
+
+from pyspark.ml.feature import Imputer
+
+imputer = Imputer(strategy="median", inputCols=imputeCols, outputCols=imputeCols)
+
+imputedDF = imputer.fit(doublesDF).transform(doublesDF)
+```
+Getting rid of extreme values
+
+Let's take a look at the min and max values of the price column:
+
+```
+display(imputedDF.select("price").describe())
+
+```
+There are some super-expensive listings. But that's the Data Scientist's job to decide what to do with them. We can certainly filter the "free" Airbnbs though.
+
+Let's see first how many listings we can find where the price is zero.
+
+```
+imputedDF.filter(col("price") == 0).count()
+```
+Now only keep rows with a strictly positive *price*.
+
+```
+posPricesDF = imputedDF.filter(col("price") > 0)
+```
+Let's take a look at the *min* and *max* values of the *minimum_nights* column:
+
+```
+display(posPricesDF.select("minimum_nights").describe())
+display(posPricesDF
+  .groupBy("minimum_nights").count()
+  .orderBy(col("count").desc(), col("minimum_nights"))
+)
+```
+A minimum stay of one year seems to be a reasonable limit here. Let's filter out those records where the *minimum_nights* is greater then 365:
+
+```
+cleanDF = posPricesDF.filter(col("minimum_nights") <= 365)
+
+display(cleanDF)
+```
+
+OK, our data is cleansed now. Let's save this DataFrame to a file so that we can start building models with it.
+```
+outputPath = "./data/"
+
+cleanDF.write.mode("overwrite").parquet(outputPath)
+```
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-airbnb-parquet-cleansing.png" width="800">
+
+
+Random Forest (pipeline)
+
+```
+def mlflow_rf(file_path, num_trees, max_depth):
+  with mlflow.start_run(run_name="random-forest") as run:
+    # Create train/test split
+    spark = SparkSession.builder.appName("App").getOrCreate()
+    airbnbDF = spark.read.parquet("./data/")
+    (trainDF, testDF) = airbnbDF.randomSplit([.8, .2], seed=42)
+
+    # Prepare the StringIndexer and VectorAssembler
+    categoricalCols = [field for (field, dataType) in trainDF.dtypes if dataType == "string"]
+    indexOutputCols = [x + "Index" for x in categoricalCols]
+
+    stringIndexer = StringIndexer(inputCols=categoricalCols, outputCols=indexOutputCols, handleInvalid="skip")
+
+    numericCols = [field for (field, dataType) in trainDF.dtypes if ((dataType == "double") & (field != "price"))]
+    assemblerInputs = indexOutputCols + numericCols
+    vecAssembler = VectorAssembler(inputCols=assemblerInputs, outputCol="features")
+    
+    # Log params: Num Trees and Max Depth
+    mlflow.log_param("num_trees", num_trees)
+    mlflow.log_param("max_depth", max_depth)
+
+    rf = RandomForestRegressor(labelCol="price",
+                               maxBins=40,
+                               maxDepth=max_depth,
+                               numTrees=num_trees,
+                               seed=42)
+
+    pipeline = Pipeline(stages=[stringIndexer, vecAssembler, rf])
+
+    # Log model
+    pipelineModel = pipeline.fit(trainDF)
+    mlflow.spark.log_model(pipelineModel, "model")
+
+    # Log metrics: RMSE and R2
+    predDF = pipelineModel.transform(testDF)
+    regressionEvaluator = RegressionEvaluator(predictionCol="prediction",
+                                            labelCol="price")
+    rmse = regressionEvaluator.setMetricName("rmse").evaluate(predDF)
+    r2 = regressionEvaluator.setMetricName("r2").evaluate(predDF)
+    mlflow.log_metrics({"rmse": rmse, "r2": r2})
+
+    # Log artifact: Feature Importance Scores
+    rfModel = pipelineModel.stages[-1]
+    pandasDF = (pd.DataFrame(list(zip(vecAssembler.getInputCols(),
+                                    rfModel.featureImportances)),
+                          columns=["feature", "importance"])
+              .sort_values(by="importance", ascending=False))
+    # First write to local filesystem, then tell MLflow where to find that file
+    pandasDF.to_csv("/tmp/feature-importance.csv", index=False)
+    os.makedirs("data", exist_ok=True)
+    mlflow.log_artifact("data", artifact_path="airbnb.ipynb")
+    
+if __name__ == "__main__":
+  mlflow_rf("./data",2,3)
+
+if __name__ == "__main__":
+  mlflow_rf("./data",3,4)
+  
+```
+
+
+Full Notebook:
+
+https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/jupyter-v1.0.0/ipynb/spark-airbnb-cleansing-random-forest-mlflow.ipynb
+
+Check MLFlow UI:
+
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-airbnb-MLFlow-experimnets.png" width="800">
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Spark-ML-airbnb-MLFlow-run.png" width="800">
+
+
+
 
 # Appendix5: Databricks (ML and MLFLow)
 
