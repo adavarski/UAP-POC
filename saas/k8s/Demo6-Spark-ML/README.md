@@ -4131,5 +4131,73 @@ You can use the Model Registry with the other deployment options too.
 Seldon Core deploy (Ref: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo3-AutoML-MLFlow-SeldonCore)
 
 
+# Appendix5: Databrics (ML and MLFLow)
+
+Use MLFlow through the Databricks platform.
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databrick-UI-overview.png" width="800">
+
+Log in to the Databricks account and spin up a cluster of desired size:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databricks-UI-Cluster-UP.png" width="800">
+
+New Notebook cells:
+
+```
+dbutils.library.installPyPI('mlflow')
+dbutils.library.installPyPI('scikit-learn')
+dbutils.library.restartPython()
+```
+```
+import pandas as pd
+import sklearn
+from sklearn.datasets import load_boston
+basedata = load_boston()
+pddf = pd.DataFrame(basedata.data
+        ,columns=basedata.feature_names)
+pddf['target'] = pd.Series(basedata.target)
+pct20 = int(pddf.shape[0]*.2)
+testdata = spark.createDataFrame(pddf[:pct20])
+traindata = spark.createDataFrame(pddf[pct20:])
+```
+```
+from pyspark.ml.feature import VectorAssembler
+va = VectorAssembler(inputCols = basedata.feature_names
+        ,outputCol = 'features')
+testdata = va.transform(testdata)['features','target']
+traindata = va.transform(traindata)['features','target']
+```
+To get some test data for MLflow, we’ll run it three times using a simple loop. We’ll also change the maxItem and regParam hyperparameters to see if they make any difference in the performance of the algorithm. To keep the loop logic to a minimum, we’ll increase both in unison. You wouldn’t do it like this in a real use case:
+
+```
+from pyspark.ml.regression import LinearRegression
+import mlflow
+for i in range(1,4):
+  with mlflow.start_run():
+    mi = 10 * i
+    rp = 0.1 * i
+    enp = 0.5
+    mlflow.log_param('maxIter',mi)
+    mlflow.log_param('regParam',rp)
+    mlflow.log_param('elasticNetParam',enp)
+    lr = LinearRegression(maxIter=mi
+        ,regParam=rp
+        ,elasticNetParam=enp
+        ,labelCol="target")
+    model = lr.fit(traindata)
+    pred = model.transform(testdata)
+    r = pred.stat.corr("prediction", "target")
+    mlflow.log_metric("rsquared", r**2, step=i)
+```
+
+
+
+Example demo Notebook: https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/databrics/Databrics-MLFlow-demo.ipynb
+
+Check MLFlow UI:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databrics-MLFlow-experiments.png" width="800">
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databrics-MLFlow-demo-run.png" width="800">
 
 
