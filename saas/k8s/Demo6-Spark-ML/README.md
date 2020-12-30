@@ -4791,11 +4791,11 @@ df.write \
     .save() \
 ```
 
-Databrick:
+Databricks:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Databricks-simple-notebook.png" width="800">
 
-https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/snowflake/snowflake_airbnb.ipynb
+Notebook: https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/snowflake/snowflake_airbnb.ipynb
 
 Snowflake:
 
