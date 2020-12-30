@@ -4491,4 +4491,5 @@ Check MLFlow UI:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databrics-MLFlow-demo-run.png" width="800">
 
+# Appendix6: Apache Spark/Databricks with Snowflake
 
