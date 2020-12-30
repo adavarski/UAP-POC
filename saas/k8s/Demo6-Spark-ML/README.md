@@ -4491,5 +4491,311 @@ Check MLFlow UI:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databrics-MLFlow-demo-run.png" width="800">
 
-# Appendix6: Apache Spark/Databricks with Snowflake
+# Appendix6: Apache Spark(Databricks) with Snowflake
 
+
+Snowflake Architecture:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-architecture.png" width="800">
+
+Snowflake Layers:
+
+<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo6-Spark-ML/pictures/Snowflake-layers.png" width="800">
+
+Snowflake was built from the ground up and designed to handle modern big data and analytics challenges. It combines the benefits of both SMP and MPP architectures and takes full advantage of the cloud.
+
+Similar to an SMP architecture, Snowflake uses a central storage that is accessible from all the compute nodes. In addition, similar to an MPP
+architecture, Snowflake processes queries using MPP compute clusters, also known as virtual warehouses. As a result, Snowflake combines the simplicity of data management and scalability with a shared-nothing architecture (like in MPP).
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-MPP-vs-SMP.png" width="800">
+
+
+Planning: Deciding on a Snowflake Edition
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-editions.png" width="800">
+
+
+Creating a Snowflake Account: 
+
+Click Start for Free in the upper-right corner of the page (www.snowflake.com). This will give you a 30-day trial of Snowflake plus 400 Snowflake credits to play with. Enter the following required details: name, company name, e-mail, phone number, Snowflake edition, cloud provider, and region. Finish by clicking Create Account, and in about 15 minutes, you will receive an e-mail with a link to your web interface.
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-UI-startup.png" width="800">
+
+
+Installing Snowsql
+
+SnowSQL is the next-generation command-line client for connecting to Snowflake, executing SQL queries, and performing all DDL and DML operations, including loading data into and unloading data out of database tables.
+
+```
+$ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.10-linux_x86_64.bash
+$ bash snowsql-1.2.10-linux_x86_64.bash 
+
+```
+
+Configure snowsql (Add your connection information to the ~/.snowsql/config file)
+```
+$ cat ~/.snowsql/config |grep -v "^#"
+[connections]          
+
+
+accountname = vw60186
+username = ADAVARSKI
+password = Kr0k0dil!
+region = eu-central-1
+```
+
+Snowsql (test connection):
+
+```
+$ snowsql 
+* SnowSQL * v1.2.10
+Type SQL statements or !help
+ADAVARSKI#COMPUTE_WH@(no database).(no schema)>
+
+$ snowsql -s TPCH_SF001 -d SNOWFLAKE_SAMPLE_DATA
+* SnowSQL * v1.2.10
+Type SQL statements or !help
+ADAVARSKI#COMPUTE_WH@SNOWFLAKE_SAMPLE_DATA.TPCH_SF001>
+
+```
+
+Create DW examples:
+
+```
+$ snowsql
+CREATE WAREHOUSE DEVELOPMENT WITH WAREHOUSE_SIZE =
+'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 600
+AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_
+COUNT = 2 SCALING_POLICY = 'STANDARD';
+
+CREATE WAREHOUSE PRODUCTION WITH WAREHOUSE_SIZE =
+'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 600
+AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_
+COUNT = 2 SCALING_POLICY = 'STANDARD';
+
+#~/.snowsql/config
+[connections.development]
+password=<your password>
+warehousename=DEVELOPMENT
+[connections.production]
+password=<your password>
+warehousename=PRODUCTION
+
+$ snowsql
+!connect development
+!connect production
+!exit
+!exit
+!quit
+```
+
+Bulk Data Loading
+
+To get data into a database table, you need to insert it. Insert statements can take a while since they need to be executed one row at a time. Bulk copying can take a large amount of data and insert it into a database all in one batch. The bulk data loading option in Snowflake allows batch loading of data from files that are in cloud storage, like AWS S3. If your data files are not currently in cloud storage, then there is an option to copy the data files from a local machine to a cloud storage staging area before loading them into Snowflake. This is known as Snowflake’s internal staging area. The data files are transmitted from a local machine to an internal, Snowflake-designated, cloud storage staging location and then loaded into tables using the COPY command.
+
+Tip: External tables can be created instead of loading data into Snowflake. This would be useful when only a portion of data is needed.
+
+
+Bulk Load Locations
+
+Snowflake supports loading data from files staged in any of the following
+cloud storage locations, regardless of the cloud platform for your
+Snowflake account:
+
+• Snowflake-designated internal storage staging location
+
+• AWS S3, where files can be loaded directly from any
+user-supplied S3 bucket
+
+• GCP Cloud Storage, where files can be loaded directly
+from any user-supplied GCP Cloud Storage container
+
+• Azure Blob storage, where files can be loaded directly
+from any user-supplied Azure container
+
+
+Data Loading with SnowSQL:
+
+```
+CREATE WAREHOUSE DEVELOPMENT WITH WAREHOUSE_SIZE = 'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 600 AUTO_RESUME = TRUE;
+USE WAREHOUSE DEVELOPMENT;
+CREATE DATABASE AIRBNB;
+USE DATABASE AIRBNB;
+USE SCHEMA PUBLIC;
+CREATE OR REPLACE TABLE "ZIPCODES2000_SNOWSQL" ("ZIPCODE" STRING, "LON" DOUBLE, "LAT" DOUBLE);
+put file:///home/davar/Downloads/zips2000.csv @AIRBNB.PUBLIC.%zipcodes2000_snowsql;
+copy into zipcodes2000_snowsql from @%zipcodes2000_snowsql file_format = (type = csv field_optionally_enclosed_by='"' SKIP_HEADER = 1);
+select count(*) from ZIPCODES2000_SNOWSQL;
+
+```
+
+Example Output:
+
+```
+ADAVARSKI#COMPUTE_WH@(no database).(no schema)>CREATE WAREHOUSE DEVELOPMENT WITH WAREHOUSE_SIZE = 'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 600 AUTO_RESUME = TRUE;
++---------------------------------------------+                                 
+| status                                      |
+|---------------------------------------------|
+| Warehouse DEVELOPMENT successfully created. |
++---------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.945s
+ADAVARSKI#DEVELOPMENT@(no database).(no schema)>USE WAREHOUSE DEVELOPMENT;
++----------------------------------+                                            
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.130s
+ADAVARSKI#DEVELOPMENT@(no database).(no schema)>CREATE DATABASE AIRBNB;
++---------------------------------------+                                       
+| status                                |
+|---------------------------------------|
+| Database AIRBNB successfully created. |
++---------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.207s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>use database AIRBNB;
++----------------------------------+                                            
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.109s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>USE SCHEMA PUBLIC;
++----------------------------------+                                            
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.104s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>CREATE OR REPLACE TABLE "ZIPCODES2000_SNOWSQL" ("ZIPCODE" STRING, "LON" DOUBLE, "LAT" DOUBLE);
++--------------------------------------------------+                            
+| status                                           |
+|--------------------------------------------------|
+| Table ZIPCODES2000_SNOWSQL successfully created. |
++--------------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.453s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>show tables;
++-------------------------------+----------------------+---------------+-------------+-------+---------+------------+------+-------+----------+----------------+----------------------+-----------------+-------------+
+| created_on                    | name                 | database_name | schema_name | kind  | comment | cluster_by | rows | bytes | owner    | retention_time | automatic_clustering | change_tracking | is_external |
+|-------------------------------+----------------------+---------------+-------------+-------+---------+------------+------+-------+----------+----------------+----------------------+-----------------+-------------|
+| 2020-12-30 02:53:21.318 -0800 | ZIPCODES2000_SNOWSQL | AIRBNB        | PUBLIC      | TABLE |         |            |    0 |     0 | SYSADMIN | 1              | OFF                  | OFF             | N           |
++-------------------------------+----------------------+---------------+-------------+-------+---------+------------+------+-------+----------+----------------+----------------------+-----------------+-------------+
+1 Row(s) produced. Time Elapsed: 0.122s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>put file:///home/davar/Downloads/zips2000.csv @AIRBNB.PUBLIC.%zipcodes2000_snowsql;
+zips2000.csv_c.gz(0.33MB): [##########] 100.00% Done (0.474s, 0.70MB/s).        
++--------------+-----------------+-------------+-------------+--------------------+--------------------+----------+---------+
+| source       | target          | source_size | target_size | source_compression | target_compression | status   | message |
+|--------------+-----------------+-------------+-------------+--------------------+--------------------+----------+---------|
+| zips2000.csv | zips2000.csv.gz |      987372 |      346309 | NONE               | GZIP               | UPLOADED |         |
++--------------+-----------------+-------------+-------------+--------------------+--------------------+----------+---------+
+1 Row(s) produced. Time Elapsed: 2.006s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>copy into zipcodes2000_snowsql from @%zipcodes2000_snowsql file_format = (type = csv field_optionally_enclosed_by='"' SKIP_HEADER = 1);
++-----------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------+
+| file            | status | rows_parsed | rows_loaded | error_limit | errors_seen | first_error | first_error_line | first_error_character | first_error_column_name |
+|-----------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------|
+| zips2000.csv.gz | LOADED |       42192 |       42192 |           1 |           0 | NULL        |             NULL |                  NULL | NULL                    |
++-----------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------+
+1 Row(s) produced. Time Elapsed: 3.644s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>select count(*) from ZIPCODES2000_SNOWSQL;
++----------+                                                                    
+| COUNT(*) |
+|----------|
+|    42192 |
++----------+
+1 Row(s) produced. Time Elapsed: 0.605s
+ADAVARSKI#DEVELOPMENT@AIRBNB.PUBLIC>
+
+```
+Check Snowflake UI:
+
+DWH:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-UI-DW-DEVELOPMENT.png" width="800">
+
+DB:AIRBNB:TABLE:ZIPCODES2000_SNOWSQL
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Databrick-write-sampletable.png" width="800">
+
+
+Continuous Data Loading with Snowpipe
+
+```
+#create a new database for testing snowpipe
+create database snowpipe data_retention_time_in_days = 1;
+show databases like 'snow%';
+# create a new external stage
+create or replace stage snowpipe.public.snowstage
+url='S3://<your_s3_bucket>'
+credentials=(
+AWS_KEY_ID='<your_AWS_KEY_ID>',
+AWS_SECRET_KEY='<your_AWS_SEKRET_KEY>');
+# create target table for Snowpipe
+create or replace table snowpipe.public.snowtable(
+    jsontext variant
+);
+# create a new pipe
+create or replace pipe snowpipe.public.snowpipe
+    auto_ingest=true as
+            copy into snowpipe.public.snowtable
+            from @snowpipe.public.snowstage
+            file_format = (type = 'JSON');
+#Note:Variant is universal semistructured data type of Snowflake
+for loading data in formats such as JSON, Avro, ORC, Parquet, or
+XML. 
+
+# check exists pipes and stages
+show pipes;
+show stages;
+# Copy the SQS ARN link from the NotificationChannel field.
+# Using a simple select statement, we can check the count of
+loaded data.
+# check count of rows in target table
+select count(*) from snowpipe.public.snowtable
+```
+
+Databricks (notebook):
+
+Create a new notebook using Databricks ➤ Create a blank notebook, call it snowflake_airbnb, and attach the existing
+cluster(MLOps).
+
+Connect to Snowflake.
+
+Replace the substitutions according to your Snowflake credentials
+before executing
+
+```
+options = dict(sfUrl="vw60186.eu-central-1.snowflakecomputing.com",
+   sfUser="ADAVARSKI",
+   sfPassword="Kr0k0dil!",
+   sfDatabase= "AIRBNB",
+   sfSchema= "PUBLIC",
+   sfWarehouse= "DEVELOPMENT" )
+```
+Read data from Snowflake.
+```
+
+df = spark.read \
+  .format("snowflake") \
+  .options(**options) \
+  .option("dbtable", "ZIPCODES2000_SNOWSQL") \
+  .load()
+display(df)
+```
+Write data into Snowflake.
+```
+df.write \
+    .format("snowflake") \
+    .options(**options) \
+    .option("dbtable", "sampletable") \
+    .save() \
+```
+
+Databrick:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Databricks-simple-notebook.png" width="800">
+
+
+Snowflake:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Databrick-write-sampletable.png" width="800">
