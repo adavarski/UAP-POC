@@ -5,6 +5,8 @@ Summary: Vagrant/Docker/k8s/AWS IaC-based PaaS/SaaS infrastucture/environments (
 ### Used stacks and products for PaaS/SaaS POC
 VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Indexing and Analytics/Debugging and Log management stacks (ELK/EFK); Pipeline: Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Routing and Transformation (Serverless:OpenFaaS; ETL:Apache NiFi), Data Lake/Big Data (MinIO s3-compatable Object Storage); DWHs (HIVE with MinIO:s3, Cassandra, Presto); Blockchein (Ethereum for Smart Contacts); Apache Spark for large-scale data processing and data analytics; Machine Learning/Deep Learning/AutoML (TensorFlow, k8s:Model Development with AutoML: Kubeflow(MLflow, etc.) and k8s:AI Model Deployment (Seldon Core), Spark ML with S3(MinIO) as Data Source); GitLab/Jenkins In-Platform CI/CD (including GitOps); Identity and Access Management (IAM:Keycloak); JupyterHub/JupyterLab for data science; Consul cluster; HashiCorp Vault cluster; Postgres cluster with Patroni; k8s Persistent Volumes (Rook Ceph, Gluster); etc.
 
+NOTE: MinIO(s3) + Hive DWH(s3) instead of Snowflake (S3, etc.), Apache Spark (Hive for metadata) + Delta Lake + Jupyter instead of Databricks. 
+
 ### PaaS/SaaS POC/Development environments used:
 
 - docker-compose based dev env 
