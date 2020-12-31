@@ -4811,3 +4811,9 @@ Notebook: https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo
 Snowflake:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Databrick-write-sampletable.png" width="800">
+
+Example modern Analytics Solution/Platform architecture with Snowflake DWH:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-modern-DW-architecture.png" width="800">
+
+
