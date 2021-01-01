@@ -19,6 +19,7 @@ Platform as a Service (PaaS) will be data-driven and data-science platform allow
 
 Software as a Service (SaaS) will be "on-demand software", accessed/used by end users using a web browser.
 
+For production we will use k8s:
 
 ## k8s-based data-driven Analytics/ML/DeepML SaaS platform for data analyst/data engineer/data scientist playground (R&D/MVP/POC/environmints)
 
