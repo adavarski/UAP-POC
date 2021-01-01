@@ -19,6 +19,8 @@ Platform as a Service (PaaS) will be data-driven and data-science platform allow
 
 Software as a Service (SaaS) will be "on-demand software", accessed/used by end users using a web browser.
 
-## Productionalize SaaS: k8s-based data-driven Analytics/ML/DeepML SaaS platform for data analyst/data engineer/data scientist playground (R&D/MVP/POC/environmints)
+## Productionalize SaaS: k8s (KOPS, Rancher)
+
+k8s-based data-driven Analytics/ML/DeepML SaaS platform for data analyst/data engineer/data scientist playground (R&D/MVP/POC/environmints) provisioning.
 
 Summary: k8s-based Analytics/ML/DeepML SaaS using Big Data/Data Lake: MinIO (s3-compatable object storage) with Hive(s3) SQL-Engine/DWHs (instead of Snowflake as big data platform for example), Apache Spark(Hive for metadata)/Delta Lake(lakehouses)/Jupyter/etc. (instead of Databricks for example) + Kafka stack + ELK/EFK + Serverless(OpenFaaS) + ETL(Apache NiFi) + ML/DeepML/AutoML + Jupyter + GitOps. For building Analytics/ML SaaS platform we can also use cloud-native SaaSs as reference (or build SaaS based on cloud-native SaaSs): Snowflake(SaaS/DWaaS) as big data solution on a single data platform (DWH, S3, etc.) + Databricks(cloud-based big data processing SaaS) + AWS S3/MKS/SQS/ELK/Lambda/etc.
