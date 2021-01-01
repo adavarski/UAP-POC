@@ -18,6 +18,11 @@ Platform as a Service (PaaS) will be data-driven and data-science platform allow
 
 Software as a Service (SaaS) will be "on-demand software", accessed/used by end users using a web browser.
 
+### Productionalize SaaS: k8s (KOPS, Rancher, managed k8s)
+
+k8s-based data-driven Analytics/ML/DeepML SaaS platform provisioning/deploy : KOPS for k8s provisioning on AWS(default); Rancher (custom provisioning): k3s(for branches development)/RKE(for on-prem k8s) and Rancher(for the public clouds) with AWS EKS/Azure AKS/Google GKE; managed k8s on AWS/Azure/GCP/OCP/etc. k8s Operators/Helm Charts/YAML manifests for creating k8s deployments (SaaS services).
+
+
 # Local & AWS SaaS development k8s environment
 
 ## AWS (build k8s cluster with KOPS)
