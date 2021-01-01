@@ -299,6 +299,16 @@ This component is used for building Machine Learning Models on Big Data in a dis
 -Spark GraphX/Graphframe
 This component excels in graph analytics and graph parallel execution. Graph frames can be used to understand the underlying relationships and visualize the insights from data.
 
+Summary:
+
+Apache Spark high-level components:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Apache-Spark-high-level-componenets.png" width="800">
+
+Apache Spark components:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Apache-Spark-Componenets-table.png" width="800">
+
 
 ## Cluster Managers
 Cluster managers manage and allocate cluster resources. Spark supports the standalone cluster manager that comes with Spark (Standalone Scheduler), YARN, Mesos, and Kubernetes.
@@ -4428,6 +4438,10 @@ Databricks Unified Analytics Platform (elements):
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databricks-Unified-Analytics-Platform.png" width="800">
 
+Databricks components:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Databricks-Unified-analytics-Platform-components-table.png" width="800">
+
 
 Use MLFlow through the Databricks platform.
 
@@ -4765,6 +4779,10 @@ Data flow process between Snowflake data warehouse services and managed Apache S
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-Spark-bidirectional-data-transfer.png" width="800">
 
+Snowflake <-> Spark interaction:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowfalke-spark-interaction-table.png" width="800">
+
 Databricks (notebook):
 
 Create a new notebook using Databricks ➤ Create a blank notebook, call it snowflake_airbnb, and attach the existing
@@ -4816,4 +4834,4 @@ Example modern Analytics Solution/Platform architecture with Snowflake DWH:
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-modern-DW-architecture.png" width="800">
 
-
+Note: Snowflake helped us to leverage big data and streaming capabilities that were impossible with the legacy solution. For big data, we were processing web logs for example within Apache Spark deployed on top of the EMR cluster. Snowflake accesses Parquet files, and we don’t need to load them into Snowflake. For the streaming use case, we leveraged DynamoDB streams and Kinesis Firehose, and all data is sent into an S3 bucket where Snowflake can consume it.
