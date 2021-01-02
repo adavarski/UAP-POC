@@ -4531,6 +4531,61 @@ architecture, Snowflake processes queries using MPP compute clusters, also known
 Note: A specialty of the technical design of the Snowflake is that the data is stored in [micro-partitions](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions.html),  which are immutable. This means that with any operations such as the addition or deletion of data, a new
 micro-partition is created, and the old one ceases to exist.
 
+Snowflake Architecture (deep):
+
+
+What is Snowflake ?
+
+Snowflake is a modern Data Warehouse developed to address issue in existing Data Warehouse tools. It is provided as a Saas (Software-as-a-Service) so we do not need to worry about Hardware or Software maintenance. It enables users to just create tables and start querying data with very less administration or DBA activities needed. Added to that it has an unique and required feature Time Travel.
+
+Snowflake uses hybrid architecture. It is a mixture of both shared disk and shared nothing architecture. For storing data it uses shared disk design where it stores all data in a centralized place that is accessible from all nodes (servers) in the compute cluster. For running/executing query it uses shared nothing design, Snowflake executes query using compute clusters (virtual data warehouse) where each node in the cluster stores a portion of the entire data set locally. This approach offers the data management simplicity of a shared-disk architecture, but with the performance and scale-out benefits of a shared-nothing architecture.
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-architecture-full.png" width="800">
+
+As we from the above diagram Snowflake has 3 layers.
+
+    Storage layer (Database storage)
+    Compute layer (Query processing)
+    Cloud services 
+
+Storage layer (Database storage)
+
+it is similar to shared disk architecture. When we load the data into Snowflake it converts data into COLUMNAR format and store it. Snowflake stores data into multiple micro partitions that are internally optimized and compressed. Since Snowflake Database storage layer uses Cloud based storage, it is elastic and is charged as per the usage per TB every month. (40$ / TB for on-demand and 23$ / TB for pre-purchased storage)
+
+Data storage layer is shared disk architecture and all data warehouse can access it. Compute nodes connect with storage layer to fetch the data for query processing. As the storage layer is independent, we only pay for the average monthly storage used. Snowflake charges only for storing actual data and storing metadata (DB schema, View, etc.,) are free of cost.
+
+Compute Layer (Query Processing)
+
+It is similar to shared nothing architecture. This Layer uses Virtual Warehouse for executing query (DDL and DML) on the data stored.  Snowflake separates the query processing layer from the disk storage. Queries execute in this layer using the data from the storage layer.
+
+Each virtual warehouse is an independent compute cluster and MPP (Massively parallel process) that does not share compute resources with other virtual warehouses. As a result, each virtual warehouse has no impact on the performance of other virtual warehouses.
+
+Each virtual warehouse runs with its own compute and caching. In Snowflake, while queries are running, compute resources can scale without disruption or downtime, and without the need to redistribute/rebalance data (storage). Scaling of compute resources can occur automatically, with auto-sensing. This means the Snowflake software can automatically detect when scaling is needed and scale your environment without admin or user involvement.
+
+Virtual warehouse will be auto-suspended when there is no query to execute and will be auto-resumed when there is a query to run. This is managed by Snowflake. We pay when the Virtual warehouse is active, meaning when we execute query. Query processing (Virtual Warehouse) are charged in the form of Snowflake credits. (I will cover about Snowflake cost in different post).
+
+Cloud Service
+
+This layer provides all necessary functionality that coordinates across Snowflake.This layer also runs on compute instances provisioned by Snowflake from the cloud provider so there is no cost for this service.
+
+This layer provides following services,
+
+    Authentication –  login request is handled in this layer.
+    Metadata management – metadata related to query optimization are available in this layer.
+    Query parsing and optimization – When a user executed a SQL query that will be parsed and optimized in this layer and then forwarded to Compute Layer for query processing.
+    Access control – Role based access managements are handled in this layer.
+
+As we can see here – All this 3 layers are loosely coupled and we can scale any one layer independently of others. We pay for only Storage and Compute layer. 
+
+Conclusion
+
+    Snowflake is a true SaaS cloud data warehouse.
+    Snowflake follows hybrid architecture to handle storage and compute.
+    In Snowflake all the layers are independent. We can easily auto-scale any of the layers.
+    Snowflake uses different pricing model for Storage and Query processing layers.
+    We pay for what we store in Storage layer and pay for the amount of query execution time in Query processing layer. 
+
+
 Planning: Deciding on a Snowflake Edition
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-editions.png" width="800">
