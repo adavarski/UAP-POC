@@ -4540,11 +4540,8 @@ Shared-Disk vs Shared-Nothing architectures:
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/sharednothing.png" width="600">
 
 
-
 What is Snowflake ?
 
-
-What is Snowflake ?
 
 Snowflake is a modern Data Warehouse developed to address issue in existing Data Warehouse tools. It is provided as a Saas (Software-as-a-Service) so we do not need to worry about Hardware or Software maintenance. It enables users to just create tables and start querying data with very less administration or DBA activities needed. Added to that it has an unique and required feature Time Travel.
 
