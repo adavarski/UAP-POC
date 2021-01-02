@@ -4533,6 +4533,16 @@ micro-partition is created, and the old one ceases to exist.
 
 Snowflake Architecture (deep):
 
+Shared-Disk vs Shared-Nothing architectures:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/snareddisk.png" width="600">
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/sharednothing.png" width="600">
+
+
+
+What is Snowflake ?
+
 
 What is Snowflake ?
 
