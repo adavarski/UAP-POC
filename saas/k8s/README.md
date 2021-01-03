@@ -7,6 +7,8 @@ VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+Inf
 
 Summary: k8s-based Analytics/ML/DeepML SaaS using Big Data/Data Lake: MinIO (s3-compatable object storage) with Hive(s3) SQL-Engine/DWHs (instead of Snowflake as big data platform for example), Apache Spark(Hive for metadata)/Delta Lake(lakehouses)/Jupyter/etc. (instead of Databricks for example) + Kafka stack + ELK/EFK + Serverless(OpenFaaS) + ETL(Apache NiFi) + ML/DeepML/AutoML + GitOps. For building Analytics/ML SaaS platform we can also use cloud-native SaaSs as reference (or build SaaS based on cloud-native SaaSs): Snowflake(SaaS/DWaaS) as big data solution on a single data platform (DWH, S3, etc.) + Databricks(cloud-based big data processing SaaS) + AWS S3/MKS/SQS/ELK/Lambda/etc.
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/003-pictures/k8s-saas.png" width="900">
+
 ### PaaS/SaaS MVP/POC/Development environments used:
 
 - k8s (k8s-local: k3s, minikube, kubespray) `Note: Default development environment: k3s` 
@@ -22,7 +24,6 @@ Software as a Service (SaaS) will be "on-demand software", accessed/used by end 
 
 k8s-based data-driven Analytics/ML/DeepML SaaS platform provisioning/deploy : KOPS for k8s provisioning on AWS(default); Rancher (custom provisioning): k3s(for branches development)/RKE(for on-prem k8s) and Rancher(for the public clouds) with AWS EKS/Azure AKS/Google GKE; managed k8s on AWS/Azure/GCP/OCP/etc. k8s Operators/Helm Charts/YAML manifests for creating k8s deployments (SaaS services).
 
-<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/003-pictures/k8s-saas.png" width="900">
 
 # Local & AWS SaaS development k8s environment
 
