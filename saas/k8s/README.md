@@ -22,6 +22,7 @@ Software as a Service (SaaS) will be "on-demand software", accessed/used by end 
 
 k8s-based data-driven Analytics/ML/DeepML SaaS platform provisioning/deploy : KOPS for k8s provisioning on AWS(default); Rancher (custom provisioning): k3s(for branches development)/RKE(for on-prem k8s) and Rancher(for the public clouds) with AWS EKS/Azure AKS/Google GKE; managed k8s on AWS/Azure/GCP/OCP/etc. k8s Operators/Helm Charts/YAML manifests for creating k8s deployments (SaaS services).
 
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/003-pictures/k8s-saas.png" width="800">
 
 # Local & AWS SaaS development k8s environment
 
