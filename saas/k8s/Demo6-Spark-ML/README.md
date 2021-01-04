@@ -4897,3 +4897,482 @@ Example modern Analytics Solution/Platform architecture with Snowflake DWH:
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/Snowflake-modern-DW-architecture.png" width="800">
 
 Note: Snowflake helped us to leverage big data and streaming capabilities that were impossible with the legacy solution. For big data, we were processing web logs for example within Apache Spark deployed on top of the EMR cluster. Snowflake accesses Parquet files, and we don’t need to load them into Snowflake. For the streaming use case, we leveraged DynamoDB streams and Kinesis Firehose, and all data is sent into an S3 bucket where Snowflake can consume it.
+
+
+# Appendix6: Apache Spark with Delta Lake : Building Reliable Data Lakes with Apache Spark
+
+In the previous Appendixes, we learned how to easily and effectively use Apache Spark to build scalable and performant data processing pipelines. However, in practice, expressing the processing logic only solves half of the end-to-end problem of building a pipeline. For a data engineer, data scientist, or data analyst, the ultimate goal of building pipelines is to query the processed data and get insights from it. The choice of storage solution determines the end-to-end (i.e., from raw data to insights) robustness and performance of the data pipeline. We will introduce the next wave of storage solution, called lakehouses, and explore some of the new open source processing engines in this space.
+
+
+### Lakehouses: The Next Step in the Evolution of Storage Solutions
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/DeltaLake-lakehouse.jpeg" width="800">
+
+The lakehouse is a new paradigm that combines the best elements of data lakes and data warehouses for OLAP workloads. Lakehouses are enabled by a new system design that provides data management features similar to databases directly on the low-cost, scalable storage used for data lakes. More specifically, they provide the following features:
+
+- Transaction support
+Similar to databases, lakehouses provide ACID guarantees in the presence ofconcurrent workloads.
+
+- Schema enforcement and governance
+Lakehouses prevent data with an incorrect schema being inserted into a table,and when needed, the table schema can be explicitly evolved to accommodate
+ever-changing data. The system should be able to reason about data integrity, andit should have robust governance and auditing mechanisms.
+
+- Support for diverse data types in open formats
+Unlike databases, but similar to data lakes, lakehouses can store, refine, analyze,and access all types of data needed for many new data applications, be it structured, semi-structured, or unstructured. To enable a wide variety of tools toaccess it directly and efficiently, the data must be stored in open formats with
+standardized APIs to read and write them.
+
+- Support for diverse workloads
+Powered by the variety of tools reading data using open APIs, lakehouses enablediverse workloads to operate on data in a single repository. Breaking down iso‐
+lated data silos (i.e., multiple repositories for different categories of data) enablesdevelopers to more easily build diverse and complex data solutions, from traditional SQL and streaming analytics to machine learning.
+
+- Support for upserts and deletes
+Complex use cases like change-data-capture (CDC) and slowly changing dimen‐sion (SCD) operations require data in tables to be continuously updated. Lakehouses allow data to be concurrently deleted and updated with transactionalguarantees.
+
+- Data governance
+
+Lakehouses provide the tools with which you can reason about data integrity andaudit all the data changes for policy compliance. Currently, there are a few open source systems, such as Apache Hudi, Apache Iceberg,and Delta Lake, that can be used to build lakehouses with these properties. At a very high level, all three projects have a similar architecture inspired by well-known database principles. They are all open data storage formats that do the following:
+
+• Store large volumes of data in structured file formats on scalable filesystems.
+
+• Maintain a transaction log to record a timeline of atomic changes to the data (much like databases).
+
+• Use the log to define versions of the table data and provide snapshot isolation guarantees between readers and writers.
+
+• Support reading and writing to tables using Apache Spark.
+
+Within these broad strokes, each project has unique characteristics in terms of APIs, performance, and the level of integration with Apache Spark’s data source APIs. We will explore them next. Note that all of these projects are evolving fast, and therefore some of the descriptions may be outdated at the time you are reading them. Refer to the online documentation for each project for the most up-to-date information.
+
+### Apache Hudi
+
+Initially built by Uber Engineering, Apache Hudi—an acronym for Hadoop Update Delete and Incremental—is a data storage format that is designed for incremental
+upserts and deletes over key/value-style data. The data is stored as a combination of columnar formats (e.g., Parquet files) and row-based formats (e.g., Avro files for recording incremental changes over Parquet files). Besides the common features mentioned earlier, it supports:
+
+• Upserting with fast, pluggable indexing
+
+• Atomic publishing of data with rollback support
+
+• Reading incremental changes to a table
+
+• Savepoints for data recovery
+
+• File size and layout management using statistics
+
+• Async compaction of row and columnar data
+
+### Apache Iceberg
+
+Originally built at Netflix, Apache Iceberg is another open storage format for huge data sets. However, unlike Hudi, which focuses on upserting key/value data, Iceberg focuses more on general-purpose data storage that scales to petabytes in a single table and has schema evolution properties. Specifically, it provides the following additional features (besides the common ones):
+
+• Schema evolution by adding, dropping, updating, renaming, and reordering of columns, fields, and/or nested structures
+
+• Hidden partitioning, which under the covers creates the partition values for rows in a table
+
+• Partition evolution, where it automatically performs a metadata operation to update the table layout as data volume or query patterns change
+
+• Time travel, which allows you to query a specific table snapshot by ID or by timestamp
+
+• Rollback to previous versions to correct errors
+
+• Serializable isolation, even between multiple concurrent writers
+
+### Delta Lake
+
+Delta Lake is an open source project hosted by the Linux Foundation, built by the original creators of Apache Spark. Similar to the others, it is an open data storage format that provides transactional guarantees and enables schema enforcement and evolution. It also provides several other interesting features, some of which are unique.
+
+Delta Lake supports:
+
+• Streaming reading from and writing to tables using Structured Streaming sources and sinks
+
+• Update, delete, and merge (for upserts) operations, even in Java, Scala, and Python APIs
+
+• Schema evolution either by explicitly altering the table schema or by implicitly merging a DataFrame’s schema to the table’s during the DataFrame’s write. (In
+fact, the merge operation in Delta Lake supports advanced syntax for conditional updates/inserts/deletes, updating all columns together, etc., as you’ll see later in the appendix.
+
+• Time travel, which allows you to query a specific table snapshot by ID or by timestamp
+
+• Rollback to previous versions to correct errors
+
+• Serializable isolation between multiple concurrent writers performing any SQL, batch, or streaming operations
+
+In the rest of this appendix, we are going to explore how such a system, along with Apache Spark, can be used to build a lakehouse that provides the aforementioned properties. Of these three systems, so far Delta Lake has the tightest integration with Apache Spark data sources (both for batch and streaming workloads) and SQL operations (e.g., MERGE ). Hence, we will use Delta Lake as the vehicle for further exploration.
+
+Note: This project is called Delta Lake because of its analogy to streaming. Streams flow into the sea to create deltas—this is where all of
+the sediments accumulate, and thus where the valuable crops are grown. Jules S. Damji (one of our coauthors) came up with this!
+
+### Building Lakehouses with Apache Spark and Delta Lake
+
+In this section, we are going to take a quick look at how Delta Lake and Apache Spark can be used to build lakehouses. Specifically, we will explore the following:
+
+• Reading and writing Delta Lake tables using Apache Spark
+
+• How Delta Lake allows concurrent batch and streaming writes with ACID
+guarantees
+
+• How Delta Lake ensures better data quality by enforcing schema on all writes,
+while allowing for explicit schema evolution
+
+• Building complex data pipelines using update, delete, and merge operations, all
+of which ensure ACID guarantees
+
+• Auditing the history of operations that modified a Delta Lake table and traveling
+back in time by querying earlier versions of the table
+
+### Delta Lake (Overview and best choice for Lakehouse)
+
+Migrating from CSV to parquet files in our data lake storage has been a great initial choice for most of our needs. However, we still lacked some features on top of it that could make our life much easier, including ACID transactions, schema enforcements and updating events in parquet files.
+
+After analysing all existing alternatives on the market including Hudi, Iceberg and Delta Lake, we decided to start using Delta Lake based on its Apache Spark 3.x support. It provides all of the main requirements and fits perfectly in our architecture.
+
+    - Efficiency. We decoupled the computation process from the storage allowing our architecture to scale more efficiently.
+    - Low latency, high quality data. Using the upsert and schema enforcements features provided by Delta Lake, we can continuously deliver low latency and high quality data to all stakeholders.
+    - Multiple access points. Persisting all incoming data into Delta Lake allows the stakeholders to query low latency data through multiple systems including Apache Spark and Presto.
+    - Time travel. Delta Lake allows reprocessing data from a particular time in the past which automates back-populating data, in addition to allowing analysis between particular date intervals for different use cases such as reports or training machine learning models.
+
+## Configuring Apache Spark with Delta Lake  
+
+Add Delta Lake jar:
+
+```
+cd ./jupyter-2.0.0/docker
+
+# Add lines 
+
+$ grep -i delta *
+Dockerfile.k8s-minio.executor:RUN curl https://repo1.maven.org/maven2/io/delta/delta-core_2.12/0.7.0/delta-core_2.12-0.7.0.jar -o /opt/spark/jars/delta-core_2.12-0.7.0.jar
+
+$ grep 2.0.0 Docker*
+Dockerfile.cluster-dask:FROM davarski/spark301-k8s-minio-polyglot:2.0.0
+Dockerfile.cv:FROM davarski/spark301-minio-dask:2.0.0
+Dockerfile.hub-jupyter:FROM davarski/spark301-k8s-minio-jupyter:2.0.0
+Dockerfile.hub-polyglot:FROM davarski/spark301-k8s-minio-dl:latest:2.0.0
+Dockerfile.itk:FROM davarski/spark301-minio-dask:2.0.0
+Dockerfile.k8s-minio.deep-learning:FROM davarski/spark301-k8s-minio-kafka:2.0.0
+Dockerfile.k8s-minio.driver:FROM davarski/spark301-k8s-minio-base:2.0.0
+Dockerfile.k8s-minio.jupyter:FROM davarski/spark301-k8s-minio-driver:2.0.0
+Dockerfile.k8s-minio.ml-executor:FROM davarski/spark301-k8s-minio-base:2.0.0
+
+# Rebuild images with MinIO(S3)
+docker login
+# Build and tag the base/executor image
+docker build -f ./Dockerfile.k8s-minio.executor -t davarski/spark301-k8s-minio-base:2.0.0 .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-base:2.0.0
+
+# Build and tag the driver image
+docker build -f ./Dockerfile.k8s-minio.driver -t davarski/spark301-k8s-minio-driver:2.0.0 .
+# Push the contaimer image to a public registry
+docker push davarski/spark301-k8s-minio-driver:1.0.0
+
+# Build/tag/push the jupyter image
+docker build -f ./Dockerfile.k8s-minio.jupyter -t davarski/spark301-k8s-minio-jupyter:2.0.0 .
+docker push davarski/spark301-k8s-minio-jupyter:2.0.0
+```
+Pull images into k8s(k3s):
+```
+export KUBECONFIG=~/.kube/k3s-config-jupyter 
+sudo k3s crictl pull davarski/spark301-k8s-minio-base:2.0.0
+sudo k3s crictl pull davarski/spark301-k8s-minio-driver:2.0.0
+sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter:2.0.0
+
+```
+Delete old deploy:
+```
+kubectl delete -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml -f jupyter-notebook.pod.yaml
+
+```
+
+Fix yamls: 
+```
+$ cd ./jupyter-2.0.0/k8s
+$ grep 2.0.0 *.yaml
+jupyter-notebook.pod.yaml:    image: davarski/spark301-k8s-minio-jupyter:2.0.0
+jupyter-notebook.pod.yaml.DEMO:    image: davarski/spark301-k8s-minio-jupyter:2.0.0
+jupyter-notebook.pod.yaml.MINIO-BUCKET:    image: davarski/spark301-k8s-minio-jupyter:2.0.0
+```
+
+Apply yamls:
+
+```
+kubectl apply -f jupyter-notebook.pod.yaml -f jupyter-notebook.svc.yaml -f jupyter-notebook.ingress.yaml
+```
+
+Check libs:
+
+```
+$ kubectl exec -it spark-jupyter -- bash -c "ls /opt/spark/jars/*delta*"
+/opt/spark/jars/delta-core_2.12-0.7.0.jar
+
+```
+Check Spark Delta Lake integration:
+
+This is a simple example using only spark driver pod to run spark apps that utilize Delta Lake. Delta Lake is a technology that helps:
+
+    - Make data transformations storage more resiliant
+    - Enable time travel
+    - Make storage more efficient using parquet files
+
+Being able to run on a spark driver pod is a stepping stone to running on a cluster (with k8s as spark cluster manager). 
+
+Example1: Run spark apps that utilize Delta Lake (local)
+
+This is an example pyspark app that does some simple things with Delta lake.
+
+Cells:
+
+```
+from pyspark.sql import SparkSession
+```
+```
+# load up all the delta lake dependencies in our app
+# let's target our cluster on our k8s driver pod
+
+spark = SparkSession.builder.appName("DeltaLakeExample")\
+    .config("spark.jars.packages", "io.delta:delta-core_2.12:0.7.0") \
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+    .getOrCreate()
+
+# write some numbers (creats parquet)
+spark.range(10).write.format("delta").save("./data/events")  
+
+# use the disk location as a table
+spark.sql("CREATE TABLE IF NOT EXISTS events using delta location './data/events'")
+
+# execute some sql against it
+spark.sql("select * from events").show(100)
+```
+Check parquet and Hive DB:
+
+```
+$ kubectl exec -it spark-jupyter -- bash
+jovyan@spark-jupyter:/$ ls -al ./home/jovyan/work/spark-warehouse/airbnb.db
+total 8
+drwxr-xr-x 2 jovyan analytics 4096 Jan  4 09:00 .
+drwxr-xr-x 3 jovyan analytics 4096 Jan  4 09:00 ..
+
+jovyan@spark-jupyter:/$ ls -al ./home/jovyan/work/data/events/
+total 20
+drwxr-xr-x 3 jovyan analytics 4096 Jan  4 08:45 .
+drwxr-xr-x 3 jovyan analytics 4096 Jan  4 08:45 ..
+drwxr-xr-x 2 jovyan analytics 4096 Jan  4 08:45 _delta_log
+-rw-r--r-- 1 jovyan analytics  518 Jan  4 08:45 part-00000-4a434623-e8a7-470b-add8-5298f381a1d4-c000.snappy.parquet
+-rw-r--r-- 1 jovyan analytics   16 Jan  4 08:45 .part-00000-4a434623-e8a7-470b-add8-5298f381a1d4-c000.snappy.parquet.crc
+```
+
+Delta Lake stores our table as a parquet file in our local system (k8s driver pod).
+
+Parquet files are a very efficient form of storage for column oriented data operations.
+
+Full notebook: 
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/deltalake/DeltaLake_test_local.ipynb
+
+Example2: Run spark apps that utilize Delta Lake (with MinIO:s3)
+
+Let's try to run Delta Lake using MinIO:S3 as the backing store for our parquet files and tables:
+
+
+    Make sure you have some MinIO(S3) credentials.
+    
+    Our example needs to be updated, they key differences are:
+
+    we now add MinIO config 
+    we're telling our metastore to pay attention to MinIO:S3 instead of our local file system
+
+
+```
+$ mc mb minio-cluster/airbnb
+$ mc ls minio-cluster
+[2021-01-04 09:54:57 EET]     0B airbnb/
+```
+
+Cells (pyspark operational in a Jupyter notebook):
+
+```
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("DeltaLakeExample")\
+    .config("spark.jars.packages", "io.delta:delta-core_2.12:0.7.0") \
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+    .config("spark.delta.logStore.class", "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore") \
+    .config("spark.hadoop.fs.s3a.access.key","minio") \
+    .config("spark.hadoop.fs.s3a.secret.key","minio123") \
+    .config("spark.hadoop.fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000") \
+    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+    .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
+    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .getOrCreate()
+
+spark.range(10).write.format("delta").save("s3a://airbnb/events")
+spark.sql("CREATE TABLE IF NOT EXISTS events using delta location 's3a://airbnb/events'")
+spark.sql("select * from events").show(100)
+```
+Check MinIO(s3):
+
+```
+$ mc ls minio-cluster/airbnb/events/
+[2021-01-04 11:31:44 EET]   518B part-00000-6cfc46ea-c82e-4d67-a9a9-878fa905707b-c000.snappy.parquet
+[2021-01-04 11:33:08 EET]     0B _delta_log/
+```
+
+Full notebook: 
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/deltalake/DeltaLake_test_s3.ipynb
+
+Note1: Working with the Hive metastore:
+
+The hive metastore is used to describe the data within our parquet files using SQL concepts. By default, Spark uses a hive metastore on your k8s driver pod (in previous examples)
+
+Notice in our first line of our notebook (Example2)
+
+```
+CREATE TABLE IF NOT EXISTS events using delta location 's3a://<your bucket>/events'
+```
+We are helping the hive metastore map the concept of a table event to our parquet file on S3
+
+You can delete this metadata with a
+```
+DROP TABLE events
+```
+Try it on some simple test data and then try remapping it with another CREATE TABLE ;)
+```
+spark.sql("CREATE TABLE IF NOT EXISTS events using delta location '/tmp/events'")
+spark.sql("select * from events").show(100)
+spark.sql("DROP TABLE events")
+spark.sql("CREATE TABLE IF NOT EXISTS events using delta location '/tmp/events'")
+spark.sql("select * from events").show(100)
+```
+
+It's up to you how you keep your schemas up to date to accurately reflect what's in the parquet files when using SQL.
+
+Note2: Moving this to a real cluster
+
+On a real cluster, there's a number of changes you'll likely do:
+
+    Put your hive metastore on mysql or some other relational database so the cluster can share the same concept of tables (if we delete driver pod we don't have hive airbnb db)
+    Use more powerful clusters that allow you to completely delegate the handling of running an app to worker rather than your machine delegating to cluster's workers. Research --deploy-mode cluster.
+    Setup security for multiples machines and multiple user access to the cluster.
+
+Note3: Hive and MinIO:S3 is shared within the spark cluster (for shared workers access)
+
+Example3: Run spark apps that utilize Delta Lake (with MinIO:s3, Delta Lake and MLFlow)
+
+```
+$ mc mb minio-cluster/mlflow
+Bucket created successfully `minio-cluster/mlflow`.
+$ mc mb minio-cluster/airbnb
+Bucket created successfully `minio-cluster/airbnb`.
+$ mc cp sf-airbnb.csv minio-cluster/airbnb
+sf-airbnb.csv:                       32.65 MiB / 32.65 MiB ┃▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┃ 105.68 MiB/s 
+#Deploy MLFlow
+$ kubectl apply -f 40-statefulset.yml -f 50-service.yml -f 60-ingress.yml
+```
+Jupyter Notebook:
+
+```
+#Cells:
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("DeltaLake-airbnb")\
+    .config("spark.jars.packages", "io.delta:delta-core_2.12:0.7.0") \
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+    .config("spark.delta.logStore.class", "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore") \
+    .config("spark.hadoop.fs.s3a.access.key","minio") \
+    .config("spark.hadoop.fs.s3a.secret.key","minio123") \
+    .config("spark.hadoop.fs.s3a.endpoint", "http://minio-service.data.svc.cluster.local:9000") \
+    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+    .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
+    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .getOrCreate()
+
+rawDF = spark.read.csv("s3a://airbnb/sf-airbnb.csv", header="true", inferSchema="true", multiLine="true", escape='"')
+
+...
+...
+...
+
+cleanDF = posPricesDF.filter(col("minimum_nights") <= 365)
+display(cleanDF)
+cleanDF.write.format("delta").save("s3a://airbnb/airbnb-clean")
+```
+
+Check MinIO(s3):
+
+```
+$ mc ls minio-cluster/airbnb/airbnb-clean/
+[2021-01-04 12:27:49 EET] 186KiB part-00000-b20ab5cd-546f-462a-9062-c189c7417ff0-c000.snappy.parquet
+[2021-01-04 12:28:11 EET]     0B _delta_log/
+```
+MLflow:
+
+```
+def mlflow_rf(file_path, num_trees, max_depth):
+  with mlflow.start_run(run_name="random-forest") as run:
+    # Create train/test split
+    spark = SparkSession.builder.appName("App").getOrCreate()
+    airbnbDF = spark.read.parquet("s3a://airbnb/airbnb-clean/")
+    (trainDF, testDF) = airbnbDF.randomSplit([.8, .2], seed=42)
+
+    # Prepare the StringIndexer and VectorAssembler
+    categoricalCols = [field for (field, dataType) in trainDF.dtypes if dataType == "string"]
+    indexOutputCols = [x + "Index" for x in categoricalCols]
+
+    stringIndexer = StringIndexer(inputCols=categoricalCols, outputCols=indexOutputCols, handleInvalid="skip")
+
+    numericCols = [field for (field, dataType) in trainDF.dtypes if ((dataType == "double") & (field != "price"))]
+    assemblerInputs = indexOutputCols + numericCols
+    vecAssembler = VectorAssembler(inputCols=assemblerInputs, outputCol="features")
+    
+    # Log params: Num Trees and Max Depth
+    mlflow.log_param("num_trees", num_trees)
+    mlflow.log_param("max_depth", max_depth)
+
+    rf = RandomForestRegressor(labelCol="price",
+                               maxBins=40,
+                               maxDepth=max_depth,
+                               numTrees=num_trees,
+                               seed=42)
+
+    pipeline = Pipeline(stages=[stringIndexer, vecAssembler, rf])
+
+    # Log model
+    pipelineModel = pipeline.fit(trainDF)
+    mlflow.spark.log_model(pipelineModel, "model")
+
+    # Log metrics: RMSE and R2
+    predDF = pipelineModel.transform(testDF)
+    regressionEvaluator = RegressionEvaluator(predictionCol="prediction",
+                                            labelCol="price")
+    rmse = regressionEvaluator.setMetricName("rmse").evaluate(predDF)
+    r2 = regressionEvaluator.setMetricName("r2").evaluate(predDF)
+    mlflow.log_metrics({"rmse": rmse, "r2": r2})
+
+    # Log artifact: Feature Importance Scores
+    rfModel = pipelineModel.stages[-1]
+    pandasDF = (pd.DataFrame(list(zip(vecAssembler.getInputCols(),
+                                    rfModel.featureImportances)),
+                          columns=["feature", "importance"])
+              .sort_values(by="importance", ascending=False))
+    # First write to local filesystem, then tell MLflow where to find that file
+    pandasDF.to_csv("/tmp/feature-importance.csv", index=False)
+    os.makedirs("data", exist_ok=True)
+    mlflow.log_artifact("data", artifact_path="airbnb.ipynb")
+    
+if __name__ == "__main__":
+  mlflow_rf("./data",2,3)
+
+if __name__ == "__main__":
+  mlflow_rf("./data",3,4)
+```
+
+Full notebook: 
+
+https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/deltalake/DeltaLake_aiirbnb_mlflow.ipynb
+
+Check MLFlow UI:
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/DeltaLake-mlflow-airbnb-experiments.png" width="800">
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/DeltaLake-MLFlow-airbnb-run.png" width="800">
+
+
