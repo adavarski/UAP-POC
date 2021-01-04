@@ -1,0 +1,28 @@
+FROM davarski/spark301-minio-dask:2.0.0
+
+USER root 
+
+# Install ITK and ITK Widgets
+RUN pip3 install itkwidgets \
+  && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-matplotlib jupyterlab-datawidgets itkwidgets 
+
+# Install IpyVolume
+RUN jupyter labextension install ipyvolume \
+  && jupyter labextension install jupyter-threejs
+
+# Install BQPlot
+RUN pip3 install bqplot
+
+# Install Mayavi and PyQt5
+RUN apt-get install -y python3-vtk7 \
+  && pip3 install PyQt5 \
+  && pip3 install mayavi \
+  && jupyter nbextension install --py mayavi \
+  && jupyter nbextension enable --py mayavi
+
+
+# Update JupyterLab Extensions
+RUN jupyter labextension update --all
+
+# Set User back to jovyan/1000
+USER 1000
