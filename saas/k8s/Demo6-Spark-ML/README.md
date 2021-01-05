@@ -5027,6 +5027,10 @@ After analysing all existing alternatives on the market including Hudi, Iceberg 
     - Low latency, high quality data. Using the upsert and schema enforcements features provided by Delta Lake, we can continuously deliver low latency and high quality data to all stakeholders.
     - Multiple access points. Persisting all incoming data into Delta Lake allows the stakeholders to query low latency data through multiple systems including Apache Spark and Presto.
     - Time travel. Delta Lake allows reprocessing data from a particular time in the past which automates back-populating data, in addition to allowing analysis between particular date intervals for different use cases such as reports or training machine learning models.
+    
+    
+   
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo6-Spark-ML/pictures/DeltaLake-compare-lakehouses.png" width="800">
 
 ## Configuring Apache Spark with Delta Lake  
 
