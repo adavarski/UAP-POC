@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jupyter-notebook-config
+data:
+  storage_path.py: |
+    from s3contents import S3ContentsManager
+    from IPython.lib import passwd
+    c = get_config()
+    # Startup auth Token
+    c.NotebookApp.password = passwd("jupyter")
+    # S3 Object Storage Configuration
+    c.NotebookApp.contents_manager_class = S3ContentsManager
+    c.S3ContentsManager.access_key_id = "minio"
+    c.S3ContentsManager.secret_access_key = "minio123"
+    c.S3ContentsManager.endpoint_url = "http://minio-service.data.:9000"
+    c.S3ContentsManager.bucket = "spark-jupyter"
+    c.S3ContentsManager.prefix = "notebooks"

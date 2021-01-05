@@ -1,0 +1,57 @@
+FROM davarski/spark301-k8s-minio-jupyter:2.0.0
+
+USER root
+
+# Install git and other version control tools, additional Python dependencies
+RUN apt-get install -y git gcc mono-mcs musl-dev curl gnupg 
+RUN curl -sL https://deb.nodesource.com/setup_12.x  | bash - \
+  && apt-get -y install nodejs 
+RUN pip3 --no-cache-dir install rubix python-gitlab jupyterlab-git plotly \
+  && jupyter serverextension enable --py jupyterlab_git
+
+# Install Kafka client tools and Python libraries
+ADD https://archive.apache.org/dist/kafka/2.2.0/kafka_2.12-2.2.0.tgz /root
+RUN pip3 install kafka-python \
+  && cd /root && tar -xvzf kafka_2.12-2.2.0.tgz \
+  && mv kafka_2.12-2.2.0 /opt/kafka
+ENV PATH=$PATH:/opt/kafka/bin
+
+# Allow files to be stored locally and remotely
+RUN apt-get install -y postgresql-common libpq-dev \
+  &&  pip3 --no-cache-dir install pgcontents
+
+# Install Geocoding Libraries and Dependencies
+RUN pip3 --no-cache-dir install chart-studio geopandas pyshp shapely plotly-geo mapboxgl geopy
+
+# Install pandoc (need for PDF output)
+RUN apt-get -y install pandoc
+RUN apt-get -y install texlive-xetex
+
+# Install JupyterHub
+RUN pip3 install jupyterhub pandas-profiling pymc3 statsmodels ggplot geoplotlib
+
+# Install additional Python visualization and GIS libraries
+RUN pip3 --no-cache-dir install missingno pillow 
+RUN apt-get install -y libgdal-dev && pip3 --no-cache-dir install cartopy
+
+# Vaex: Out of memory DataFrames for annoyingly large data (but not quite big)
+RUN pip3 --no-cache-dir install vaex vaex-ml
+
+# Add S3FS: S3 interface for Python
+RUN pip3 --no-cache-dir install s3fs
+
+# Add text editors and sudo
+RUN apt-get install -y sudo vim
+
+# Build frontend assets
+RUN pip3 --no-cache-dir install --upgrade jupyterhub ipympl
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager 
+RUN jupyter lab build
+
+# Allow sudo without prompt
+RUN echo "jovyan ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Configure Working Directory and Storage Plugins
+USER 1000 
+ADD jupyter/jupyter_notebook_config.py /home/jovyan/.jupyter/jupyter_notebook_config.py
+ENV PATH=$PATH:/opt/kafka/bin:/opt/spark/bin

@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: web-auth
+  namespace: data
+  labels:
+    app: web-auth
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  rules:
+    - host: auth.data.davar.com
+      http:
+        paths:
+          - backend:
+              serviceName: web-keycloak
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - auth.data.davar.com
+      secretName: auth-production-tls
