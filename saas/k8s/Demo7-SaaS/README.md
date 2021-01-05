@@ -261,9 +261,12 @@ JupyterLab is “the next-generation web-based user interface for Project Jupyte
 
 Jupyter Notebooks are a browser-based (or web-based) IDE.
 
-Kubernetes is a natural fit for provisioning and serving JupyterLab environments through JupyterHub, as demonstrated in the previous section. Streamlining the development of machine learning and statistical models has driven the success of Project Jupyter. Many data science activities, such as machine learning, require static, immutable data sets to achieve reproducible results from experimentation. However, operating Jupyter environments with static data alongside real-time event streams, indexes, and the full power of Kubernetes distributed computing is an opportunity to offer a variety of data science functionality directly in the center of a data platform. The following sections demonstrate brief examples of working directly with the data and control plane from within the k8s cluster, connecting JupyterLab notebooks (Spark cluster) with MinIO, Hive, etc. services
+Note: Kubernetes is a natural fit for provisioning and serving JupyterLab environments through JupyterHub, as demonstrated in the previous section. Streamlining the development of machine learning and statistical models has driven the success of Project Jupyter. Many data science activities, such as machine learning, require static, immutable data sets to achieve reproducible results from experimentation. However, operating Jupyter environments with static data alongside real-time event streams, indexes, and the full power of Kubernetes distributed computing is an opportunity to offer a variety of data science functionality directly in the center of a data platform. The following sections demonstrate brief examples of working directly with the data and control plane from within the k8s cluster, connecting JupyterLab notebooks (Spark cluster) with k8s MinIO, Hive, etc. SaaS services
 
 ### SaaS login 
+
+URL: https://saas.data.davar.com
+
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-jupyterhub.png" width="500">
 
