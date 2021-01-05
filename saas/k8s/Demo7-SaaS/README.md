@@ -45,15 +45,15 @@ Creates a user-provisioned Spark clusters connected to other SaaS servcies (MinI
 
 JupyterHub/Lab in the "saas" namespace:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-JupyterHub-JupyterLab-in-the-saas-namespace.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-JupyterHub-JupyterLab-in-the-saas-namespace.png" width="500">
 
 JuputerLab inside k8s cluster:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-JupyterLab-inside-k8s.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-JupyterLab-inside-k8s.png" width="500">
 
 JuputerHub high-level:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-jhub-parts.png" width="400">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-jhub-parts.png" width="400">
 
 
 Note: JupyterLab, brings a robust and extendable suite of data science capabilities along with a command-line terminal. Operating JupyterLab within the cluster creates an incredibly efficient environment for both traditional data science, analytics, and experimentation, along with opportunities for development and operations through closer interaction with the Kubernetes API.
@@ -74,7 +74,7 @@ singleuser:
 
 Example Notebook(snip):
 
-(Ref: Demo6:  https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/tree/main/k8s/Demo6-Spark-ML : using spark driver pod and running 2 spark workers and Spark using k8s as Cluster Manager)
+(Ref: Demo6:  https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML : using spark driver pod and running 2 spark workers and Spark using k8s as Cluster Manager)
 
 ```
 import pyspark
@@ -149,18 +149,18 @@ Realm, Client, and User
 
 Keycloak provides identity management and authentication to multiple tenants through the configuration of realms. JupyterHub is configured later to authenticate users using Oauth2, belonging to the realm "saas". A Keycloak client associated with a realm grants access to applications such as JupyterHub looking to authenticate users. This section sets up a realm, client, and user used to provision JupyterLab servers later. Using a web browser, visit the new Ingress https://auth.data.davar.com/auth/ as set up via yaml manifests. Log in to Keycloak using the "sysop" credential defined in /9000-keycloak/15-secret.yml . After logging in, master is the default realm shown in the upper left of the user interface and depicted bellow:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-add-realm-saas.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-add-realm-saas.png" width="800">
 
 Open the "Add realm" menu by clicking the drop-down to the right of the realm title and create the new realm "saas".
 
 
 Next, navigate to Clients in the left-hand navigation of the new Datalab realm. Click Create and fill in the “Add Client” form to add a new client named "saas" shown bellow:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-add-client-to-realm-saas.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-add-client-to-realm-saas.png" width="800">
 
 After adding the new "saas" client, click the Credentials tab to retrieve the generated secret, as shown:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-client-credentilals.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-client-credentilals.png" width="800">
 
 
 JupyterHub is later configured to use the client ID "saas" and the generated secret for permission to authenticate users against the Keycloak "saas" realm.
@@ -169,12 +169,12 @@ JupyterHub is later configured to use the client ID "saas" and the generated sec
 Configure the new "saas" client (under the Setting tab) by switching Authorization Enabled to on. Provide Valid Redirect URIs, in this case,
 https://saas.data.davar.com/hub/oauth_callback later defined in the “JupyterHub” section. Review:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-client-config-url-auth-enabled.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-client-config-url-auth-enabled.png" width="800">
 
 
 Finally, create one or more users in the "saas" realm by choosing Users under the Manage section of the left-hand menu. After adding a user, assign a password under the Credentials tab. Use a strong password; any users assigned to this realm are later given access to a JupyterLab environment with permissions to read and write data and execute code from within the cluster.
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-user-password-realm-saas.png" width="800">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-Keycloack-user-password-realm-saas.png" width="800">
 
 
 ### SaaS Namespace
@@ -265,10 +265,10 @@ Kubernetes is a natural fit for provisioning and serving JupyterLab environments
 
 ### SaaS login 
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-jupyterhub.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-jupyterhub.png" width="500">
 
 Change password:
 
-<img src="https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo7-SaaS/pictures/SaaS-login-change-passord.png" width="500">
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo7-SaaS/pictures/SaaS-login-change-passord.png" width="500">
 
 
