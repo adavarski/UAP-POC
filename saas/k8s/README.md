@@ -1063,7 +1063,7 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 
 ## Demo6: [Spark with MinIO(S3) and Delta Lake for large-scale big data processing and ML](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML)
 
-## Demo7: [SaaS deploy using IAM:Keycloak + JupyterHUB/JupyterLAB](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo7-SaaS)
+## Demo7: [SaaS deploy with IAM:Keycloak + JupyterHUB/JupyterLAB](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo7-SaaS)
 
 
 ## Clean environment
