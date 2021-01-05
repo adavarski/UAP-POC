@@ -1,0 +1,52 @@
+proxy:
+  secretToken: "1cdb29d3a3fcfa658283830209647b2bb6bfb08d9e0bae6258bbb3315476f038"
+  service:
+    type: ClusterIP
+
+singleuser:
+  image:
+    name: davarski/spark301-k8s-minio-jupyter
+    tag: 2.0.0
+  defaultUrl: "/lab"
+
+hub:
+  image:
+    name: jupyterhub/k8s-hub
+    tag: 0.9-dcde99a
+  db:
+    pvc:
+      storageClassName: local-storage
+  extraConfig:
+    jupyterlab: |-
+      c.Spawner.cmd = ['jupyter-labhub']
+      c.KubeSpawner.namespace = "saas"
+      c.KubeSpawner.service_account = "saas"
+    jupyterhub: |-
+      c.Authenticator.auto_login = True
+  extraEnv:
+    OAUTH2_AUTHORIZE_URL: https://auth.data.davar.com/auth/realms/saas/protocol/openid-connect/auth
+    OAUTH2_TOKEN_URL: https://auth.data.davar.com/auth/realms/saas/protocol/openid-connect/token
+    OAUTH_CALLBACK_URL: https://saas.data.davar.com/hub/oauth_callback
+
+scheduling:
+  userScheduler:
+    enabled: true
+    replicas: 2
+    logLevel: 4
+    image:
+      name: gcr.io/google_containers/kube-scheduler-amd64
+      tag: v1.14.4
+
+auth:
+  type: custom
+  custom:
+    className: oauthenticator.generic.GenericOAuthenticator
+    config:
+      login_service: "Keycloak"
+      client_id: "saas"
+      client_secret: "4ad1a28d-76b0-4304-af10-3a728265e151"
+      token_url: https://auth.data.davar.com/auth/realms/saas/protocol/openid-connect/token
+      userdata_url: https://auth.data.davar.com/auth/realms/saas/protocol/openid-connect/userinfo
+      userdata_method: GET
+      userdata_params: {'state': 'state'}
+      username_key: preferred_username

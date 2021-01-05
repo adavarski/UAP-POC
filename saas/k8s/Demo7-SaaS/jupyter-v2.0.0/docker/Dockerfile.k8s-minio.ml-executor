@@ -1,0 +1,20 @@
+FROM davarski/spark301-k8s-minio-base:2.0.0
+
+# Install kubectl
+USER root
+RUN ln -sv /usr/bin/pip3 /usr/bin/pip \
+        && pip install numpy pandas
+RUN pip --no-cache-dir install notedown plotly seaborn matplotlib
+RUN pip --no-cache-dir install bokeh xlrd yellowbrick
+RUN pip --no-cache-dir install scikit-learn scikit-image
+RUN pip --no-cache-dir install scipy
+RUN pip --no-cache-dir install py4j \
+        && ln -s /opt/spark/python/pyspark /usr/local/lib/python3.8/dist-packages/pyspark \
+        && ln -s /opt/spark/python/pylintrc /usr/local/lib/python3.8/dist-packages/pylintrc
+
+RUN pip3 install \
+  git+https://code.oak-tree.tech/guru-labs/packages/guru-client.git \
+  git+https://code.oak-tree.tech/oak-tree/medical-imaging/packages/sonador
+
+# Switch back to Spark USER uid
+USER ${spark_uid}
