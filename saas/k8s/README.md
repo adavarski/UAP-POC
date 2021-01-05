@@ -145,7 +145,8 @@ mlflow.data    IN       A       192.168.0.101
 quality.data   IN       A       192.168.0.101
 spark.data     IN       A       192.168.0.101
 jupyter.data   IN       A       192.168.0.101
-
+auth.data      IN       A       192.168.0.101
+saas.data      IN       A       192.168.0.101
 
 ;CNAME Record
 www     IN      CNAME    www.davar.com.
@@ -921,7 +922,56 @@ Note: GitOps
 GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
 
 
+## SaaS Build (Ref:https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML)
 
+
+SAAS: IAM:Keycloak + JupyterHUB/JupyterLAB (Spark clusters per tenant/user with k8s as Cluster Manager)
+
+### Keycloak
+
+```
+kubectl apply -f ./003-data/9000-keycloak/10-service.yml
+kubectl apply -f ./003-data/9000-keycloak/15-secret.yml
+kubectl apply -f ./003-data/9000-keycloak/30-deployment.yml
+kubectl apply -f ./003-data/9000-keycloak/50-ingress.yml
+```
+
+### JupyterHub
+
+```
+$ helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+   
+$ helm repo update
+
+# Install (or upgrade/update) the JupyterHub Helm package.
+$ cd ./003-data/10000-jupterhub
+$ helm upgrade --install saas-hub jupyterhub/jupyterhub --namespace="data" --version="0.9-dcde99a" --values="values.yml"
+```
+### Check Keycloak/Jupyter pods/ingress:
+```
+$ kubectl get po -n data|tail -n6
+web-keycloak-0                      1/1     Running   0          106m
+continuous-image-puller-g686q       1/1     Running   0          65s
+user-scheduler-7bcbfff44f-58hqj     1/1     Running   0          65s
+user-scheduler-7bcbfff44f-2j98b     1/1     Running   0          64s
+proxy-554f7d49c5-rzb62              1/1     Running   0          65s
+hub-97857c8c5-z7bnb                 1/1     Running   2          65s
+
+$ kubectl get ing -n data
+NAME               CLASS    HOSTS                    ADDRESS         PORTS     AGE
+openfaas-ingress   <none>   gateway.openfaas.local                   80        38d
+faas               <none>   faas.data.davar.com      192.168.0.100   80, 443   38d
+minio-ingress      <none>   minio.data.davar.com     192.168.0.100   80, 443   33d
+kibana             <none>   kib.data.davar.com       192.168.0.100   80, 443   38d
+presto             <none>   presto.data.davar.com    192.168.0.100   80, 443   24d
+mlflow             <none>   mlflow.data.davar.com    192.168.0.100   80, 443   25h
+web-auth           <none>   auth.data.davar.com      192.168.0.100   80, 443   4h20m
+jupyterhub         <none>   saas.data.davar.com      192.168.0.100   80, 443   137m
+$ kubectl get ing -n data|tail -n2
+web-auth           <none>   auth.data.davar.com      192.168.0.100   80, 443   4h20m
+jupyterhub         <none>   saas.data.davar.com      192.168.0.100   80, 443   137m
+
+```
 
 ## Extend k3s cluster: Add k3s worker (bare-metal)
 
@@ -1012,6 +1062,9 @@ Fix k3s CoreDNS for local development to use local DNS server if needed.
 ## Demo5: [BigData:MinIO Data Lake with Hive/Presto SQL-Engines](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo5-BigData-MinIO-Hive-Presto)
 
 ## Demo6: [Spark with MinIO(S3) and Delta Lake for large-scale big data processing and ML](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML)
+
+## Demo7: [SaaS deploy using IAM:Keycloak + JupyterHUB/JupyterLAB](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo7-SaaS)
+
 
 ## Clean environment
 
