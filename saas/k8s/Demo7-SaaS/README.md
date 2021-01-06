@@ -41,7 +41,7 @@ sudo k3s crictl pull davarski/spark301-k8s-minio-driver:2.0.0
 sudo k3s crictl pull davarski/spark301-k8s-minio-jupyter:2.0.0
 
 ```
-Creates a user-provisioned Spark clusters connected to other SaaS servcies (MinIO, Hive, Kafka, ELK, etc) directly within the cluster as shownas bellow:
+Creates a user-provisioned Spark clusters connected to other SaaS servcies (MinIO, Hive, Kafka, ELK, etc) directly within the cluster as shown:
 
 JupyterHub/Lab in the "saas" namespace:
 
