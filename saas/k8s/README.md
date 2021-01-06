@@ -927,6 +927,15 @@ GitOps, a process popularized by Weaveworks, is another trending concept within 
 
 SAAS: IAM:Keycloak + JupyterHUB/JupyterLAB (Spark clusters per tenant/user with k8s as Cluster Manager)
 
+### SaaS namespace 
+
+```
+kubectl apply -f ./003-data/8000-saas-namespace/00-namespace.yml
+kubectl apply -f ./003-data/8000-saas-namespace/05-serviceaccount.yml
+kubectl apply -f ./003-data/8000-saas-namespace/07-role.yml
+kubectl apply -f ./003-data/8000-saas-namespace/08-rolebinding.yml
+```
+
 ### Keycloak
 
 ```
