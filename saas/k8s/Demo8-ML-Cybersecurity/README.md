@@ -235,7 +235,7 @@ iris_df.head()
 iris_df.describe()
 ```
 
-Example python libraries notebook: https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Python-libs-examples.ipynb
+Example python libraries notebook: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Python-libs-examples.ipynb
 
 
 
@@ -406,9 +406,9 @@ Another example of supervised algorithms is regression algorithms. Ultimately, t
     
 Example notebooks: 
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Supervised-learning-example%20_%20linear_regression.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Supervised-learning-example%20_%20linear_regression.ipynb
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Simple-Neural%20Network-example_perceptron.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Simple-Neural%20Network-example_perceptron.ipynb
 
 ### Unsupervised learning
 
@@ -423,7 +423,7 @@ Here are some examples of unsupervised algorithms:
        - k-means
        - Hierarchical cluster analysis (HCA)
 
-Example: https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Unsupervised-learning-example_clustering.ipynb
+Example: https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Unsupervised-learning-example_clustering.ipynb
 
 ### Reinforcement learning
 
@@ -530,21 +530,21 @@ This example will cover the following topics:
 
 #### Detecting spam with linear classifiers
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Perceptron.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Perceptron.ipynb
 
 #### Spam detection with SVMs && Image spam detection with SVMs
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/SVM.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/SVM.ipynb
 
 
 ####  Phishing detection with logistic regression and decision trees
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Logistic_Regression_Phishing_Detector.ipynb
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Decision_Tree_Phishing_Detector.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Logistic_Regression_Phishing_Detector.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Decision_Tree_Phishing_Detector.ipynb
 
 
 ####  A Bayesian spam detector with NLTK
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Bayesian_Spam_Detector_with_Nltk.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Bayesian_Spam_Detector_with_Nltk.ipynb
 
 
 ### Malware Threat Detection
@@ -604,19 +604,19 @@ These detection activities can be easily automated by using specific algorithms,
 
 #### Random Forest Malware Classifier
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Random_Forest_Malware_Classifier.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Random_Forest_Malware_Classifier.ipynb
 
 #### Decision Tree Malware Detector
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Decision_Tree_Malware_Detector.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Decision_Tree_Malware_Detector.ipynb
 
 #### K-means malware clustering
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/K-means_malware_clustering.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/K-means_malware_clustering.ipynb
 
 #### Detecting metamorphic malware with Hidden Markov Models (HMMs)
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/HMM.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/HMM.ipynb
 
 #### Advanced malware detection with deep learning (Convolutional Neural Networks :CNNs)
 
@@ -779,7 +779,7 @@ The section features in our example consist of the values of network latency and
 
 For each example, the accuracy of the algorithm is calculated, in order to be able to make comparisons between the results obtained:
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Network_Anomaly_Detection.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Network_Anomaly_Detection.ipynb
 
 ####  Anomaly detection using the Gaussian distribution
 
@@ -794,7 +794,7 @@ Obviously, not all the phenomena under investigation can be represented by the G
 
 Therefore, we must see the characteristics of the Gaussian distribution in order to understand why it is frequently used.
 
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Gaussian_Network_Anomaly_Detection.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Gaussian_Network_Anomaly_Detection.ipynb
 
 
 ## Protecting Sensitive Information and Assets
@@ -832,7 +832,7 @@ Keystroke Dynamics - Benchmark Data Set:
 ```
 $ wget https://www.cs.cmu.edu/~keystroke/DSL-StrongPasswordData.csv (and put into Jupyter env directory: datasets)
 ```
-https://github.com/adavarski/DataScience-DataOps_MLOps-Playground/blob/main/k8s/Demo8-ML-Cybersecurity/notebooks/Keystroke_Detection.ipynb
+https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo8-ML-Cybersecurity/notebooks/Keystroke_Detection.ipynb
 
 
 ### Fraud Prevention with Cloud AI Solutions
