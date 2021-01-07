@@ -44,6 +44,11 @@ Browse to http://jupyter.data.davar.com/lab
 
 Note: Examples from book "Hands-On Artificial Intelligence for Cybersecurity"
 
+## Machine Learning Map
+
+<img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/Demo8-ML-Cybersecurity/pictures/machine-learning-map.png" width="900">
+
+
 ## Getting to know Python's libraries
 
 Python libraries that are among the most well known and widespread in the field of ML:
