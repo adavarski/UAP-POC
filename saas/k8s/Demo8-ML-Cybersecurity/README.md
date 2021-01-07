@@ -41,8 +41,7 @@ $ kubectl logs jupyter-notebook
 ```
 Browse to http://jupyter.data.davar.com/lab
 
-
-Note: Examples from book "Hands-On Artificial Intelligence for Cybersecurity"
+Note: Examples from book "Hands-On Artificial Intelligence for Cybersecurity" & "Machine Learning for Cybersecurity Cookbook"
 
 ## Machine Learning Map
 
