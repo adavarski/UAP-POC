@@ -1,7 +1,5 @@
 ## Jupyter environment
 
-Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
-
 Build custom JupyterLab docker image and pushing it into DockerHub container registry.
 ```
 $ cd ./jupyterlab
@@ -40,6 +38,8 @@ $ kubectl logs jupyter-notebook
         http://(jupyter-notebook or 127.0.0.1):8888/?token=1efac938a73ef297729290af9b301e92755f5ffd7c72bbf8
 ```
 Browse to http://jupyter.data.davar.com/lab
+
+Note: Jupyter Notebooks are a browser-based (or web-based) IDE (integrated development environments)
 
 Note: Examples from book "Hands-On Artificial Intelligence for Cybersecurity" & "Machine Learning for Cybersecurity Cookbook"
 
