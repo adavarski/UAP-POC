@@ -1264,3 +1264,17 @@ Examples:
 cd ./additional
 ```
 
+### Example ML/DeepML Cookbooks for Cybersecurity
+
+```
+cd ./cookbooks
+
+1-Machine_Learning_for_Cybersecurity
+2-Machine_Learning-Based_Malware_Detection
+3-Advanced_Malware_Detection
+4-Machine_Learning_for_Social_Engineering
+5-Penetration_Testing_Using_Machine_Learning
+6-Automatic_Intrusion_Detection
+7-Securing_and_Attacking_Data_with_Machine_Learning
+8-Secure_and_Private_AI
+```
