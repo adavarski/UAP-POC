@@ -316,7 +316,7 @@ kubectl apply -f ./003-data/000-namespace/003-issuer.yaml
 kubectl apply -f ./003-data/000-namespace/005-clusterissuer.yml
 ```
 
-## PaaS/SaaS deploy 
+## PaaS/SaaS Services deploy 
 
 ### Monitoring
 
@@ -921,7 +921,7 @@ Note: GitOps
 GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
 
 
-## SaaS Build/Deploy
+## SaaS Deploy
 
 Ref: [Spark with MinIO(S3) and Delta Lake for large-scale big data processing and ML](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo6-Spark-ML) & [SaaS deploy with IAM:Keycloak + JupyterHUB/JupyterLAB](https://github.com/adavarski/PaaS-and-SaaS-POC/tree/main/saas/k8s/Demo7-SaaS)
 
