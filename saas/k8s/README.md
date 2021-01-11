@@ -9,7 +9,7 @@ Summary: k8s-based Analytics/ML/DeepML SaaS using Big Data/Data Lake: MinIO (s3-
 
 <img src="https://github.com/adavarski/PaaS-and-SaaS-POC/blob/main/saas/k8s/003-pictures/saas-v2.0.0.png" width="900">
 
-Note: For building Analytics/ML SaaS platform we can also use cloud-native SaaSs as reference (or build SaaS based on cloud-native SaaSs): Snowflake(SaaS/DWaaS) as big data solution on a single data platform (DWH, S3, etc.) + Databricks(cloud-based big data processing SaaS) + AWS S3/MKS/SQS/ELK/Lambda/etc.
+Note: For building Analytics/ML SaaS platform we can also use cloud-native SaaSs as reference (or build SaaS based on cloud-native SaaSs): Snowflake(SaaS/DWaaS) as big data solution on a single data platform (DWH, S3, etc.) + Databricks(cloud-based big data processing SaaS: unified analytics platform for ML & Data Science) + AWS S3/MKS/SQS/ELK/Lambda/etc.
 
 ### PaaS/SaaS MVP/POC/Development environments used:
 
