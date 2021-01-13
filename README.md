@@ -1,4 +1,4 @@
-## PaaS/SaaS data-driven Analytics/ML/DeepML platform for data analyst/data engineer/data scientist playground (R&D/MVP/POC/environmints)
+## PaaS/SaaS data-driven Analytics/ML/DeepML Platform for data analyst/data engineer/data scientist playground (R&D/MVP/POC/environmints)
 
 Summary: Vagrant/Docker/k8s/AWS IaC-based PaaS/SaaS infrastucture/environments (POC): Terraform for AWS infrastructure provisioning, Vagrant/Docker/k8s for Dev environments and Ansible for Configuration Management (CM). 
 
