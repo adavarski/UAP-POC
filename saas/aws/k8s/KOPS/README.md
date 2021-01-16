@@ -6,7 +6,7 @@ pip3 install awscli
 aws configure (or export AWS_ACCESS_KEY_ID= ; export AWS_SECRET_ACCESS_KEY=; export AWS_DEFAULT_REGION=us-east-1)
 ```
 
-Created a new IAM user called k8s-saas with a new group (k8s-saas) that has access to AmazonEC2FullAccess, IAMFullAccess, AmazonS3FullAccess, and AmazonVPCFullAccess.
+Created a new IAM user called k8s-saas with a new group (k8s-saas) that has access to AmazonEC2FullAccess, IAMFullAccess, AmazonS3FullAccess, and AmazonVPCFullAccess (via AWS console).
 
 ```
 # IAM:ARN
@@ -17,7 +17,7 @@ IAMFullAccess
 AmazonVPCFullAccess
 ```
 
-Create kops user using aws cli:
+Create kops user using aws cli (example):
 ```
 
 aws iam create-group --group-name k8s-saas
@@ -33,11 +33,11 @@ aws iam create-access-key --user-name k8s-saas
 #Record the SecretAccessKey and AccessKeyID in the returned JSON output.
 ```
 
-Grab access and secrets keys (from previous JSON output for example or from downloaded file `$ cat new_user_credentials.csv`) and configure your k8s-saas profile with: 
+Grab access and secrets keys (from previous JSON output for example or from downloaded file `$ cat new_user_credentials.csv` if we use AWS console) and configure your aws profile:k8s-saas  with: 
 ```
 aws configure (or edit ~/.aws/credentials & ~/.aws/config files)
 ```
-Example: You can check those creds at:
+Example: Check those creds at:
 ```
 $ cat ~/.aws/credentials 
 [default]
@@ -56,7 +56,7 @@ region = us-east-1
 ```
 Next, let's create the s3 bucket with versioning that we need for our kube state (us-east-1). I will call it `k8s-saas-kops-state-dev`. Make sure you turn on versioning.
 
-Create S3 bucket using aws cli:
+Create S3 bucket using aws cli(example):
 
 ```
 aws s3api create-bucket --bucket k8s-saas-kops-state-dev --region us-east-1 
@@ -77,17 +77,17 @@ Note: What is KOPS? We like to think of it as kubectl for clusters. kops helps y
 
 KOPS Features
 
-    Automates the provisioning of Kubernetes clusters in AWS and GCE
-    Deploys Highly Available (HA) Kubernetes Masters
-    Built on a state-sync model for dry-runs and automatic idempotency
-    Ability to generate Terraform
-    Supports managed kubernetes add-ons
-    Command line autocompletion
-    YAML Manifest Based API Configuration
-    Templating and dry-run modes for creating Manifests
-    Choose from eight different CNI Networking providers out-of-the-box
-    Supports upgrading from kube-up
-    Capability to add containers, as hooks, and files to nodes via a cluster manifest
+    - Automates the provisioning of Kubernetes clusters in AWS and GCE
+    - Deploys Highly Available (HA) Kubernetes Masters
+    - Built on a state-sync model for dry-runs and automatic idempotency
+    - Ability to generate Terraform
+    - Supports managed kubernetes add-ons
+    - Command line autocompletion
+    - YAML Manifest Based API Configuration
+    - Templating and dry-run modes for creating Manifests
+    - Choose from eight different CNI Networking providers out-of-the-box
+    - Supports upgrading from kube-up
+    - Capability to add containers, as hooks, and files to nodes via a cluster manifest
 
 
 
@@ -113,15 +113,15 @@ export KUBECONFIG=~/.kube/k8s-saas-AWS-KOPS
 ```
 Note:  Kops will save your configuration to KUBECONFIG=~/.kube/k8s-saas-AWS-KOPS
 
-Once we have done that, let's run kops in the command line to create a master and 3 nodes.(I named mine saas.k8s.local):
-note: Create a new ssh key called k8s-saas with `ssh-keygen`
+Create a new ssh key called k8s-saas with `ssh-keygen`:
 ```
-
-
 $ ls  ~/.ssh/k8s-saas*
 -rw------- 1 davar davar 1679 Jan 16 09:53 /home/davar/.ssh/k8s-saas
 -rw-r--r-- 1 davar davar  394 Jan 16 09:53 /home/davar/.ssh/k8s-saas.pub
 ```
+
+Once we have done that, let's run kops in the command line to create a master and 3 nodes.(I named mine saas.k8s.local):
+
 Create k8s cluster with kops:
 
 ```
@@ -604,7 +604,7 @@ Suggestions:
 
 Finally configure your cluster with: kops update cluster --name saas.k8s.local --yes
 ```
-check:
+Check:
 
 ```
 $ kops get cluster
@@ -620,7 +620,7 @@ $ aws s3 ls s3://k8s-saas-kops-state-dev/saas.k8s.local/
 2021-01-16 10:03:53       5191 cluster.spec
 2021-01-16 10:03:52       1101 config
 ```
-Create k8s cluster with kops (final step: --yes):
+Create k8s cluster with kops (Final step: --yes):
 
 ```
 kops update cluster --name saas.k8s.local --yes
@@ -1030,8 +1030,6 @@ fc0289cd5d70        k8s.gcr.io/pause-amd64:3.2           "/pause"               
 ```
 
 
-
-
 When you are finished, go ahead and bring it down to save your free tier compute hours:
 ```
 kops delete cluster saas.k8s.local --yes
@@ -1207,12 +1205,17 @@ Deleted cluster: "saas.k8s.local"
 
 ```
 
-and verify that the cluster has been terminated in your EC2. And remember, your cluster state is stored in the S3 bucket that you created! (so delete S3 bucket too). 
+and verify that the cluster has been terminated in your EC2. And remember, your cluster state is stored in the S3 bucket that you created! 
+
+Delete S3 bucket via aws cli. 
 
 ```
 $ aws s3 rm s3://k8s-saas-kops-state-dev/ --recursive
 $ aws s3api delete-bucket --bucket k8s-saas-kops-state-dev --region us-east-1
 ```
+
+And delete kops user and group using aws cli.
+
 Check:
 
 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:
@@ -1400,4 +1403,3 @@ $ kops delete cluster --yes \
 Ps: You don't have to kops delete cluster if you just want to recreate from scratch. Deleting kOps cluster state means that you've have to kops create again.
 
 ## mini-HOWTO: Using Terraform (Ref: https://github.com/kubernetes/kops/blob/master/docs/terraform.md)
-
