@@ -1,4 +1,4 @@
-Install/configure awscli
+Install/configure awscli:
 
 ```
 apt install -y python3-pip
@@ -17,7 +17,7 @@ IAMFullAccess
 AmazonVPCFullAccess
 ```
 
-Create kops user using aws cli (example):
+Create KOPS user using aws cli (example):
 ```
 
 aws iam create-group --group-name k8s-saas
@@ -63,7 +63,7 @@ aws s3api create-bucket --bucket k8s-saas-kops-state-dev --region us-east-1
 aws s3api put-bucket-versioning --bucket k8s-saas-kops-state-dev --versioning-configuration Status=Enabled
 
 ```
-Now let's work on the Kops and Kubernetes segment.
+Now let's work on the KOPS and Kubernetes segment.
 
 to install kops on linux:
 ```
@@ -111,7 +111,7 @@ export AWS_SECRET_ACCESS_KEY=$(aws configure get k8s-saas.aws_secret_access_key)
 export KOPS_STATE_STORE=s3://k8s-saas-kops-state-dev
 export KUBECONFIG=~/.kube/k8s-saas-AWS-KOPS
 ```
-Note:  Kops will save your configuration to KUBECONFIG=~/.kube/k8s-saas-AWS-KOPS
+Note:  KOPS will save your configuration to KUBECONFIG=~/.kube/k8s-saas-AWS-KOPS
 
 Create a new ssh key called k8s-saas with `ssh-keygen`:
 ```
@@ -613,6 +613,7 @@ saas.k8s.local	aws	us-east-1a
 ```
 
 All configuration and your cluster state is stored in the S3 bucket that you created:
+
 ```
 $ aws s3 ls s3://k8s-saas-kops-state-dev/saas.k8s.local/
                            PRE instancegroup/
@@ -692,7 +693,7 @@ and to validate:
 ```
 kops validate cluster --name saas.k8s.local
 ```
-Example ouput:
+Example output:
 ```
 $ kops validate cluster --wait 10m
 Using cluster from kubectl context: saas.k8s.local
@@ -717,7 +718,7 @@ Your cluster saas.k8s.local is ready
 
 Once this cluster is complete, you should be able to see it in your EC2 Dashboard. It will also save your configuration to .kube/ (~/.kube/k8s-saas-AWS-KOPS) in you home directory.
 
-try:
+Try:
 ```
 kubectl get nodes
 ```
@@ -816,6 +817,7 @@ kube-system   replicaset.apps/kube-dns-autoscaler-cd7778b7b   1         1       
 
 
 Login to master node: 
+
 ```
 aws ec2 describe-instances  --filter 'Name=instance-state-name,Values=running' |   jq -r '.Reservations[].Instances[] | [.InstanceId, .PublicDnsName, .Tags[].Value] | @json'
 
@@ -1031,6 +1033,7 @@ fc0289cd5d70        k8s.gcr.io/pause-amd64:3.2           "/pause"               
 
 
 When you are finished, go ahead and bring it down to save your free tier compute hours:
+
 ```
 kops delete cluster saas.k8s.local --yes
 ```
@@ -1403,3 +1406,4 @@ $ kops delete cluster --yes \
 Ps: You don't have to kops delete cluster if you just want to recreate from scratch. Deleting kOps cluster state means that you've have to kops create again.
 
 ## mini-HOWTO: Using Terraform (Ref: https://github.com/kubernetes/kops/blob/master/docs/terraform.md)
+
