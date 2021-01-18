@@ -14,7 +14,7 @@ Note: For building Analytics/ML SaaS platform we can also use cloud-native SaaSs
 ### PaaS/SaaS MVP/POC/Development environments used:
 
 - k8s (k8s-local: k3s, minikube, kubespray) `Note: Default development environment: k3s` 
-- k8s AWS (KOPS for k8s clusters deploy on AWS, and k8s Operators/Helm Charts/YAML manifests for creating k8s deployments (PasS&SaaS services).  
+- k8s AWS (KOPS for k8s clusters deploy on AWS, and k8s Operators/Helm Charts/YAML manifests for creating k8s deployments (PaaS&SaaS services).  
 
 ### PaaS/SaaS objectives:
 
