@@ -894,7 +894,28 @@ service/spark-master             ClusterIP   10.43.5.150     <none>        7077/
 $ kubectl get ing -n data|grep spark
 spark-ingress      <none>   spark.data.davar.com     192.168.0.100   80, 443   44m
 ```
+### Apache Spark with Jupyter, DeltaLake, S3(MinIO) and k8s as Spark Cluster Manager (Spark DevOps/DataOps ML/DeepML development demo environment)
 
+Ref: Dockerfile: COPY --from=deps /tmp/spark-3.0.1-bin-hadoop3.2/kubernetes/dockerfiles/spark/entrypoint.sh /opt/
+```
+kubectl create serviceaccount spark-driver
+kubectl create rolebinding spark-driver-rb --clusterrole=cluster-admin --serviceaccount=default:spark-driver
+kubectl create serviceaccount spark-minion
+kubectl create rolebinding spark-minion-rb --clusterrole=edit --serviceaccount=default:spark-minion
+kubectl apply -f ./003-data/6000-spark-jupyter/jupyter-notebook.configmap.yaml
+kubectl apply -f ./003-data/6000-spark-jupyter/jupyter-notebook.pod.yaml
+kubectl apply -f ./003-data/6000-spark-jupyter/jupyter-notebook.svc.yaml
+kubectl apply -f ./003-data/6000-spark-jupyter/jupyter-notebook.ingress.yaml
+```
+Check Spark+Jupyter environment:
+```
+$ kubectl get svc|grep spark-jupyter
+spark-jupyter      ClusterIP   None         <none>        8888/TCP    15d
+$ kubectl get ing|grep jupyter
+jupyter-ingress   <none>   jupyter.data.davar.com   192.168.0.100   80, 443   12d
+$ kubectl get po|grep jupyter
+jupyter-notebook   1/1     Running   35         11d
+```
 
 ### GitLab (in-cluster CI/CD)  
 ```
