@@ -894,7 +894,9 @@ service/spark-master             ClusterIP   10.43.5.150     <none>        7077/
 $ kubectl get ing -n data|grep spark
 spark-ingress      <none>   spark.data.davar.com     192.168.0.100   80, 443   44m
 ```
-### Apache Spark with Jupyter, DeltaLake, S3(MinIO) and k8s as Spark Cluster Manager (Spark DevOps/DataOps ML/DeepML development demo environment)
+### Apache Spark (k8s as Spark Cluster Manager) with Jupyter, DeltaLake, S3(MinIO)  
+
+Note: development demo environment
 
 Ref: Dockerfile: COPY --from=deps /tmp/spark-3.0.1-bin-hadoop3.2/kubernetes/dockerfiles/spark/entrypoint.sh /opt/
 ```
