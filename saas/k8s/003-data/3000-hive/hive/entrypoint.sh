@@ -6,7 +6,7 @@ sleep 10
 
 # replace hive-site.xml values with environment
 # variables
-HIVE_CONF_TEMPLATE="/hive-site-template.xml"
+HIVE_CONF_TEMPLATE="/opt/hive/conf/hive-site-template.xml"
 HIVE_CONF="/opt/hive/conf/hive-site.xml"
 
 cp $HIVE_CONF_TEMPLATE $HIVE_CONF
