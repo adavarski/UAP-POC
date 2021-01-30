@@ -29,7 +29,7 @@ RUN apt-get update \
 ADD src/hadoop-3.1.2 /opt/hadoop
 ADD src/apache-hive-3.1.2-bin /opt/hive
 
-COPY ./hive-site-template.xml /opt/hive/conf/hive-site.xml
+COPY ./hive-site-template.xml /opt/hive/conf/hive-site-template.xml
 
 ADD entrypoint.sh /
 RUN chmod 775 /entrypoint.sh
