@@ -19,4 +19,4 @@ curl $MIRROR/com/amazonaws/aws-java-sdk-kms/1.11.307/aws-java-sdk-kms-1.11.307.j
 curl $MIRROR/com/amazonaws/aws-java-sdk-s3/1.11.307/aws-java-sdk-s3-1.11.307.jar -o $HIVE_LIB/aws-java-sdk-s3-1.11.307.jar
 curl $MIRROR/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar -o $HIVE_LIB/httpclient-4.5.3.jar
 curl $MIRROR/joda-time/joda-time/2.9.9/joda-time-2.9.9.jar -o $HIVE_LIB/joda-time-2.9.9.jar
-curl $MIRROR/mysql/mysql-connector-java/5.1.48/mysql-connector-java-5.1.48.jar -o ­$HIVE_LIB/mysql-connector-java-5.1.48.jar­
+curl $MIRROR/mysql/mysql-connector-java/5.1.48/mysql-connector-java-5.1.48.jar -o $HIVE_LIB/mysql-connector-java-5.1.48.jar
