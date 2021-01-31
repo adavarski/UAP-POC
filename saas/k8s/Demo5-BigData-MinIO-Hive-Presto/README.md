@@ -50,6 +50,9 @@ tar -xzvf ./src/hadoop-3.1.2.tar.gz -C ./src
 # create container
 docker build -t davarski-hive-s3m:3.1.2 .
 docker tag davarski-hive-s3m:3.1.2 davarski/hive-s3m:3.1.2-1.0.0
+docker login
+docker push davarski/hive-s3m:3.1.2-1.0.0
+
 ```
 Note: Hive, like many Java-based applications, uses XML files for configuration, in this case, hive-site.xml. However, packaging configuration values containing
 sensitive authentication tokens, passwords, and environment-specific services locations would be an anti-pattern causing security concerns and limiting
