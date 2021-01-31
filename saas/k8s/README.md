@@ -334,7 +334,58 @@ $ kubectl --namespace monitoring port-forward svc/grafana 3000
 ````
 Open http://localhost:3000 on a local workstation, and log in to Grafana with the default administrator credentials, username: admin, password: admin. Explore the prebuilt dashboards for monitoring many aspects of the Kubernetes cluster, including Nodes, Namespaces, and Pods.
 
-#to teardown the stack: kubectl delete --ignore-not-found=true -f manifests/ -f manifests/setup
+Check monitoring ns:
+```
+$ kubectl get all -n monitoring
+NAME                                       READY   STATUS    RESTARTS   AGE
+pod/prometheus-operator-59976dc7d5-nqx2b   2/2     Running   0          3m58s
+pod/alertmanager-main-1                    2/2     Running   0          110s
+pod/alertmanager-main-0                    2/2     Running   0          110s
+pod/alertmanager-main-2                    2/2     Running   0          110s
+pod/node-exporter-vbwbc                    2/2     Running   0          108s
+pod/kube-state-metrics-986b854-nnvgw       3/3     Running   0          109s
+pod/blackbox-exporter-556d889b47-jfr9d     3/3     Running   0          109s
+pod/prometheus-adapter-767f58977c-crxrb    1/1     Running   0          107s
+pod/prometheus-k8s-1                       2/2     Running   1          108s
+pod/prometheus-k8s-0                       2/2     Running   1          108s
+pod/grafana-674b67dc58-ck495               0/1     Running   0          109s
+
+NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+service/prometheus-operator     ClusterIP   None            <none>        8443/TCP                     3m58s
+service/alertmanager-main       ClusterIP   10.43.31.143    <none>        9093/TCP                     110s
+service/alertmanager-operated   ClusterIP   None            <none>        9093/TCP,9094/TCP,9094/UDP   110s
+service/blackbox-exporter       ClusterIP   10.43.43.146    <none>        9115/TCP,19115/TCP           110s
+service/grafana                 NodePort    10.43.124.105   <none>        3000:31321/TCP               109s
+service/kube-state-metrics      ClusterIP   None            <none>        8443/TCP,9443/TCP            109s
+service/node-exporter           ClusterIP   None            <none>        9100/TCP                     109s
+service/prometheus-adapter      ClusterIP   10.43.205.195   <none>        443/TCP                      108s
+service/prometheus-k8s          ClusterIP   10.43.122.149   <none>        9090/TCP                     108s
+service/prometheus-operated     ClusterIP   None            <none>        9090/TCP                     108s
+
+NAME                           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+daemonset.apps/node-exporter   1         1         1       1            1           kubernetes.io/os=linux   109s
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/prometheus-operator   1/1     1            1           3m58s
+deployment.apps/grafana               0/1     1            0           109s
+deployment.apps/kube-state-metrics    1/1     1            1           109s
+deployment.apps/blackbox-exporter     1/1     1            1           110s
+deployment.apps/prometheus-adapter    1/1     1            1           109s
+
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/prometheus-operator-59976dc7d5   1         1         1       3m58s
+replicaset.apps/grafana-674b67dc58               1         1         0       109s
+replicaset.apps/kube-state-metrics-986b854       1         1         1       109s
+replicaset.apps/blackbox-exporter-556d889b47     1         1         1       110s
+replicaset.apps/prometheus-adapter-767f58977c    1         1         1       109s
+
+NAME                                 READY   AGE
+statefulset.apps/alertmanager-main   3/3     110s
+statefulset.apps/prometheus-k8s      2/2     108s
+```
+
+To teardown the monitoring stack: kubectl delete --ignore-not-found=true -f manifests/ -f manifests/setup
+
 
 ### Messaging
 
