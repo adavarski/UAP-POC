@@ -1195,7 +1195,7 @@ Note3: If we don’t use k8s we have to write our TF modules for SaaS (PoC: AWS)
 Examples TF: 
 https://github.com/phiroict/terraform-aws-kafka-cluster; https://github.com/dwmkerr/terraform-consul-cluster, etc.
 
-Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Cahrts
+Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Charts
 ```
 
 
