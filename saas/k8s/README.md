@@ -544,7 +544,7 @@ kubectl apply -f ./003-data/1000-seldoncore/000-sd-s3-secret.yml
 kubectl apply -f ./003-data/1000-seldoncore/100-sd-quality.yml
 ```
 
-### no-SQL: Cassandra
+### NoSQL: Cassandra
 ```
 cd ./003-data/4500-cassandra/
 helm repo add datastax https://datastax.github.io/charts
