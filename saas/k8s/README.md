@@ -3,7 +3,7 @@
 
 ### Used stacks and products:
 
-VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Indexing and Analytics/Debugging and Log management stacks (ELK/EFK); Pipeline: Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Routing and Transformation (Serverless:OpenFaaS; ETL:Apache NiFi); Data Lake/Big Data (MinIO s3-compatable Object Storage); DWHs (HIVE SQL-Engine with MinIO:s3, Presto SQL query engine with Hive/Cassandra/MySql/Postgresql/etc. as data sources); Apache Spark for large-scale distributed Big Data processing and data analytics with Delta Lake (Lakehouse) and MinIO(S3); Machine Learning/Deep Learning/AutoML (TensorFlow, Pandas/Koalas, Keras, Scikit-learn, Spark MLlib, etc.; k8s:Model Development with AutoML: Kubeflow(MLflow, etc.) and k8s:AI Model Deployment (Seldon Core); Spark ML with S3(MinIO) as Data Source); GitLab/Jenkins/Jenkins X/Argo CD In-Platform CI/CD (GitOps); Identity and Access Management (IAM:Keycloak); JupyterHub/JupyterLab for data science; HashiCorp Vault cluster; k8s Persistent Volumes (Rook Ceph, Gluster); etc.
+VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+InfluxDB+Grafana, Sensu, Zabbix); Indexing and Analytics/Debugging and Log management stacks (ELK/EFK); Pipeline: Messaging/Kafka stack (Kafka cluster, Zookeper cluster, Kafka Replicator, Kafka Connect, Schema Registry); Routing and Transformation (Serverless:OpenFaaS; ETL:Apache NiFi/Apache Airflow); Data Lake/Big Data (MinIO s3-compatable Object Storage); DWHs (HIVE SQL-Engine with MinIO:s3, Presto SQL query engine with Hive/Cassandra/MySql/Postgresql/etc. as data sources); Apache Spark for large-scale distributed Big Data processing and data analytics with Delta Lake (Lakehouse) and MinIO(S3); Machine Learning/Deep Learning/AutoML (TensorFlow, Pandas/Koalas, Keras, Scikit-learn, Spark MLlib, etc.; k8s:Model Development with AutoML: Kubeflow(MLflow, etc.) and k8s:AI Model Deployment (Seldon Core); Spark ML with S3(MinIO) as Data Source); GitLab/Jenkins/Jenkins X/Argo CD In-Platform CI/CD (GitOps); Identity and Access Management (IAM:Keycloak); JupyterHub/JupyterLab for data science; HashiCorp Vault cluster; k8s Persistent Volumes (Rook Ceph, Gluster); etc.
 
 Summary: k8s-based Analytics/ML/DeepML SaaS using Big Data/Data Lake: MinIO (s3-compatable object storage) with Hive(s3) SQL-Engine/DWHs (instead of Snowflake as big data platform for example), Apache Spark(Hive for metadata)/Delta Lake(lakehouses)/Jupyter/etc. (instead of Databricks for example) + Kafka stack + ELK/EFK + Serverless(OpenFaaS) + ETL(Apache NiFi) + ML/DeepML/AutoML + GitOps. 
 
@@ -1002,6 +1002,44 @@ We can configure argo to run deployments for us instead of kubectl apply -f. The
 Note: GitOps
 
 GitOps, a process popularized by Weaveworks, is another trending concept within the scope of Kubernetes CI/CD. GitOps involves the use of applications reacting to `git push events`. GitOps focuses primarily on Kubernetes clusters matching the state described by configuration residing in a Git repository. On a simplistic level, GitOps aims to replace `kubectl apply` with `git push`. Popular and well-supported GitOps implementations include GitLab, ArgoCD, Flux, and Jenkins X.
+
+### Apache Airflow (DAG development)
+
+```
+kubectl create namespace development
+kubectl apply -f ./003-data/20000-postgres/ --namespace development
+cd ./003-data/30000-airflow/
+cat README.md
+helm install airflow-k3s-dev ./helm --namespace development
+```
+Check Apache Airflow:
+
+```
+$ kubectl get all -n development
+NAME                                               READY   STATUS      RESTARTS   AGE
+pod/postgres-6c869f86c5-dqw8j                      1/1     Running     0          4h6m
+pod/airflow-77bfd6b5bb-w7628                       2/2     Running     0          3h2m
+pod/copied-task-9a8daf2ded664aa8949d3da3fd7604ec   0/1     Completed   0          177m
+pod/copied-task-145f306df30d4cdc859f34b520166c3a   0/1     Completed   0          157m
+pod/copied-task-a8fb054af15e4f019404c43ea7e3df17   0/1     Completed   0          157m
+pod/copied-task-a175b877d4e3405ebb9c7a08bffb1467   0/1     Completed   0          156m
+pod/copied-task-44979a5e35f74e2ea9da5286397ce945   0/1     Completed   0          135m
+pod/copied-task-7972814f5a8b42d29394b5e5075eb985   0/1     Completed   0          75m
+pod/copied-task-83b95fca7fc54f1fba0cbe2634275d84   0/1     Completed   0          15m
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/postgres-service   ClusterIP   10.43.216.95    <none>        5432/TCP         4h6m
+service/airflow            NodePort    10.43.181.123   <none>        8080:32000/TCP   3h42m
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/postgres   1/1     1            1           4h6m
+deployment.apps/airflow    1/1     1            1           3h42m
+
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/postgres-6c869f86c5   1         1         1       4h6m
+replicaset.apps/airflow-77bfd6b5bb    1         1         1       3h2m
+replicaset.apps/airflow-5cf7595c94    0         0         0       3h42m
+```
 
 
 ## SaaS Deploy
