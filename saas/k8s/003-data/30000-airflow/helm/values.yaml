@@ -1,0 +1,3 @@
+dags_image:
+  repository: davarski/airflow-dag
+  tag: latest
