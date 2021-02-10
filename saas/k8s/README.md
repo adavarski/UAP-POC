@@ -1294,7 +1294,11 @@ https://github.com/phiroict/terraform-aws-kafka-cluster; https://github.com/dwmk
 
 Note4.It's beter to use k8s Operators (ref: https://github.com/adavarski/k8s-operators-playground) than Helm Charts
 ```
+# Rancher
 
+Ref1:  https://github.com/adavarski/RKE-rancher-kvm (Rancher2 RKE+ KVM + CentOS)
+
+Ref2:  https://github.com/adavarski/rancher2-vagrant-alpine (Rancher2 RKE + Vagrant:VBox + Alpine)
 
 
 
