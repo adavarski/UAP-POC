@@ -9,13 +9,12 @@ VPN (WireGuard, k8s:Kilo); Monitoring stacks (Prometheus-based, TIG:Telegraf+Inf
 
 ### PaaS/SaaS POC/Development environments used:
 
+Summary: Vagrant/Docker/k8s/AWS IaC-based PaaS/SaaS infrastucture/environments (POC): Terraform for AWS infrastructure provisioning, Vagrant/Docker/k8s for Dev environments and Ansible for Configuration Management (CM)
+
 - docker-compose based dev env 
 - Vagrant based dev env (Vagrant: IaC for simulating public/private cloud envs -> AWS, Azure, GCP, OCP, OpenStack, etc. Very flexible, ruby syntax, better than OpenStack (KVM) for DEV, you can use Vagrant with VBOX/KVM/etc. + Packer (create Vagrant boxes for Vbox/KVM/etc. like AWS AMIs creation with Packer) + Ansible for Configuration Management
 - k8s (k8s-local: k3s, minikube, kubespray) `Note: Default development environment` 
 - AWS —> Terraform for provisioning infrastructure && Ansible for Configuration Management(CM). KOPS for k8s clusters deploy on AWS, and k8s Operators/Helm Charts/YAML manifests for creating k8s deployments(PasS&SaaS services).  
-
-
-Summary: Vagrant/Docker/k8s/AWS IaC-based PaaS/SaaS infrastucture/environments (POC): Terraform for AWS infrastructure provisioning, Vagrant/Docker/k8s for Dev environments and Ansible for Configuration Management (CM)
 
 
 ### PaaS/SaaS objectives:
