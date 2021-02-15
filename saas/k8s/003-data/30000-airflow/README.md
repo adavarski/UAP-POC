@@ -190,7 +190,7 @@ Simplistic UI.
 Lack of live monitoring and per-record statistics.
 ```
 
-- Apache Airflow(definition!): This modern platform for designing, creating and tracking workflows is an open source ETL software. It can be used with cloud services, including GCP, Azure, and AWS. There is an opportunity to run Airflow on Kubernetes using Astronomer Enterprise.
+- Apache Airflow: This modern platform for designing, creating and tracking workflows is an open source ETL software. It can be used with cloud services, including GCP, Azure, and AWS. There is an opportunity to run Airflow on Kubernetes using Astronomer Enterprise.
 You can code in Python, but not have to worry about XML or drag-and-drop GUIs. The workflows are written in Python, however, the steps themselves can be done in anything you want. Airflow was created as a perfectly flexible task scheduler. One of the top ETL tools is suitable for lots of different purposes. It is used to train ML models, send notifications, track systems, and power functions within various APIs.
 ```
 Pros:
