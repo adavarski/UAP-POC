@@ -1182,7 +1182,7 @@ $ kubectl label node gpu-metal kubernetes.io/role=gpu
 
 Fix k3s CoreDNS for local development to use local DNS server if needed.
 
-## k3s multi-node hybrid cluster (master/workers VMs on differen Cloud providers)
+## Hybrid multi-node k8s cluster (k3s: master/workers VMs on differen Cloud providers)
 
 k3s multi-node Hybrid cluster running on cloud VMs on differen Cloud providers (different regions), based on Kilo pod network. 
 
